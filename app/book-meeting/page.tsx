@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
 import { RiLoaderFill } from "react-icons/ri";
-import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot } from "@/actions/database-actions";
+import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot, unblockSlots, deletePastSlots } from "@/actions/database-actions";
 import { Calendar } from "@/components/ui/calendar";
 import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
@@ -18,6 +18,11 @@ import { Text } from "@/components/typography";
 export default function ChooseSlotPage() {
   const router = useRouter();
   const isMobile = useMedia("(max-width: 480px)", false);
+
+  useEffect(() => {
+    deletePastSlots();
+    unblockSlots();
+  })
   
   return (
     <>
@@ -41,8 +46,6 @@ export default function ChooseSlotPage() {
     </>
   );
 }
-
-
 
 function ChooseSlotForm() {
   const router = useRouter();

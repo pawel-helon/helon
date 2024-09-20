@@ -16,15 +16,10 @@ import { Text } from "./typography";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { RiLoaderFill } from "react-icons/ri";
+import { sendBookingConfirmation } from "@/actions/email-actions";
 
 export function ConfirmBooking(props: { slotId: string }) {
-  const [slot, setSlot] = useState<Slot>({
-    id: "",
-    type: SLOTTYPE.AVAILABLE,
-    dateTime: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+  const [slot, setSlot] = useState<Slot>({id: "", type: SLOTTYPE.AVAILABLE, dateTime: new Date(), createdAt: new Date(), updatedAt: new Date()});
   const router = useRouter();
   const isMobile = useMedia("(max-width: 480px)", false);
 
@@ -89,13 +84,7 @@ function ConfirmBookingForm(props: { slot: Slot }) {
   const month = utcDate.toLocaleDateString("en-US", { month: "long" });
   const year = utcDate.getFullYear();
   const day = String(utcDate.getDate()).padStart(2, "0");
-  const time = utcDate
-    .toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    })
-    .slice(0, 5);
+  const time = utcDate.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false}).slice(0, 5);
 
   async function handleSubmit(formData: FormData) {
     const validatedFields = BookingSchema.safeParse({
@@ -111,15 +100,17 @@ function ConfirmBookingForm(props: { slot: Slot }) {
     const { fullName, email } = validatedFields.data;
     const message = formData.get("message") as string;
 
-    startTransition(async () => {
-      try {
-        const bookingSlot = await bookSlot(props.slot.id, fullName, email, message);
-        if (bookingSlot.message === "fail") {
-          toast.error("Something went wrong. Please try again later.");
-          return;
-        }
+    try {
+      const bookingSlot = await bookSlot(props.slot.id, fullName, email, message);
+      if (bookingSlot.status === 400) {
+        toast.error(bookingSlot.message);
+        return;
+      } 
 
-        router.push("/home");
+      await sendBookingConfirmation(bookingSlot.meeting);
+
+      startTransition(async () => {
+      router.push("/home");
         toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
           action: {
             label: "Close",
@@ -129,10 +120,10 @@ function ConfirmBookingForm(props: { slot: Slot }) {
           },
           duration: Infinity,
         });
+      });
       } catch (e) {
         toast.error("An unexpected error occurred. Please try again later.");
       }
-    });
   }
 
   return (
@@ -163,7 +154,7 @@ function ConfirmBookingForm(props: { slot: Slot }) {
         <div className="w-full flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="fullName">Full name</Label>
-            <Input id="fullName" name="fullName" placeholder="Enter your name" />
+            <Input id="fullName" name="fullName" placeholder="Enter your full name" />
             {state?.errors?.fullName ? (
               <Text variant="p-small-thin" className="text-right">
                 {state.errors.fullName}

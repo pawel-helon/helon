@@ -9,9 +9,9 @@ datasource db {
 }
 
 enum SLOTTYPE {
+  AVAILABLE
   BLOCKED
   BOOKED
-  AVAILABLE
 }
 
 model Slot {
@@ -27,6 +27,7 @@ model Meeting {
   id          String         @id @default(uuid())
   slot        Slot           @relation(fields: [slotId], references: [id], onDelete: Cascade)
   slotId      String         @unique  
+  dateTime    DateTime       @unique
   userName    String
   userEmail   String
   message     String?

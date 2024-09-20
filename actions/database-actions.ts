@@ -1,4 +1,22 @@
-import { Slot } from "@prisma/client";
+import { Meeting, Slot } from "@prisma/client";
+
+export async function unblockSlots(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/database/unblock-slots", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function deletePastSlots(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/database/delete-past-slots", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
 
 export async function getAvailableSlotsForDate(formattedDate: string): Promise<{ message: string, slots: Slot[], status: number }> {
   const request = await fetch(`/api/database/get-available-slots-for-date?date=${formattedDate}`, {
@@ -45,7 +63,7 @@ export async function unblockSlot(slotId: string): Promise<{ message: string, st
   return response;
 }
 
-export async function bookSlot(slotId: string, fullName: string, email: string, message: string | null): Promise<{ message: string, status: number }> {
+export async function bookSlot(slotId: string, fullName: string, email: string, message: string | null): Promise<{ message: string, meeting: Meeting, status: number }> {
   const request = await fetch(`/api/database/book-slot?slotId=${slotId}&fullName=${fullName}&email=${email}&message=${message}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
