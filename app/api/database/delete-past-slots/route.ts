@@ -1,17 +1,25 @@
 import { db } from "@/lib/db";
 
-export async function GET(request: Request) {
+function createResponse(message: string, status: number) {
+  return new Response(JSON.stringify({ message, status }));
+}
+
+export async function GET() {
   try {
-    await db.slot.deleteMany({
+    const slots = await db.slot.deleteMany({
       where : {
         dateTime: {
           lte: new Date()
         }
       }
     })
-
-    return new Response(JSON.stringify({ message: "success", status: 200 }));
+    
+    if (!slots) {
+      return createResponse("Slots not found", 503);
+    } else {
+      return createResponse("Past slots have been deleted", 200);
+    }
   } catch (error) {
-    console.error('Error deleting past slots: ', error);
+    return createResponse("An unexpected error has occurred", 500);
   }
 }

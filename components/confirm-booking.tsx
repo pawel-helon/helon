@@ -25,8 +25,8 @@ export function ConfirmBooking(props: { slotId: string }) {
 
   useEffect(() => {
     getSlot(props.slotId).then((r) => {
-      if (r.message === "fail") {
-        toast.error("Something went wrong. Please try again later.");
+      if (r.status !== 200) {
+        toast.error(r.message);
       } else {
         setSlot(r.slot);
       }
@@ -37,8 +37,8 @@ export function ConfirmBooking(props: { slotId: string }) {
     <>
       {isMobile ? (
         <Sheet open={true} onOpenChange={() => { unblockSlot(props.slotId).then((r) => {
-          if (r.message === "fail") {
-            toast.error("Something went wrong. Please try again later.");
+          if (r.status !== 201) {
+            toast.error(r.message);
           } else {
             router.push("/home");
         }})}}>
@@ -54,8 +54,8 @@ export function ConfirmBooking(props: { slotId: string }) {
         </Sheet>
       ) : (
         <Dialog open={true} onOpenChange={() => { unblockSlot(props.slotId).then((r) => {
-          if (r.message === "fail") {
-            toast.error("Something went wrong. Please try again later.");
+          if (r.status !== 201) {
+            toast.error(r.message);
           } else {
             router.push("/home");
         }})}}>
@@ -101,29 +101,27 @@ function ConfirmBookingForm(props: { slot: Slot }) {
     const message = formData.get("message") as string;
 
     try {
-      const bookingSlot = await bookSlot(props.slot.id, fullName, email, message);
-      if (bookingSlot.status === 400) {
-        toast.error(bookingSlot.message);
-        return;
-      } 
-
-      await sendBookingConfirmation(bookingSlot.meeting);
-
       startTransition(async () => {
-      router.push("/home");
-        toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
-          action: {
-            label: "Close",
-            onClick: () => {
-              toast.dismiss();
+        const bookingSlot = await bookSlot(props.slot.id, fullName, email, message);
+        if (bookingSlot.status === 400) {
+          toast.error(bookingSlot.message);
+          return;
+        } 
+        await sendBookingConfirmation(bookingSlot.meeting);
+        router.push("/home");
+          toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
+            action: {
+              label: "Close",
+              onClick: () => {
+                toast.dismiss();
+              },
             },
-          },
-          duration: Infinity,
-        });
+            duration: Infinity,
+          });
       });
-      } catch (e) {
+    } catch (e) {
         toast.error("An unexpected error occurred. Please try again later.");
-      }
+    }
   }
 
   return (
@@ -139,8 +137,8 @@ function ConfirmBookingForm(props: { slot: Slot }) {
           size="sm"
           onClick={() => {
             unblockSlot(props.slot.id).then((r) => {
-              if (r.message === "fail") {
-                toast.error("Something went wrong. Please try again later.");
+              if (r.status !== 201) {
+                toast.error(r.message);
               } else {
                 router.push("/book-meeting");
               }
@@ -190,7 +188,7 @@ function ConfirmBookingForm(props: { slot: Slot }) {
         </div>
         <div className="w-full absolute bottom-0 right-0 flex p-6 justify-end gap-2">
             <Button onClick={() => router.push('/home')} type="button" variant="ghost">Cancel</Button>
-            <Button disabled={isPending} type="submit" className="min-w-[64px]">
+            <Button disabled={isPending} type="submit" className="min-w-[72px]">
               {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Book"}
             </Button>
         </div>

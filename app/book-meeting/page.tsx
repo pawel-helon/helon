@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
 import { RiLoaderFill } from "react-icons/ri";
-import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot, unblockSlots, deletePastSlots } from "@/actions/database-actions";
+import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot, unblockSlots, deletePastSlots, createSampleSlots } from "@/actions/database-actions";
 import { Calendar } from "@/components/ui/calendar";
 import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
@@ -22,6 +22,7 @@ export default function ChooseSlotPage() {
   useEffect(() => {
     deletePastSlots();
     unblockSlots();
+    createSampleSlots();
   })
   
   return (
@@ -59,8 +60,8 @@ function ChooseSlotForm() {
     const formattedDate = `${date!.getFullYear()}-${String(date!.getMonth() + 1).padStart(2, '0')}-${String(date!.getDate()).padStart(2, '0')}`;
     if (date) {
       getAvailableSlotsForDate(formattedDate).then((r) => {
-        if (r.message === "fail") {
-          toast.error("No available slots for this date. Please choose another date.");
+        if (r.status !== 200) {
+          toast.error(r.message);
         } else {
           setSlots(r.slots);
         }
@@ -70,26 +71,26 @@ function ChooseSlotForm() {
 
   async function handleSubmit(formData: FormData) {
     const slotId = formData.get("slotId") as string;
+    if (!slotId) {
+      toast.error("Please select a slot to continue.");
+      return;
+    }
+    
     startTransition(async () => {
       try {
-        if (!slotId) {
-          toast.error("Please select a slot to continue.");
-          return;
-        }
-
         const checkingSlotAvailability = await checkSlotAvailability(slotId);
-        if (checkingSlotAvailability.message === "fail") {
-          toast.error("Slot is no longer available. Please choose another slot.");
+        if (checkingSlotAvailability.status !== 200) {
+          toast.error(checkingSlotAvailability.message);
           return;
         }
         const blockingSlot = await blockSlot(slotId);
-        if (blockingSlot.message === "fail") {
-          toast.error("An unexpected error occurred. Please try again.");
+        if (blockingSlot.status !== 201) {
+          toast.error(blockingSlot.message);
           return;
         }
         
         router.push(`/book-meeting/${slotId}`);
-      } catch (e) {
+      } catch (error) {
         toast.error("An unexpected error occurred. Please try again later.")
       }
     } )

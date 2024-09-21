@@ -1,20 +1,29 @@
 import { db } from "@/lib/db";
+import { Slot } from "@prisma/client";
+
+function createResponse(message: string, status: number, slot?: Slot) {
+  return new Response(JSON.stringify({ message, status, slot }));
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const slotId = searchParams.get("slotId");
 
   if (!slotId) {
-    return new Response(JSON.stringify({ message: "Slot ID is required", status: 400 }))
+    return createResponse("Slot ID is required", 400);
   }
 
-  const slot = await db.slot.findUnique({
-    where: { id: slotId },
-  });
+  try {
+    const slot = await db.slot.findUnique({
+      where: { id: slotId },
+    });
+    if (!slot) {
+      return createResponse("Slot not found", 503);
+    } else {
+      return createResponse("Slot has been fetched", 200, slot);
+    }
 
-  if (!slot) {
-    return new Response(JSON.stringify({ message: "fail", slot: null, status: 404 }));
-  } else {
-    return new Response(JSON.stringify({ message: "success", slot: slot, status: 500 }));
+  } catch (error) {
+    return createResponse("An unexpected error has occurred", 500);
   }
 }

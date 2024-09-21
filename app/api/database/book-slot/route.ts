@@ -1,53 +1,59 @@
 import { db } from "@/lib/db";
-import { SLOTTYPE } from "@prisma/client";
+import { Meeting, SLOTTYPE } from "@prisma/client";
 
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const slotId = searchParams.get("slotId");
-    const fullName = searchParams.get("fullName");
-    const email = searchParams.get("email");
-    const message = searchParams.get("message") || null;
+interface MeetingRequest {
+  slotId: string;
+  fullName: string;
+  email: string;
+  message?: string;
+}
+
+function createResponse(message: string, status: number, meeting?: Meeting) {
+  return new Response(JSON.stringify({ message, status, meeting }));
+}
+
+export async function POST(request: Request) {
+  const { slotId, fullName, email, message }: MeetingRequest = await request.json();
   
-    if (!slotId || !fullName || !email) {
-      return new Response(JSON.stringify({ message: "Slot id, full name, and email are required", status: 400 }))
-    }
+  if (!slotId || !fullName || !email) {
+    return createResponse("Slot id, full name, and email are required", 400);
+  }
 
+  try {
     const slot = await db.slot.findUnique({
       where: { id: slotId },
       select: { dateTime: true }
     })
 
     if (!slot) {
-      return new Response(JSON.stringify({ message: "Failed to fetch slot", status: 400 }))
+      return createResponse("Slot not found", 503);
     }
 
     const meeting = await db.meeting.create({
       data: {
-        dateTime: slot!.dateTime,
+        dateTime: slot.dateTime,
         userName: fullName,
         userEmail: email,
         slotId: slotId,
         message: message
       }
     })
-
+  
     if (!meeting) {
-      return new Response(JSON.stringify({ message: "Failed to create meeting", status: 400 }));
+      return createResponse("Failed to create meeting", 503);
     }
-    
-    const updatingSlot = await db.slot.update({
+
+    const updatedSlot = await db.slot.update({
       where: { id: slotId },
       data: { type: SLOTTYPE.BOOKED},
     });
-
-    if (!updatingSlot) {
-      return new Response(JSON.stringify({ message: "Failed to updated slot", status: 400 }));
-    }
-  
-    return new Response(JSON.stringify({ message: "Success", meeting: meeting, status: 200 }));
+    
+    if (!updatedSlot) {
+      return createResponse("Failed to update slot", 503);
+    } 
+    
+    return createResponse("Meeting has been created", 201, meeting);
   } catch (error) {
-    console.error('Error updating slot: ', error);
+    return createResponse("An unexpected error has occurred", 500);
   }
-
 }
