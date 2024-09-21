@@ -64,19 +64,23 @@ export async function unblockSlot(slotId: string): Promise<{ message: string, st
 }
 
 export async function bookSlot(slotId: string, fullName: string, email: string, message: string | null): Promise<{ message: string, meeting: Meeting, status: number }> {
-  const request = await fetch(`/api/database/book-slot?slotId=${slotId}&fullName=${fullName}&email=${email}&message=${message}`, {
-    method: "GET",
+  const request = await fetch(`/api/database/book-slot`, {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      fullName: fullName,
+      email: email,
+      message: message
+    })
   })
   const response = await request.json();
   return response;
 }
 
-export async function createSlot(date: Date): Promise<{ message: string, slot: Slot, status: number }> {
-  const formattedDate = date.toISOString();
-  
-  const request = await fetch(`/api/database/create-slot?date=${formattedDate}`, {
-    method: "GET",
+export async function createSampleSlots(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/database/create-sample-slots", {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
   })
   const response = await request.json();
