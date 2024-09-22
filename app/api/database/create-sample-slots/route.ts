@@ -27,15 +27,14 @@ export async function POST() {
       const newSlots = await db.slot.createMany({
         data: dateTimes.map(dateTime => ({ dateTime, type: SLOTTYPE.AVAILABLE })),
       })
-
       if (!newSlots) {
         return createResponse("Failed to create slots", 503);
+      } else {
+        return createResponse("Added sample slots", 201);
       }
-      return createResponse("Added sample slots", 201);
     } else {
       return createResponse("Slots already exist", 200);
     }
-
   } catch (error) {
     return createResponse("An unexpected error has occurred", 500);
   }

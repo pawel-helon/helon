@@ -5,13 +5,13 @@ function createResponse(message: string, status: number) {
   return new Response(JSON.stringify({ message, status }));
 }
 
-export async function GET() {
+export async function PUT() {
   try {
-    const oneHourAgo = new Date(Date.now() - 1000 * 60 * 20);
+    const twentyMinutesAgo = new Date(Date.now() - 1000 * 60 * 20);
     const slots = await db.slot.updateMany({
       where: {
         type: SLOTTYPE.BLOCKED,
-        updatedAt: { lte: oneHourAgo }
+        updatedAt: { lte: twentyMinutesAgo }
       },
       data: { type: SLOTTYPE.AVAILABLE }
     })

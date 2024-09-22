@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
@@ -24,13 +24,19 @@ export function ConfirmBooking(props: { slotId: string }) {
   const isMobile = useMedia("(max-width: 480px)", false);
 
   useEffect(() => {
-    getSlot(props.slotId).then((r) => {
-      if (r.status !== 200) {
-        toast.error(r.message);
-      } else {
-        setSlot(r.slot);
+    async function fetchSlot() {
+      try {
+        const response = await getSlot(props.slotId)
+        if (response.status !== 200) {
+          toast.error(response.message);
+        } else {
+          setSlot(response.slot);
+        }
+      } catch (error) {
+        toast.error("An error occurred while fetching the slot.")
       }
-    });
+    }
+    fetchSlot();
   }, [props.slotId]);
 
   return (
@@ -86,7 +92,7 @@ function ConfirmBookingForm(props: { slot: Slot }) {
   const day = String(utcDate.getDate()).padStart(2, "0");
   const time = utcDate.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false}).slice(0, 5);
 
-  async function handleSubmit(formData: FormData) {
+  const handleSubmit = useCallback(async function handleSubmit(formData: FormData) {
     const validatedFields = BookingSchema.safeParse({
       fullName: formData.get("fullName"),
       email: formData.get("email"),
@@ -107,22 +113,24 @@ function ConfirmBookingForm(props: { slot: Slot }) {
           toast.error(bookingSlot.message);
           return;
         } 
+
         await sendBookingConfirmation(bookingSlot.meeting);
         router.push("/home");
-          toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
-            action: {
-              label: "Close",
-              onClick: () => {
-                toast.dismiss();
-              },
+        
+        toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
+          action: {
+            label: "Close",
+            onClick: () => {
+              toast.dismiss();
             },
-            duration: Infinity,
-          });
+          },
+          duration: Infinity,
+        });
       });
     } catch (e) {
-        toast.error("An unexpected error occurred. Please try again later.");
+      toast.error("An unexpected error occurred. Please try again later.");
     }
-  }
+  },[day, dayOfTheWeek, month, props.slot.id, router, time, year])
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-4">

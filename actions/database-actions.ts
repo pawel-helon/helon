@@ -2,7 +2,7 @@ import { Meeting, Slot } from "@prisma/client";
 
 export async function unblockSlots(): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/database/unblock-slots", {
-    method: "GET",
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
   })
   const response = await request.json();
@@ -11,15 +11,15 @@ export async function unblockSlots(): Promise<{ message: string, status: number 
 
 export async function deletePastSlots(): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/database/delete-past-slots", {
-    method: "GET",
+    method: "DELETE",
     headers: { "Content-Type": "application/json" },
   })
   const response = await request.json();
   return response;
 }
 
-export async function getAvailableSlotsForDate(formattedDate: string): Promise<{ message: string, slots: Slot[], status: number }> {
-  const request = await fetch(`/api/database/get-available-slots-for-date?date=${formattedDate}`, {
+export async function getAvailableSlotsForDate(date: string): Promise<{ message: string, slots: Slot[], status: number }> {
+  const request = await fetch(`/api/database/get-available-slots-for-date?date=${date}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   })
@@ -37,9 +37,12 @@ export async function checkSlotAvailability(slotId: string): Promise<{ message: 
 }
 
 export async function blockSlot(slotId: string): Promise<{ message: string, status: number }> {
-  const request = await fetch(`/api/database/block-slot?slotId=${slotId}`, {
-    method: "GET",
+  const request = await fetch(`/api/database/block-slot`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId
+    })
   })
   const response = await request.json();
   return response;
@@ -55,9 +58,12 @@ export async function getSlot(slotId: string): Promise<{ message: string, slot: 
 }
 
 export async function unblockSlot(slotId: string): Promise<{ message: string, status: number }> {
-  const request = await fetch(`/api/database/unblock-slot?slotId=${slotId}`, {
-    method: "GET",
+  const request = await fetch(`/api/database/unblock-slot`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId
+    })
   })
   const response = await request.json();
   return response;

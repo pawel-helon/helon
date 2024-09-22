@@ -5,9 +5,8 @@ function createResponse(message: string, status: number) {
   return new Response(JSON.stringify({ message, status}));
 }
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const slotId = searchParams.get("slotId");
+export async function PUT(request: Request) {
+  const { slotId }: { slotId: string } = await request.json();
   
   if (!slotId) {
     return createResponse("Slot ID is required", 400);

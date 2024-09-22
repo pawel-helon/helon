@@ -4,7 +4,7 @@ function createResponse(message: string, status: number) {
   return new Response(JSON.stringify({ message, status }));
 }
 
-export async function GET() {
+export async function DELETE() {
   try {
     const slots = await db.slot.deleteMany({
       where : {

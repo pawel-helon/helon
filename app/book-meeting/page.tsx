@@ -20,10 +20,17 @@ export default function ChooseSlotPage() {
   const isMobile = useMedia("(max-width: 480px)", false);
 
   useEffect(() => {
-    deletePastSlots();
-    unblockSlots();
-    createSampleSlots();
-  })
+    async function initSlots() {
+      try {
+        await deletePastSlots();
+        await unblockSlots();
+        await createSampleSlots();
+      } catch (error) {
+        toast.error("Error initializing slots.")
+      }
+    }
+    initSlots();
+  },[])
   
   return (
     <>
@@ -48,23 +55,32 @@ export default function ChooseSlotPage() {
   );
 }
 
-function ChooseSlotForm() {
+const ChooseSlotForm = React.memo(function ChooseSlotForm() {
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   useEffect(() => {
+    if (!date) return;
+    setIsLoading(true);
     setSelectedSlot("");
-    const formattedDate = `${date!.getFullYear()}-${String(date!.getMonth() + 1).padStart(2, '0')}-${String(date!.getDate()).padStart(2, '0')}`;
+    
+    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
     if (date) {
       getAvailableSlotsForDate(formattedDate).then((r) => {
+        setIsLoading(false);
         if (r.status !== 200) {
           toast.error(r.message);
         } else {
           setSlots(r.slots);
         }
+      }).catch(() => {
+        setIsLoading(false);
+        toast.error("Failed to load available slots.")
       })
     }
   },[date])
@@ -105,27 +121,33 @@ function ChooseSlotForm() {
         mode="single"
       />
       <div className="w-full flex flex-col gap-2">
-        <RadioGroup name="slotId">
-          {slots.length > 0 ? (
-            slots.map((slot) => {
-              const utcDate = new Date(slot.dateTime);
-              const localTime = utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).slice(0, 5);
-              return (
-                <RadioGroupItem key={slot.id} value={slot.id} onClick={() => setSelectedSlot(slot.id)} className="w-full" asChild>
-                  <Button variant={selectedSlot === slot.id ? "default" : "outline"} size="sm" className="w-full">
-                    {localTime}
-                  </Button>
-                </RadioGroupItem>
-              );
-            })
-          ) : (
-            <div className="flex items-center justify-center">
-              <Text variant="p-small-thin" className="max-w-[40ch] text-center text-muted-foreground">
-                No slots available. Please choose another day.
-              </Text>
-            </div>
-          )}
-        </RadioGroup>
+        {isLoading ? (
+          <div className="w-full flex py-2 justify-center items-center border border-input bg-background shadow-sm">
+            <RiLoaderFill className="size-5 text-muted-foreground animate-spin"/>
+          </div>
+        ) : (
+          <RadioGroup name="slotId">
+            {slots.length > 0 ? (
+              slots.map((slot) => {
+                const utcDate = new Date(slot.dateTime);
+                const localTime = utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).slice(0, 5);
+                return (
+                  <RadioGroupItem key={slot.id} value={slot.id} onClick={() => setSelectedSlot(slot.id)} className="w-full" asChild>
+                    <Button variant={selectedSlot === slot.id ? "default" : "outline"} size="sm" className="w-full">
+                      {localTime}
+                    </Button>
+                  </RadioGroupItem>
+                );
+              })
+            ) : (
+              <div className="flex items-center justify-center">
+                <Text variant="p-small-thin" className="max-w-[40ch] text-center text-balance text-muted-foreground">
+                  No slots available. Please choose different day.
+                </Text>
+              </div>
+            )}
+          </RadioGroup>
+        )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 flex flex-col xs:flex-row xs:justify-end p-6 gap-2">
         <Button onClick={() => router.push("/home")} type="button" variant="ghost">
@@ -137,4 +159,4 @@ function ChooseSlotForm() {
       </div>
     </form>
   );
-}
+});
