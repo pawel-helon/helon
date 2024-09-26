@@ -113,6 +113,26 @@ const DialogContentWithoutClose = React.forwardRef<
 ))
 DialogContentWithoutClose.displayName = DialogPrimitive.Content.displayName
 
+const DialogContentWithoutAnimationAndClose = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlayWithoutAnimation />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed z-50 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] grid w-full max-w-lg border bg-background p-6 shadow-lg sm:rounded-lg",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </DialogPrimitive.Content>
+  </DialogPortal>
+))
+DialogContentWithoutAnimationAndClose.displayName = DialogPrimitive.Content.displayName
+
 const DialogHeader = ({
   className,
   ...props
@@ -194,6 +214,7 @@ export {
   DialogContent,
   DialogContentWithoutAnimation,
   DialogContentWithoutClose,
+  DialogContentWithoutAnimationAndClose,
   DialogHeader,
   DialogFooter,
   DialogTitle,

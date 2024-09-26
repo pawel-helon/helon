@@ -11,6 +11,8 @@ export async function POST() {
     date.setDate(date.getDate() + i);
     date.setHours(8 + i);
     date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
     return date;
   });
   

@@ -1,7 +1,8 @@
-import { getSlotsForCurrentWeek } from "@/actions/server-actions";
-import { Slots } from "@/components/slots";
+import { getSlotsForWeek } from "@/actions/server-actions";
+import { Availability } from "@/components/availability";
+import { WeekSlots } from "@/lib/types";
 
-export default async function SlotsPage() {
+export default async function AvailabilityPage() {
   const currentWeek = Array.from({ length: 7 }, (_, i) => {
     const today = new Date();
     const dayOfWeek = today.getDay();
@@ -11,7 +12,7 @@ export default async function SlotsPage() {
     const date = `${dateTime.getFullYear()}-${String(dateTime.getMonth() + 1).padStart(2, '0')}-${String(dateTime.getDate()).padStart(2, '0')}`
     return date;
   })
-  
-  const currentWeekSlots = await getSlotsForCurrentWeek(currentWeek);
-  return <Slots currentWeekSlots={currentWeekSlots}/>;
+
+  const gettingSlotsForCurrentWeek = await getSlotsForWeek(currentWeek);
+  return <Availability currentWeek={currentWeek} currentWeekSlots={gettingSlotsForCurrentWeek.weekSlots as WeekSlots} />;
 }
