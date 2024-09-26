@@ -1,6 +1,8 @@
 import { getSlotsForWeek } from "@/actions/server-actions";
 import { Availability } from "@/components/availability";
-import { WeekSlots } from "@/lib/types";
+import { Slot } from "@prisma/client";
+
+type DaySlots = { day: string; slots: Slot[] };
 
 export default async function AvailabilityPage() {
   const currentWeek = Array.from({ length: 7 }, (_, i) => {
@@ -14,5 +16,5 @@ export default async function AvailabilityPage() {
   })
 
   const gettingSlotsForCurrentWeek = await getSlotsForWeek(currentWeek);
-  return <Availability currentWeek={currentWeek} currentWeekSlots={gettingSlotsForCurrentWeek.weekSlots as WeekSlots} />;
+  return <Availability currentWeek={currentWeek} currentWeekSlots={gettingSlotsForCurrentWeek.weekSlots as DaySlots[]} />;
 }

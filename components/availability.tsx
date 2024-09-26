@@ -6,13 +6,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/typography";
 import { useState } from "react";
-import { addSlot, deleteSlot, getSlotsForWeek, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
+import { addSlot, deleteSlot, duplicateSlots, getSlotsForWeek, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
 import { toast } from "sonner";
-import { WeekSlots } from "@/lib/types";
 import { useMedia } from "react-use";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
 import { CaretSortIcon } from "@radix-ui/react-icons"
+import { Slot } from "@prisma/client";
+
+type DaySlots = { day: string; slots: Slot[] };
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = ["00", "15", "30", "45"];
@@ -20,7 +22,7 @@ const DAYSOFWEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Fri
 
 export function Availability(props: {
   currentWeek: string[];
-  currentWeekSlots: WeekSlots;
+  currentWeekSlots: DaySlots[];
 }) {
   const [displayedWeek, setDisplayedWeek] = useState(props.currentWeek);
   const [displayedWeekSlots, setDisplayedWeekSlots] = useState(props.currentWeekSlots);
@@ -41,7 +43,7 @@ export function Availability(props: {
         return;
       }
       setDisplayedWeek(nextWeek);
-      setDisplayedWeekSlots(gettingNextWeekSlots.weekSlots as WeekSlots);
+      setDisplayedWeekSlots(gettingNextWeekSlots.weekSlots as DaySlots[]);
     } catch {
       toast.error('Failed to fetch next week slots');
     }
@@ -61,7 +63,7 @@ export function Availability(props: {
         return;
       }
       setDisplayedWeek(prevWeek);
-      setDisplayedWeekSlots(gettingPrevWeekSlots.weekSlots as WeekSlots);
+      setDisplayedWeekSlots(gettingPrevWeekSlots.weekSlots as DaySlots[]);
     } catch {
       toast.error('Failed to fetch previous week slots');
     }
@@ -123,17 +125,29 @@ export function Availability(props: {
     }
   }
 
-
+  async function handleDuplicateSlots(dayToDuplicate: string, day: DaySlots) {
+    try {
+      const duplicatingSlots = await duplicateSlots(dayToDuplicate, day);
+      if (duplicatingSlots.status !== 201) {
+        toast.error('Failed to duplicate slots');
+        return;
+      } else {
+        window.location.reload();
+      }
+    } catch {
+      toast.error('Failed to duplicate slots');
+    }
+  }
   
   return (
     <>
       {isMobile ? (
         <div />
-      ):(
+      ) : (
         <Dialog open={true}>
           <DialogContent aria-describedby="" className="max-w-[880px]">
             <div className="w-full flex justify-between">
-              <DialogTitle>Slots</DialogTitle>
+              <DialogTitle>Availability</DialogTitle>
               <div className="flex items-center">
                 <Button onClick={handlePrevWeek} size="icon" variant="ghost" className="focus-visible:ring-transparent">
                   <ChevronLeft size={18}/>
@@ -149,6 +163,7 @@ export function Availability(props: {
             <div className="grid grid-cols-4 gap-3 mt-8">
               {displayedWeekSlots.map((day) => {
                 const date = new Date(day.day);
+                const notToday = displayedWeek.filter(d => d !== day.day);
                 return (
                   <div key={day.day} style={{ aspectRatio: "3/4" }}className="relative col-span-1 flex flex-col p-2 border border-border rounded-md">
                     <Text variant="p-base-thick" className={cn(new Date() < new Date(`${day.day}T23:59:59.999Z`) ? "text-foreground" : "text-muted-foreground")}>{DAYSOFWEEK[date.getDay()]}</Text>
@@ -207,16 +222,16 @@ export function Availability(props: {
                           <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="pr-2">
+                                <Button variant="outline" size="sm" className="w-[104px] min-w-[104px] pr-2">
                                   Duplicate
                                   <ChevronDown size={16} className="size-4 ml-2"/>
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="start" className="flex flex-col bg-black shadow-black shadow-md">
-                                {DAYSOFWEEK.map((day) => {
+                              <DropdownMenuContent align="start" className="w-[104px] min-w-[104px] flex flex-col bg-black shadow-black shadow-md">
+                                {notToday.map((dayToDuplicate) => {
                                   return (
-                                    <Button variant="ghost" size="sm" className="w-full justify-start pl-2" key={day}>
-                                      {day}
+                                    <Button onClick={() => handleDuplicateSlots(dayToDuplicate, day)} variant="ghost" size="sm" className="justify-start pl-2" key={dayToDuplicate}>
+                                      {DAYSOFWEEK[new Date(dayToDuplicate).getDay()]}
                                     </Button>
                                   );
                                 })}
@@ -255,4 +270,3 @@ export function Availability(props: {
     </>
   );
 }
-

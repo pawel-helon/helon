@@ -62,7 +62,7 @@ export async function updateSlotMinutes(slotId: string, dateTime: Date, minutes:
 }
 
 export async function addSlot(day: string) {
-  const allTimes = [];
+  const allTimes = [] as string[];
   for (let hour = 6; hour <= 20; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
       allTimes.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
@@ -110,5 +110,32 @@ export async function deleteSlot(slotId: string) {
     return { message: "Slot not deleted", status: 404 };
   } else {
     return { message: "Slot deleted", status: 202 };
+  }
+}
+
+type DaySlots = { day: string; slots: Slot[] };
+
+export async function duplicateSlots(dayToDuplicate: string, day: DaySlots) {
+  const slots = await db.slot.deleteMany({
+    where: {
+      dateTime: {
+        gte: `${dayToDuplicate}T00:00:00.000Z`,
+        lte: `${dayToDuplicate}T23:59:59.999Z`
+      },
+    },
+  });
+
+  if (!slots) {
+    return { message: "No slots duplicated", status: 404 };
+  } else {
+    for (const slot of day.slots) {
+      const time = slot.dateTime.toISOString().split('T')[1];
+      await db.slot.create({
+        data: {
+          dateTime: `${dayToDuplicate}T${time}`
+        }
+      });
+    }
+    return { message: "Slots duplicated", status: 201 };
   }
 }
