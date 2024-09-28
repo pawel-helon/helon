@@ -113,9 +113,8 @@ export async function deleteSlot(slotId: string) {
   }
 }
 
-type DaySlots = { day: string; slots: Slot[] };
 
-export async function duplicateSlots(dayToDuplicate: string, day: DaySlots) {
+export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating: Slot[]) {
   const slots = await db.slot.deleteMany({
     where: {
       dateTime: {
@@ -128,7 +127,7 @@ export async function duplicateSlots(dayToDuplicate: string, day: DaySlots) {
   if (!slots) {
     return { message: "No slots duplicated", status: 404 };
   } else {
-    for (const slot of day.slots) {
+    for (const slot of slotsForDuplicating) {
       const time = slot.dateTime.toISOString().split('T')[1];
       await db.slot.create({
         data: {

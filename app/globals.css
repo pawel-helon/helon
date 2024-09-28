@@ -55,6 +55,7 @@ body {
     --radius: 0.5rem;
 
     --background-h: 262 100% 3%;
+    --foreground-h: 0 100% 100%;
     --muted-foreground-h: 261 48% 15%;
     --muted-h: 261 51% 22%;
     --accent-yellow-h: 40 100% 64%;

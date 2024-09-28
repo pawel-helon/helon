@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/typography";
 import { useState } from "react";
-import { addSlot, deleteSlot, duplicateSlots, getSlotsForWeek, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
+import { addSlot, deleteSlot, getSlotsForWeek, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
 import { toast } from "sonner";
 import { useMedia } from "react-use";
 import { cn } from "@/lib/utils";
@@ -125,19 +125,19 @@ export function Availability(props: {
     }
   }
 
-  async function handleDuplicateSlots(dayToDuplicate: string, day: DaySlots) {
-    try {
-      const duplicatingSlots = await duplicateSlots(dayToDuplicate, day);
-      if (duplicatingSlots.status !== 201) {
-        toast.error('Failed to duplicate slots');
-        return;
-      } else {
-        window.location.reload();
-      }
-    } catch {
-      toast.error('Failed to duplicate slots');
-    }
-  }
+  // async function handleDuplicateSlots(dayToDuplicate: string, day: DaySlots) {
+  //   try {
+  //     const duplicatingSlots = await duplicateSlots(dayToDuplicate, day);
+  //     if (duplicatingSlots.status !== 201) {
+  //       toast.error('Failed to duplicate slots');
+  //       return;
+  //     } else {
+  //       window.location.reload();
+  //     }
+  //   } catch {
+  //     toast.error('Failed to duplicate slots');
+  //   }
+  // }
   
   return (
     <>
@@ -163,7 +163,7 @@ export function Availability(props: {
             <div className="grid grid-cols-4 gap-3 mt-8">
               {displayedWeekSlots.map((day) => {
                 const date = new Date(day.day);
-                const notToday = displayedWeek.filter(d => d !== day.day);
+                // const notToday = displayedWeek.filter(d => d !== day.day);
                 return (
                   <div key={day.day} style={{ aspectRatio: "3/4" }}className="relative col-span-1 flex flex-col p-2 border border-border rounded-md">
                     <Text variant="p-base-thick" className={cn(new Date() < new Date(`${day.day}T23:59:59.999Z`) ? "text-foreground" : "text-muted-foreground")}>{DAYSOFWEEK[date.getDay()]}</Text>
@@ -228,13 +228,13 @@ export function Availability(props: {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="start" className="w-[104px] min-w-[104px] flex flex-col bg-black shadow-black shadow-md">
-                                {notToday.map((dayToDuplicate) => {
+                                {/* {notToday.map((dayToDuplicate) => {
                                   return (
                                     <Button onClick={() => handleDuplicateSlots(dayToDuplicate, day)} variant="ghost" size="sm" className="justify-start pl-2" key={dayToDuplicate}>
                                       {DAYSOFWEEK[new Date(dayToDuplicate).getDay()]}
                                     </Button>
                                   );
-                                })}
+                                })} */}
                               </DropdownMenuContent>
                             </DropdownMenu>
                             <Button onClick={() => handleAddSlot(day.day) } size="icon" variant="outline">

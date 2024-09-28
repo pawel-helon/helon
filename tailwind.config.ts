@@ -65,6 +65,7 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
         "background-h": "hsl(var(--background-h))",
+        "foreground-h": "hsl(var(--foreground-h))",
         "muted-h": "hsl(var(--muted-h))",
         "muted-foreground-h": "hsl(var(--muted-foreground-h))",
         "accent-yellow-h": "hsl(var(--accent-yellow-h))",
