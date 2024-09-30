@@ -2,7 +2,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "../ui/button";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Slot } from "@prisma/client";
-import { Trash2 } from "lucide-react";
+import { EllipsisVertical, Trash2 } from "lucide-react";
 import { deleteSlot, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -61,50 +61,73 @@ export function TimeSlot(props: { slot: Slot }) {
   }
 
   return (
-    <div className="flex gap-2 items-center">
-      <DropdownMenu open={hourDropdownOpened} onOpenChange={setHourDropdownOpened}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
-            {String(props.slot.dateTime.getHours()).padStart(2, '0')}
-            <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
-          <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
-            {HOURS.map((hours) => {
-              return (
-                <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2">
-                  {hours}
-                </Button>
-              );
-            })}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <DropdownMenu open={minutesDropdownOpened} onOpenChange={setMinutesDropdownOpened}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
-            {String(props.slot.dateTime.getMinutes()).padStart(2, '0')}
-            <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
-          <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
-            {MINUTES.map((minutes) => {
-              return (
-                <Button key={minutes} onClick={() => handleSlotMinutesChange(props.slot.id, props.slot.dateTime, minutes)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2" >
-                  {minutes}
-                </Button>
-              );
-            })}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <div className="w-full flex justify-end">
-        <Button onClick={() => handleDeleteSlot(props.slot.id)} size="icon" variant="ghost">
+    <div className="w-full flex justify-between items-center">
+      <div className="flex gap-2">
+        <DropdownMenu open={hourDropdownOpened} onOpenChange={setHourDropdownOpened}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
+              {String(props.slot.dateTime.getHours()).padStart(2, '0')}
+              <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+            <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+              {HOURS.map((hours) => {
+                return (
+                  <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2">
+                    {hours}
+                  </Button>
+                );
+              })}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu open={minutesDropdownOpened} onOpenChange={setMinutesDropdownOpened}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
+              {String(props.slot.dateTime.getMinutes()).padStart(2, '0')}
+              <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+            <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+              {MINUTES.map((minutes) => {
+                return (
+                  <Button key={minutes} onClick={() => handleSlotMinutesChange(props.slot.id, props.slot.dateTime, minutes)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2" >
+                    {minutes}
+                  </Button>
+                );
+              })}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="w-full flex justify-end gap-1">
+        <Button onClick={() => handleDeleteSlot(props.slot.id)} size="icon" variant="outline" className="size-8">
           <Trash2 size={16} />
         </Button>
+        <ActionsOnTimeSlot />
       </div>
     </div>
+  )
+}
+
+function ActionsOnTimeSlot() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button onClick={() => {}} size="icon" variant="outline" className="size-8">
+          <EllipsisVertical size={16} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="flex flex-col bg-black shadow-black shadow-md p-1">
+        <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+          Set recurring
+        </Button>
+        <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+          Delete slot
+        </Button>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

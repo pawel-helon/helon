@@ -18,6 +18,7 @@ model Slot {
   id          String         @id @default(uuid())
   type        SLOTTYPE       @default(AVAILABLE)
   dateTime    DateTime       @unique
+  recurring   Boolean        @default(false)
   meeting     Meeting[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt

@@ -1,7 +1,7 @@
-import { getSlotsForWeek } from "@/actions/server-actions";
-import { AvailabilityHeader } from "@/components/scheduling/availability-header";
-import { DayCard } from "@/components/scheduling/day-card";
-import { Slot } from "@prisma/client";
+import { getSlotsForWeek } from '@/actions/server-actions';
+import { AvailabilityHeader } from '@/components/scheduling/availability-header';
+import { DayGrid } from '@/components/scheduling/day-grid';
+import { Slot } from '@prisma/client';
 
 type DaySlots = { day: string; slots: Slot[] };
 
@@ -22,13 +22,9 @@ export default async function WeeksAvailabilityPage(props: { params: { week: str
   const slotsForWeek = gettingSlotsForWeek.weekSlots as DaySlots[];
 
   return (
-    <div>
+    <>
       <AvailabilityHeader weekNumber={weekNumber} weekDays={weekDays}/>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16'>
-        {slotsForWeek.map((day) => {
-          return <DayCard key={day.day} day={day.day} slots={day.slots} weekDays={weekDays} />;
-        })}
-      </div>
-    </div>
+      <DayGrid slotsForWeek={slotsForWeek} weekDays={weekDays}/>
+    </>
   )
 }

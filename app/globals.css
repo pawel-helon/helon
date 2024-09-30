@@ -54,6 +54,7 @@ body {
     --chart-5: 340 75% 55%;
     --radius: 0.5rem;
 
+    --background-sh: 0 0% 4%;
     --background-h: 262 100% 3%;
     --foreground-h: 0 100% 100%;
     --muted-foreground-h: 261 48% 15%;
