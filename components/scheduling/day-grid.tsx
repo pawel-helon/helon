@@ -20,7 +20,7 @@ export function DayGrid(props: {
         <Label htmlFor='only-recurring' className='text-xs text-muted-foreground'>Recurring only</Label>
         <Switch checked={recurringOnly} onCheckedChange={() =>setRecurringOnly(!recurringOnly)}/>
       </div>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16'>
+      <div className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16'>
         {props.slotsForWeek.map((day) => {
           return <DayCard key={day.day} day={day.day} slots={day.slots} recurringOnly={recurringOnly} weekDays={props.weekDays} />;
         })}

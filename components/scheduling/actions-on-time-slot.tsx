@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteSlot, setSlotRecurring } from "@/actions/server-actions";
+import { deleteSlot, disableRecurringSlot, setSlotRecurring } from "@/actions/server-actions";
 import { Button } from "../ui/button"
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,6 @@ import { EllipsisVertical, Trash2 } from "lucide-react";
 import { Slot } from "@prisma/client";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useState } from "react";
-import { DuplicateSlotFor } from "./duplicate-slot-for";
 
 export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   const router = useRouter();
@@ -19,6 +18,21 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
     try {
       const settingSlotRecurring = await setSlotRecurring(props.slot)
       if (settingSlotRecurring.status !== 201 ) {
+        toast.error(settingSlotRecurring.message)
+        return;
+      }
+      router.refresh();
+      toast.success(settingSlotRecurring.message);
+      setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
+    } catch {
+      toast.error('An error occurred. Please try again later.');
+    }
+  }
+
+  async function handleDisableRecurringSlot() {
+    try {
+      const settingSlotRecurring = await disableRecurringSlot(props.slot)
+      if (settingSlotRecurring.status !== 204 ) {
         toast.error(settingSlotRecurring.message)
         return;
       }
@@ -55,12 +69,8 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="flex flex-col bg-black shadow-black shadow-md p-1">
-          <DuplicateSlotFor slot={props.slot} daysExceptToday={props.daysExceptToday} actionsOnSlotDropdownOpened={actionsOnSlotDropdownOpened} setActionsOnSlotDropdownOpened={setActionsOnSlotDropdownOpened} />
-          <Button onClick={handleSetRecurringSlot} variant='ghost' size='sm' className='justify-start text-left pl-2.5'>
-            Set recurring
-          </Button>
-          <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
-            Delete slot
+          <Button onClick={props.slot.recurring ? handleDisableRecurringSlot : handleSetRecurringSlot} variant='ghost' size='sm' className='justify-start text-left pl-2.5'>
+            {props.slot.recurring ? "Disable recurring" : "Set recurring"}
           </Button>
         </DropdownMenuContent>
       </DropdownMenu>

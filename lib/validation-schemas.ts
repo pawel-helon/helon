@@ -11,10 +11,23 @@ export const BookingSchema = z.object({
 
 export type BookingFormState =
   | {
-    errors?: {
-      fullName?: string[];
-      email?: string[];
-    };
-    message?: string;
+      errors?: {
+        fullName?: string[];
+        email?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const DuplicateDaySlotsSchema = z.object({
+  day: z.string().min(1, { message: "Please select day" })
+})
+
+export type DuplicateDaySlotsFormState =
+  | {
+      errors?: {
+        day?: string[];
+      }
+      message?: string;
     }
   | undefined;

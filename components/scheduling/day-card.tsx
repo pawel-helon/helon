@@ -48,7 +48,7 @@ export function DayCard(props: {
               {filteredSlots.map((s) => { return <TimeSlot key={s.id} slot={s} daysExceptToday={daysExceptToday} /> })}
             </div>
             <div className='absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh'>
-              <ActionsOnDayCard daysExceptToday={daysExceptToday}/>
+              <ActionsOnDayCard day={props.day} slots={props.slots} daysExceptToday={daysExceptToday} />
               {/* Add 2nd case for adding recurring slot */}
               <Button onClick={() => handleAddSlot(props.day) } size='icon' className='size-8'>
                 <Plus size={16} />

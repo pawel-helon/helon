@@ -184,3 +184,80 @@ export async function setSlotRecurring(slot: Slot) {
     return { message: 'An error occurred while setting recurring slots', status: 500 }
   }
 }
+
+export async function disableRecurringSlot(slot: Slot) {
+  try {
+    const updateSlot = await db.slot.update({
+      where: { id: slot.id },
+      data: { recurring: false }
+    })
+
+    if (!updateSlot) {
+      return { message: 'Failed to update slot.', status: 500 }
+    }
+
+    const endOfYear = new Date(slot.dateTime.getFullYear(), 11, 31, 23, 59, 59, 999);
+    const recurringDates: Date[] = [];
+
+    const currentRecurringDate = new Date(slot.dateTime);
+    currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    
+    while (currentRecurringDate <= endOfYear) {
+      recurringDates.push(new Date(currentRecurringDate));
+      currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    }
+
+    let recurringSlotsDeleted = false;
+    for (const date of recurringDates) {
+      const deletedSlot = await db.slot.delete({
+        where: { dateTime: new Date(date.setHours(
+          slot.dateTime.getHours(),
+          slot.dateTime.getMinutes(),
+          slot.dateTime.getSeconds(),
+          slot.dateTime.getMilliseconds()
+        ))}
+      })
+      if (deletedSlot) {
+        recurringSlotsDeleted = true
+      }
+    }
+
+
+    if (!recurringSlotsDeleted) {
+      return { message: 'Failed to create recurring slots', status: 500 }
+    } else {
+      return { message: 'Removed recurring slots', status: 204 }
+    }
+  } catch (error) {
+    console.error('Error in setSlotRecurring:', error);
+    return { message: 'An error occurred while setting recurring slots', status: 500 }
+  }
+}
+
+export async function duplicateDaySlotsFor(dayToDuplicate: string, slots: Slot[]) {
+  const date = new Date(dayToDuplicate)
+
+  let slotsDuplicated = false;
+  for (const slot of slots) {
+    const duplicateSlot = await db.slot.create({
+      data: {
+        dateTime: new Date(date.setHours(
+          slot.dateTime.getHours(),
+          slot.dateTime.getMinutes(),
+          slot.dateTime.getMilliseconds()
+        ))
+      }
+    })
+    if (!duplicateSlot) {
+      return { message: 'Failed to duplicate slot', status: 500 }
+    } else {
+      slotsDuplicated = true;
+    }
+  }
+
+  if (!slotsDuplicated) {
+    return { message: 'Failed to duplicate slots', status: 500 }
+  } else {
+    return { message: 'Slots duplicated', status: 201 }
+  }
+}
