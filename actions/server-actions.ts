@@ -237,6 +237,18 @@ export async function disableRecurringSlot(slot: Slot) {
 export async function duplicateDaySlotsFor(dayToDuplicate: string, slots: Slot[]) {
   const date = new Date(dayToDuplicate)
 
+  const deleteSlots = await db.slot.deleteMany({
+    where: {
+      dateTime: {
+        gte: new Date(date.setHours(0, 0, 0, 0)),
+        lte: new Date(date.setHours(23, 59, 59, 999))
+      }
+    }
+  })
+  if (!deleteSlots) {
+    return { message: 'Failed to delete slots', status: 500 };
+  }
+
   let slotsDuplicated = false;
   for (const slot of slots) {
     const duplicateSlot = await db.slot.create({
@@ -244,6 +256,7 @@ export async function duplicateDaySlotsFor(dayToDuplicate: string, slots: Slot[]
         dateTime: new Date(date.setHours(
           slot.dateTime.getHours(),
           slot.dateTime.getMinutes(),
+          slot.dateTime.getSeconds(),
           slot.dateTime.getMilliseconds()
         ))
       }
@@ -259,5 +272,21 @@ export async function duplicateDaySlotsFor(dayToDuplicate: string, slots: Slot[]
     return { message: 'Failed to duplicate slots', status: 500 }
   } else {
     return { message: 'Slots duplicated', status: 201 }
+  }
+}
+
+export async function deleteSlots(day: string) {
+  const deleteSlots = await db.slot.deleteMany({
+    where: {
+      dateTime: {
+        gte: new Date(new Date(day).setHours(0,0,0,0)),
+        lte: new Date(new Date(day).setHours(23,59,59,999))
+      }
+    }
+  })
+  if (!deleteSlots) {
+    return { message: 'Failed to delete slots', status: 500 }
+  } else {
+    return { message: 'Slots deleted', status: 204 }
   }
 }

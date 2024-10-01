@@ -56,7 +56,7 @@ export function DuplicateDaySlotsFor(props: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='ghost' size='sm' className='justify-start text-left pl-2.5'>
+        <Button variant='outline' size='sm' className='w-[100px] justify-start rounded-r-none text-left pl-2.5'>
           Duplicate
         </Button>
       </DialogTrigger>
