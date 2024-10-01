@@ -1,34 +1,20 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { Slot } from "@prisma/client";
-import { EllipsisVertical, Trash2 } from "lucide-react";
-import { deleteSlot, updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { updateSlotHour, updateSlotMinutes } from "@/actions/server-actions";
+import { ActionsOnTimeSlot } from "@/components/scheduling/actions-on-time-slot";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Slot } from "@prisma/client";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = ["00", "15", "30", "45"];
 
-export function TimeSlot(props: { slot: Slot }) {
+export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   const router = useRouter();
   const [hourDropdownOpened, setHourDropdownOpened] = useState<boolean>(false);
   const [minutesDropdownOpened, setMinutesDropdownOpened] = useState<boolean>(false);
-  
-  async function handleDeleteSlot(slotId: string) {
-    try {
-      const deletingSlot = await deleteSlot(slotId);
-      if (deletingSlot.status !== 202) {
-        toast.error('Failed to delete slot');
-        return;
-      } else {
-        router.refresh();
-      }
-    } catch {
-      toast.error('Failed to delete slot');
-    }
-  }
   
   async function handleSlotHourChange(slotId: string, dateTime: Date, hour: string) {
     try {
@@ -89,7 +75,7 @@ export function TimeSlot(props: { slot: Slot }) {
               <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-background-sh shadow-black shadow-md">
             <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
               {MINUTES.map((minutes) => {
                 return (
@@ -102,32 +88,7 @@ export function TimeSlot(props: { slot: Slot }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="w-full flex justify-end gap-1">
-        <Button onClick={() => handleDeleteSlot(props.slot.id)} size="icon" variant="outline" className="size-8">
-          <Trash2 size={16} />
-        </Button>
-        <ActionsOnTimeSlot />
-      </div>
+      <ActionsOnTimeSlot slot={props.slot} daysExceptToday={props.daysExceptToday}/>
     </div>
-  )
-}
-
-function ActionsOnTimeSlot() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button onClick={() => {}} size="icon" variant="outline" className="size-8">
-          <EllipsisVertical size={16} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex flex-col bg-black shadow-black shadow-md p-1">
-        <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
-          Set recurring
-        </Button>
-        <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
-          Delete slot
-        </Button>
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }

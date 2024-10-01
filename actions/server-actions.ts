@@ -138,3 +138,49 @@ export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating
     return { message: "Slots duplicated", status: 201 };
   }
 }
+
+export async function setSlotRecurring(slot: Slot) {
+  try {
+    const updateSlot = await db.slot.update({
+      where: { id: slot.id },
+      data: { recurring: true }
+    })
+
+    if (!updateSlot) {
+      return { message: 'Failed to update slot.', status: 500 }
+    }
+
+    const endOfYear = new Date(slot.dateTime.getFullYear(), 11, 31, 23, 59, 59, 999);
+    const recurringDates: Date[] = [];
+
+    const currentRecurringDate = new Date(slot.dateTime);
+    currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    
+    while (currentRecurringDate <= endOfYear) {
+      recurringDates.push(new Date(currentRecurringDate));
+      currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    }
+
+    const recurringSlots = await db.slot.createMany({
+      data: recurringDates.map(date => ({
+        dateTime: new Date(date.setHours(
+          slot.dateTime.getHours(),
+          slot.dateTime.getMinutes(),
+          slot.dateTime.getSeconds(),
+          slot.dateTime.getMilliseconds()
+        )),
+        recurring: true
+      })),
+      skipDuplicates: true
+    });
+
+    if (recurringSlots.count === 0) {
+      return { message: 'Failed to create recurring slots', status: 500 }
+    } else {
+      return { message: `Created ${recurringSlots.count} recurring slots`, status: 201 }
+    }
+  } catch (error) {
+    console.error('Error in setSlotRecurring:', error);
+    return { message: 'An error occurred while setting recurring slots', status: 500 }
+  }
+}

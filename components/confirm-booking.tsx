@@ -19,7 +19,7 @@ import { RiLoaderFill } from "react-icons/ri";
 import { sendBookingConfirmation } from "@/actions/email-actions";
 
 export function ConfirmBooking(props: { slotId: string }) {
-  const [slot, setSlot] = useState<Slot>({id: "", type: SLOTTYPE.AVAILABLE, dateTime: new Date(), createdAt: new Date(), updatedAt: new Date()});
+  const [slot, setSlot] = useState<Slot>({id: "", type: SLOTTYPE.AVAILABLE, dateTime: new Date(), recurring: false, createdAt: new Date(), updatedAt: new Date()});
   const router = useRouter();
   const isMobile = useMedia("(max-width: 480px)", false);
 
