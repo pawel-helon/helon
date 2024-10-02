@@ -15,7 +15,7 @@ import { Text } from "../typography";
 
 const DAYSOFWEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export function DuplicateDaySlotsFor(props: {
+export function DuplicateDaySlots(props: {
   day: string;
   slots: Slot[];
   daysExceptToday: string[];

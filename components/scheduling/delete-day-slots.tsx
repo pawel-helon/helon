@@ -32,7 +32,7 @@ export function DeleteDaySlots(props: {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+        <Button variant="ghost" size="sm" className="justify-start text-left pl-1.5">
           Delete slots
         </Button>
       </DialogTrigger>

@@ -290,3 +290,147 @@ export async function deleteSlots(day: string) {
     return { message: 'Slots deleted', status: 204 }
   }
 }
+
+export async function setRecurringDay(day: string, slots: Slot[]) {
+  try {
+    let updatedDay: boolean = false;
+    for (const slot of slots) {
+      const updatedSlot = await db.slot.update({
+        where: { id: slot.id },
+        data: { recurring: true }
+      })
+      if (updatedSlot) {
+        updatedDay = true;
+      }
+    }
+
+    if (!updatedDay) {
+      return { message: 'Failed to update slots', status: 500 }
+    }
+    
+    const endOfYear = new Date(new Date(day).getFullYear(), 11, 31, 23, 59, 999);
+    const recurringDates: Date[] = [];
+
+    const currentRecurringDate = new Date(day);
+    currentRecurringDate.setDate((currentRecurringDate.getDate() + 7));
+
+    while (currentRecurringDate <= endOfYear) {
+      recurringDates.push(new Date(currentRecurringDate));
+      currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    }
+
+    let recurringDay: boolean = false;
+    for (const date of recurringDates) {
+      const recurringDate = await db.recurringDate.create({
+        data: { dateTime: date }
+      })
+
+      if (!recurringDate) {
+        return { message: 'Failed to create recurring days', status: 500 }
+      }
+
+      for (const slot of slots) {
+        const recurringSlot = await db.slot.create({
+          data: {
+            dateTime: new Date(date.setHours(
+              slot.dateTime.getHours(),
+              slot.dateTime.getMinutes(),
+              slot.dateTime.getSeconds(),
+              slot.dateTime.getMilliseconds()
+            )),
+            recurring: true
+          }
+        })
+        if (recurringSlot) {
+          recurringDay = true;
+        }
+      }
+    }
+
+    if (!recurringDay) {
+      return { message: 'Failed to create recurring days', status: 500 }
+    } else {
+      return { message: 'Recurring days created', status: 201 }
+    }
+  } catch (error) {
+    return { mesage: 'An unexpected error occurred. Please try again later', status: 400}
+  }
+}
+
+export async function checkRecurringDay(day: string) {
+  const recurringDay = await db.recurringDate.findUnique({
+    where: { dateTime: new Date(day) }
+  })
+
+  if (!recurringDay) {
+    return { message: 'Recurring day not found', status: 404 }
+  } else {
+    return { message: 'Recurring day found', status: 200 }
+  }
+}
+
+export async function disableRecurringDay(day: string, slots: Slot[]) {
+  try {
+    let updatedDay: boolean = false;
+    for (const slot of slots) {
+      const updatedSlot = await db.slot.update({
+        where: { id: slot.id },
+        data: { recurring: false }
+      })
+      if (updatedSlot) {
+        updatedDay = true;
+      }
+    }
+
+    if (!updatedDay) {
+      return { message: 'Failed to update slots', status: 500 }
+    }
+    
+    const endOfYear = new Date(new Date(day).getFullYear(), 11, 31, 23, 59, 999);
+    const recurringDates: Date[] = [];
+
+    const currentRecurringDate = new Date(day);
+    currentRecurringDate.setDate((currentRecurringDate.getDate() + 7));
+
+    while (currentRecurringDate <= endOfYear) {
+      recurringDates.push(new Date(currentRecurringDate));
+      currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+    }
+
+    let recurringDay: boolean = false;
+    for (const date of recurringDates) {
+      const recurringDate = await db.recurringDate.delete({
+        where: { dateTime: date }
+      })
+
+      if (!recurringDate) {
+        return { message: 'Failed to delete recurring days', status: 500 }
+      }
+
+      for (const slot of slots) {
+        const recurringSlot = await db.slot.delete({
+          where: {
+            dateTime: new Date(date.setHours(
+              slot.dateTime.getHours(),
+              slot.dateTime.getMinutes(),
+              slot.dateTime.getSeconds(),
+              slot.dateTime.getMilliseconds()
+            )),
+            recurring: true
+          }
+        })
+        if (recurringSlot) {
+          recurringDay = true;
+        }
+      }
+    }
+
+    if (!recurringDay) {
+      return { message: 'Failed to delete recurring days', status: 500 }
+    } else {
+      return { message: 'Recurring days deleted', status: 204 }
+    }
+  } catch (error) {
+    return { mesage: 'An unexpected error occurred. Please try again later', status: 400}
+  }
+}
