@@ -113,6 +113,63 @@ export async function deleteSlot(slotId: string) {
   }
 }
 
+export async function addRecurringSlot(day: string) {
+  const allTimes: string[] = [];
+  for (let hour = 6; hour <= 20; hour++) {
+    for(let minute = 0; minute < 60; minute += 15) {
+      allTimes.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    }
+  } 
+  const unavailableTimes: string[] = [];
+  const slots = await db.slot.findMany({
+    where: {
+      dateTime: {
+        gte: new Date(`${day}T00:00:00.000Z`),
+        lte: new Date(`${day}T23:59:59.999Z`)
+      },
+    },
+    select: {
+      dateTime: true
+    }
+  }) as Slot[];
+
+  for (const slot of slots) {
+    unavailableTimes.push(slot.dateTime.toISOString().split('T')[1].slice(0,5));
+  }
+
+  const availableTimes = allTimes.filter(time => !unavailableTimes.includes(time))
+
+  const endOfYear = new Date(new Date(day).getFullYear(), 11, 31, 23, 59, 999);
+  const recurringDates: Date[] = [];
+  const currentRecurringDate = new Date(day);
+
+  while (currentRecurringDate <= endOfYear) {
+    recurringDates.push(new Date(currentRecurringDate));
+    currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
+  }
+
+  let recurringDay: boolean = false;
+  for (const date of recurringDates) {
+    const recurringSlot = await db.slot.create({
+      data: {
+        dateTime: `${date.toISOString().split('T')[0]}T${availableTimes[0]}:00.000Z`,
+        recurring: true
+      }
+    })
+
+    if (!recurringSlot) {
+      return { message: 'Failed to create slot', status: 500 }
+    } else {
+      recurringDay = true;
+    }
+  }
+
+  if (!recurringDay) {
+    return { message: 'Failed to create recurring slots', status: 500 }
+  } else {
+    return { message: 'Recurring slots creates', status: 201 }
+  }
+}
 
 export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating: Slot[]) {
   const slots = await db.slot.deleteMany({

@@ -48,26 +48,27 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
 
   return (
     <div className="w-full flex justify-between items-center">
-      <div className="flex gap-2">
-        <DropdownMenu open={hourDropdownOpened} onOpenChange={setHourDropdownOpened}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
-              {String(props.slot.dateTime.getHours()).padStart(2, '0')}
-              <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
-            <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
-              {HOURS.map((hours) => {
-                return (
-                  <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2">
-                    {hours}
-                  </Button>
-                );
-              })}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="relative flex gap-2">
+          {props.slot.recurring && <span className="size-2 absolute -top-1 -left-1 rounded-full bg-teal-500"></span>}
+          <DropdownMenu open={hourDropdownOpened} onOpenChange={setHourDropdownOpened}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
+                {String(props.slot.dateTime.getHours()).padStart(2, '0')}
+                <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+              <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+                {HOURS.map((hours) => {
+                  return (
+                    <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2">
+                      {hours}
+                    </Button>
+                  );
+                })}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         <DropdownMenu open={minutesDropdownOpened} onOpenChange={setMinutesDropdownOpened}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
