@@ -12,7 +12,7 @@ import { DeleteDaySlots } from "./delete-day-slots";
 export function ActionsOnDayCard(props: {
   day: string;
   slots: Slot[];
-  daysExceptToday: string[];
+  weekDays: string[];
 }) {
   const [dropdownOpened, setDropdownOpened] = useState<boolean>(false);
   const [recurringDate, setRecurringDate] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export function ActionsOnDayCard(props: {
   
   return (
     <div className="flex">
-      <DuplicateDay day={props.day} slots={props.slots} daysExceptToday={props.daysExceptToday} />
+      <DuplicateDay day={props.day} slots={props.slots} weekDays={props.weekDays} />
       <DropdownMenu open={dropdownOpened} onOpenChange={setDropdownOpened}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">

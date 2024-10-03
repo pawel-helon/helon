@@ -57,11 +57,11 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
                 <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
-              <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+            <DropdownMenuContent side="bottom" align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+              <div className="w-full max-h-[320px] flex flex-col pr-1 gap-0.5 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
                 {HOURS.map((hours) => {
                   return (
-                    <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2">
+                    <Button key={hours} onClick={() => handleSlotHourChange(props.slot.id, props.slot.dateTime, hours)} variant="ghost" size="sm" className="h-8 py-2">
                       {hours}
                     </Button>
                   );
@@ -77,10 +77,10 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-background-sh shadow-black shadow-md">
-            <div className="w-full flex flex-col gap-2 max-h-[140px] pl-3 pr-2 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+            <div className="w-full max-h-[140px] flex flex-col gap-0.5">
               {MINUTES.map((minutes) => {
                 return (
-                  <Button key={minutes} onClick={() => handleSlotMinutesChange(props.slot.id, props.slot.dateTime, minutes)} variant="ghost" size="sm" className="w-full h-7 justify-start pl-2" >
+                  <Button key={minutes} onClick={() => handleSlotMinutesChange(props.slot.id, props.slot.dateTime, minutes)} variant="ghost" size="sm" className="w-full h-8 py-2" >
                     {minutes}
                   </Button>
                 );

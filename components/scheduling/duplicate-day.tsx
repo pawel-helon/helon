@@ -10,20 +10,21 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/typography";
 import { CheckboxDays } from "@/components/ui/checkbox";
 import { Slot } from "@prisma/client";
+import { cn } from "@/lib/utils";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export function DuplicateDay(props: {
   day: string;
   slots: Slot[];
-  daysExceptToday: string[];
+  weekDays: string[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
   async function handleDuplicateDay(formData: FormData) {
-    const days = props.daysExceptToday.filter((_, index) => formData.get(index.toString()) !== null)
+    const days = props.weekDays.filter((_, index) => formData.get(index.toString()) !== null)
     if (days.length === 0) {
       toast.error('Please select at least one day')
       return;
@@ -51,13 +52,13 @@ export function DuplicateDay(props: {
           Duplicate
         </Button>
       </DialogTrigger>
-      <DialogContent aria-describedby='' className='min-h-[320px] min-w-[640px] flex flex-col flex-start bg-background-sh'>
+      <DialogContent aria-describedby='' className='min-h-[400px] min-w-[480px] flex flex-col flex-start bg-background-sh'>
         <DialogTitle className='mb-8'>Duplicate</DialogTitle>
-        <form action={handleDuplicateDay} className="grid grid-cols-6 gap-2">
-          {props.daysExceptToday.map((dayValue, index) => {
+        <form action={handleDuplicateDay} className="grid grid-cols-5 gap-2">
+          {props.weekDays.map((dayValue, index) => {
             return (
-              <div key={dayValue} className="col-span-1">
-              <CheckboxDays name={index.toString()} value={dayValue}>
+              <div key={dayValue} className={cn('col-span-1', props.day === dayValue ? 'opacity-50' : '')}>
+              <CheckboxDays disabled={props.day === dayValue ? true : false} name={index.toString()} value={dayValue}>
                 <Text variant='p-small-thin' className="absolute top-1 left-1 text-foreground">
                   {DAYS_OF_WEEK[new Date(dayValue).getDay()]}
                 </Text>

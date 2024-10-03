@@ -99,20 +99,6 @@ export async function addSlot(day: string) {
   }
 }
 
-export async function deleteSlot(slotId: string) {
-  const slot = await db.slot.delete({
-    where: {
-      id: slotId,
-    }
-  });
-
-  if (!slot) {
-    return { message: "Slot not deleted", status: 404 };
-  } else {
-    return { message: "Slot deleted", status: 202 };
-  }
-}
-
 export async function addRecurringSlot(day: string) {
   const allTimes: string[] = [];
   for (let hour = 6; hour <= 20; hour++) {
@@ -170,6 +156,20 @@ export async function addRecurringSlot(day: string) {
     return { message: 'Recurring slots creates', status: 201 }
   }
 }
+export async function deleteSlot(slotId: string) {
+  const slot = await db.slot.delete({
+    where: {
+      id: slotId,
+    }
+  });
+
+  if (!slot) {
+    return { message: "Slot not deleted", status: 404 };
+  } else {
+    return { message: "Slot deleted", status: 202 };
+  }
+}
+
 
 export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating: Slot[]) {
   const slots = await db.slot.deleteMany({

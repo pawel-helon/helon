@@ -58,11 +58,11 @@ export function DayCard(props: {
       <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
         {filteredSlots.length > 0 ? (
           <div>
-            <div className='w-full h-full flex flex-col gap-2 pt-2 pl-3 pr-2 mb-[48px]'>
+            <div className='w-full h-full flex flex-col gap-2 pt-2 pl-3 pr-2 mb-[72px]'>
               {filteredSlots.map((s) => { return <TimeSlot key={s.id} slot={s} daysExceptToday={daysExceptToday} /> })}
             </div>
             <div className='absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh'>
-              <ActionsOnDayCard day={props.day} slots={props.slots} daysExceptToday={daysExceptToday} />
+              <ActionsOnDayCard day={props.day} slots={props.slots} weekDays={props.weekDays}/>
               <Button onClick={props.recurringOnly ? handleAddRecurringSlot : handleAddSlot} size='icon' className={cn('size-8', props.recurringOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
                 <Plus size={16} />
               </Button>
