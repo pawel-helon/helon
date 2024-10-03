@@ -13,7 +13,6 @@ export function DayGrid(props: {
   weekDays: string[];
 }) {
   const [recurringOnly, setRecurringOnly] = useState<boolean>(false);
-
   return (
     <>
       <div className='w-full flex justify-end items-center gap-2 mb-4'>

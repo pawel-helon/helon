@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
+import { checkRecurringDay, disableRecurringDay, setRecurringDay } from "@/actions/server-actions";
+import { DuplicateDay } from "./duplicate-day";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@prisma/client";
-import { DuplicateDaySlots } from "@/components/scheduling/duplicate-day-slots";
-import { DeleteDaySlots } from "@/components/scheduling/delete-day-slots";
-import { checkRecurringDay, disableRecurringDay, setRecurringDay } from "@/actions/server-actions";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { DeleteDaySlots } from "./delete-day-slots";
 
 export function ActionsOnDayCard(props: {
   day: string;
@@ -65,7 +65,7 @@ export function ActionsOnDayCard(props: {
   
   return (
     <div className="flex">
-      <DuplicateDaySlots day={props.day} slots={props.slots} daysExceptToday={props.daysExceptToday}/>
+      <DuplicateDay day={props.day} slots={props.slots} daysExceptToday={props.daysExceptToday} />
       <DropdownMenu open={dropdownOpened} onOpenChange={setDropdownOpened}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">

@@ -196,6 +196,35 @@ export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating
   }
 }
 
+export async function duplicateDay(days: string[], slots: Slot[]) {
+  for (const day of days) {
+    const deleteSlots = await db.slot.deleteMany({
+      where: {
+        dateTime: {
+          gte: `${day}T00:00:00.000Z`,
+          lte: `${day}T23:59:59.999Z`
+        }
+      }
+    })
+    if (!deleteSlots) {
+      return { message: 'Failed to delete slots', status: 500 }
+    }
+    for (const slot of slots) {
+      const time = slot.dateTime.toISOString().split('T')[1];
+      const createSlot = await db.slot.create({
+        data: {
+          dateTime: `${day}T${time}`,
+          recurring: slot.recurring
+        }
+      })
+      if (!createSlot) {
+        return { message: 'Failed to create slots', status: 500 }
+      }
+    }
+  }
+  return { message: 'Day has been duplicated', status: 201 }
+}
+
 export async function setSlotRecurring(slot: Slot) {
   try {
     const updateSlot = await db.slot.update({
