@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RiLoaderFill } from "react-icons/ri";
 import { toast } from "sonner";
-import { duplicateDay } from "@/actions/server-actions";
+import { duplicateDay, undoDuplicateDay } from "@/actions/server-actions";
 import { Dialog, DialogClose, DialogContent, DialogTitleH as DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/typography";
@@ -30,7 +30,7 @@ export function DuplicateDay(props: {
       return;
     }
     try {
-      startTransition(async() => {
+      startTransition(async () => {
         const duplicatingDay = await duplicateDay(days, props.slots);
         if (duplicatingDay.status !== 201) {
           toast.error(duplicatingDay.message);
@@ -38,7 +38,23 @@ export function DuplicateDay(props: {
         }
         router.refresh();
         setOpen(!open);
-        toast.success(duplicatingDay.message);
+        toast.success(duplicatingDay.message, {
+          action: {
+            label: 'Undo',
+            onClick: () => {
+              async function initUndoDuplicateDay() {
+                const undoDuplicatingDay = await undoDuplicateDay(duplicatingDay.prevDays!)
+                if (undoDuplicatingDay.status !== 201) {
+                  toast.error('Failed to undo duplicate day.');
+                  return;
+                }
+                router.refresh();
+              }
+              initUndoDuplicateDay();
+            }
+          },
+          duration: 3000
+        });
       })
     } catch {
       toast.error('An unexpected error occurred. Please try again later.');

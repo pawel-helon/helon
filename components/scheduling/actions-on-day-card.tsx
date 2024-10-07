@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
-import { checkRecurringDay, disableRecurringDay, setRecurringDay } from "@/actions/server-actions";
+import { addSlots, checkRecurringDay, deleteSlots, disableRecurringDay, setRecurringDay } from "@/actions/server-actions";
 import { DuplicateDay } from "./duplicate-day";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@prisma/client";
-import { DeleteDaySlots } from "./delete-day-slots";
 
 export function ActionsOnDayCard(props: {
   day: string;
@@ -94,6 +93,37 @@ export function ActionsOnDayCard(props: {
     }
   }
 
+  async function handleDeleteSlots() {
+    try {
+      const deletingSlots = await deleteSlots(props.day);
+      if (deletingSlots.status !== 204) {
+        setDropdownOpened(!dropdownOpened)
+        toast.error('An unexpected error occurred. Please try again later.')
+        return
+      }
+      toast.success('Slots have been deleted', {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoDeleteSlots() {
+              const undoDeleteSlots = await addSlots(props.day, props.slots);
+              if (undoDeleteSlots.status !== 201) {
+                toast.error('Failed to undo delete slots');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoDeleteSlots();
+          },
+        },
+        duration: 3000
+      });
+      setDropdownOpened(!dropdownOpened)
+      router.refresh();
+    } catch (error) {
+      toast.error('An unexpected error occurred. Please try again later.')
+    }
+  }
   
   return (
     <div className="flex">
@@ -108,7 +138,9 @@ export function ActionsOnDayCard(props: {
           <Button onClick={recurringDate ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
             {recurringDate ? 'Disable recurring' : 'Set recurring'}
           </Button>
-          <DeleteDaySlots day={props.day} dropdownOpened={dropdownOpened} setDropdownOpened={setDropdownOpened}/>
+          <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+            Delete slots
+          </Button>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

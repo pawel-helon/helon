@@ -34,11 +34,12 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
               router.refresh();
             }
             initUndoSetRecurringSlot();
-        }}
+        }},
+        duration: 3000
       });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
     } catch {
-      toast.error('An error occurred. Please try again later.');
+      toast.error('An unexpected error occurred. Please try again later.');
     }
   }
 
@@ -63,11 +64,12 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
               router.refresh();
             }
             initUndoDisableRecurringSlot();
-        }}
+        }},
+        duration: 3000
       });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
     } catch {
-      toast.error('An error occurred. Please try again later.');
+      toast.error('An unexpected error occurred. Please try again later.');
     }
   }
   
@@ -97,7 +99,7 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         duration: 3000
       });
     } catch {
-      toast.error('Failed to delete slot.');
+      toast.error('An unexpected error occurred. Please try again later.');
     }
   }
   
