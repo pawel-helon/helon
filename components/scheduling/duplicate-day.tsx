@@ -26,7 +26,7 @@ export function DuplicateDay(props: {
   async function handleDuplicateDay(formData: FormData) {
     const days = props.weekDays.filter((_, index) => formData.get(index.toString()) !== null)
     if (days.length === 0) {
-      toast.error('Please select at least one day')
+      toast.error('Please select at least one day.')
       return;
     }
     try {

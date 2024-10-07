@@ -37,12 +37,27 @@ export function ActionsOnDayCard(props: {
       const settingRecurringDay = await setRecurringDay(props.day, props.slots);
       if (settingRecurringDay.status !== 201) {
         toast.error(settingRecurringDay.message);
-      } else {
-        toast.success(settingRecurringDay.message);
-        router.refresh();
+        return;
       }
+      router.refresh();
+      toast.success(settingRecurringDay.message, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoSetRecurringDay() {
+              const undoSettingRecurringDay = await disableRecurringDay(props.day, props.slots);
+              if (undoSettingRecurringDay.status !== 204) {
+                toast.error('Failed to undo set recurring day.');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoSetRecurringDay();
+          }
+        },
+        duration: 3000
+      });
       setDropdownOpened(!dropdownOpened);
-      setRecurringDate(!recurringDate);
     } catch (error) {
       toast.error('An unexpected error occurred. Please try again later.');
     }
@@ -53,9 +68,26 @@ export function ActionsOnDayCard(props: {
       const disablingRecurringDay = await disableRecurringDay(props.day, props.slots);
       if (disablingRecurringDay.status !== 204) {
         toast.error(disablingRecurringDay.message);
-      } else {
-        toast.success(disablingRecurringDay.message);
+        return;
       }
+      router.refresh();
+      toast.success(disablingRecurringDay.message, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoDisableRecurringDay() {
+              const undoDisablingRecurringDay = await setRecurringDay(props.day, props.slots);
+              if (undoDisablingRecurringDay.status !== 201) {
+                toast.error('Failed to undo disable recurring day.');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoDisableRecurringDay();
+          }
+        },
+        duration: 3000
+      });
       setDropdownOpened(!dropdownOpened)
     } catch (error) {
       toast.error('An unexpected error occurred. Please try again later.')

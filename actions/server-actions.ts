@@ -156,6 +156,7 @@ export async function addRecurringSlot(day: string) {
     return { message: 'Recurring slots creates', status: 201 }
   }
 }
+
 export async function deleteSlot(slotId: string) {
   const slot = await db.slot.delete({
     where: {
@@ -170,6 +171,20 @@ export async function deleteSlot(slotId: string) {
   }
 }
 
+export async function undoDeleteSlot(slot: Slot) {
+  const undoDeleteSlot = await db.slot.create({
+    data: {
+      dateTime: slot.dateTime,
+      recurring: slot.recurring
+    }
+  });
+
+  if (!undoDeleteSlot) {
+    return { message: "Slot not restored", status: 404 };
+  } else {
+    return { message: "Slot restored", status: 201 };
+  }
+}
 
 export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating: Slot[]) {
   const slots = await db.slot.deleteMany({
@@ -225,7 +240,7 @@ export async function duplicateDay(days: string[], slots: Slot[]) {
   return { message: 'Day has been duplicated', status: 201 }
 }
 
-export async function setSlotRecurring(slot: Slot) {
+export async function setRecurringSlot(slot: Slot) {
   try {
     const updateSlot = await db.slot.update({
       where: { id: slot.id },
@@ -266,7 +281,6 @@ export async function setSlotRecurring(slot: Slot) {
       return { message: `Created ${recurringSlots.count} recurring slots`, status: 201 }
     }
   } catch (error) {
-    console.error('Error in setSlotRecurring:', error);
     return { message: 'An error occurred while setting recurring slots', status: 500 }
   }
 }
@@ -315,7 +329,6 @@ export async function disableRecurringSlot(slot: Slot) {
       return { message: 'Removed recurring slots', status: 204 }
     }
   } catch (error) {
-    console.error('Error in setSlotRecurring:', error);
     return { message: 'An error occurred while setting recurring slots', status: 500 }
   }
 }
@@ -379,6 +392,13 @@ export async function deleteSlots(day: string) {
 
 export async function setRecurringDay(day: string, slots: Slot[]) {
   try {
+    const startRecurringDate = await db.recurringDate.create({
+      data: { dateTime: new Date(day) }
+    })
+    if (!startRecurringDate) {
+      return { message: 'Failed to create recurring day', status: 500 }
+    }
+
     let updatedDay: boolean = false;
     for (const slot of slots) {
       const updatedSlot = await db.slot.update({
@@ -404,8 +424,9 @@ export async function setRecurringDay(day: string, slots: Slot[]) {
       recurringDates.push(new Date(currentRecurringDate));
       currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
     }
-
+    
     let recurringDay: boolean = false;
+    
     for (const date of recurringDates) {
       const recurringDate = await db.recurringDate.create({
         data: { dateTime: date }
@@ -438,7 +459,7 @@ export async function setRecurringDay(day: string, slots: Slot[]) {
     } else {
       return { message: 'Recurring days created', status: 201 }
     }
-  } catch (error) {
+  } catch {
     return { mesage: 'An unexpected error occurred. Please try again later', status: 400}
   }
 }
@@ -457,6 +478,13 @@ export async function checkRecurringDay(day: string) {
 
 export async function disableRecurringDay(day: string, slots: Slot[]) {
   try {
+    const startRecurringDate = await db.recurringDate.delete({
+      where: { dateTime: new Date(day) }
+    })
+    if (!startRecurringDate) {
+      return { message: 'Failed to create recurring day', status: 500 }
+    }
+    
     let updatedDay: boolean = false;
     for (const slot of slots) {
       const updatedSlot = await db.slot.update({
@@ -473,6 +501,7 @@ export async function disableRecurringDay(day: string, slots: Slot[]) {
     }
     
     const endOfYear = new Date(new Date(day).getFullYear(), 11, 31, 23, 59, 999);
+
     const recurringDates: Date[] = [];
 
     const currentRecurringDate = new Date(day);
@@ -482,17 +511,17 @@ export async function disableRecurringDay(day: string, slots: Slot[]) {
       recurringDates.push(new Date(currentRecurringDate));
       currentRecurringDate.setDate(currentRecurringDate.getDate() + 7);
     }
-
-    let recurringDay: boolean = false;
+    
+    let removedRecurringDaySlots: boolean = false;
     for (const date of recurringDates) {
       const recurringDate = await db.recurringDate.delete({
         where: { dateTime: date }
       })
-
+      
       if (!recurringDate) {
         return { message: 'Failed to delete recurring days', status: 500 }
       }
-
+      
       for (const slot of slots) {
         const recurringSlot = await db.slot.delete({
           where: {
@@ -506,17 +535,29 @@ export async function disableRecurringDay(day: string, slots: Slot[]) {
           }
         })
         if (recurringSlot) {
-          recurringDay = true;
+          removedRecurringDaySlots = true;
         }
       }
     }
 
-    if (!recurringDay) {
+    if (!removedRecurringDaySlots) {
+      return { message: 'Failed to delete recurring days', status: 500 }
+    }
+
+    const removingdRecurringDates = await db.recurringDate.deleteMany({
+      where: {
+        dateTime: {
+          in: recurringDates
+        }
+      }
+    })
+
+    if (!removingdRecurringDates) {
       return { message: 'Failed to delete recurring days', status: 500 }
     } else {
       return { message: 'Recurring days deleted', status: 204 }
     }
-  } catch (error) {
+  } catch {
     return { mesage: 'An unexpected error occurred. Please try again later', status: 400}
   }
 }

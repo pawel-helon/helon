@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteSlot, disableRecurringSlot, setSlotRecurring } from "@/actions/server-actions";
+import { deleteSlot, disableRecurringSlot, setRecurringSlot, undoDeleteSlot } from "@/actions/server-actions";
 import { Button } from "../ui/button"
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -11,18 +11,31 @@ import { useState } from "react";
 
 export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   const router = useRouter();
-
   const [actionsOnSlotDropdownOpened, setActionsOnSlotDropdownOpened] = useState<boolean>(false);
   
   async function handleSetRecurringSlot() {
     try {
-      const settingSlotRecurring = await setSlotRecurring(props.slot)
+      const settingSlotRecurring = await setRecurringSlot(props.slot)
       if (settingSlotRecurring.status !== 201 ) {
         toast.error(settingSlotRecurring.message)
         return;
       }
       router.refresh();
-      toast.success(settingSlotRecurring.message);
+      toast.success(settingSlotRecurring.message, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoSetRecurringSlot() {
+              const undoSettingSlotRecurring = await disableRecurringSlot(props.slot);
+              if (undoSettingSlotRecurring.status !== 204) {
+                toast.error('Failed to undo set recurring slot.');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoSetRecurringSlot();
+        }}
+      });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
     } catch {
       toast.error('An error occurred. Please try again later.');
@@ -37,7 +50,21 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         return;
       }
       router.refresh();
-      toast.success(settingSlotRecurring.message);
+      toast.success(settingSlotRecurring.message, {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoDisableRecurringSlot() {
+              const undoDisableSlotRecurring = await setRecurringSlot(props.slot);
+              if (undoDisableSlotRecurring.status !== 201) {
+                toast.error('Failed to undo disable recurring slot.');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoDisableRecurringSlot();
+        }}
+      });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
     } catch {
       toast.error('An error occurred. Please try again later.');
@@ -48,12 +75,29 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
     try {
       const deletingSlot = await deleteSlot(slotId);
       if (deletingSlot.status !== 202) {
-        toast.error('Failed to delete slot');
+        toast.error('Failed to delete slot.');
         return;
       }
       router.refresh();
+      toast.success('Slot deleted successfully.', {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            async function initUndoDeleteSlot() {
+              const undoDeletingSlot = await undoDeleteSlot(props.slot);
+              if (undoDeletingSlot.status !== 201) {
+                toast.error('Failed to undo delete slot.');
+                return;
+              }
+              router.refresh();
+            }
+            initUndoDeleteSlot();
+          }
+        },
+        duration: 3000
+      });
     } catch {
-      toast.error('Failed to delete slot');
+      toast.error('Failed to delete slot.');
     }
   }
   
