@@ -4,7 +4,7 @@ function createResponse(message: string, status: number) {
   return new Response(JSON.stringify({ message, status }));
 }
 
-async function generateAvailableTimes(day: string) {
+async function generateAvailableTimes(day: string): Promise<string> {
   const allTimes = [] as string[];
   for (let hour = 6; hour <= 20; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
@@ -32,8 +32,8 @@ async function generateAvailableTimes(day: string) {
     unavailableTimes.push(time);
   }
   
-  const availableTimes = allTimes.filter((time) => !unavailableTimes.includes(time));
-  return availableTimes as string[];
+  const firstAvailableTime = allTimes.filter((time) => !unavailableTimes.includes(time))[0];
+  return firstAvailableTime as string;
 }
 
 export async function POST(request: Request) {
@@ -42,18 +42,18 @@ export async function POST(request: Request) {
     return createResponse("Day is required", 400);
   }
 
-  const availableTimes = await generateAvailableTimes(day);
-  if (!availableTimes) {
+  const firstAvailableTime = await generateAvailableTimes(day);
+  if (!firstAvailableTime) {
     return createResponse("No available times", 503);
   }
 
   const addingSlot = await db.slot.create({
     data: {
-      dateTime: new Date(`${day}T${availableTimes[0]}`)
+      dateTime: new Date(`${day}T${firstAvailableTime}`)
     }
   })
   
-  if (!addingSlot || !availableTimes[0]) {
+  if (!addingSlot || !firstAvailableTime[0]) {
     return createResponse("Failed to add slot", 503);
   }
 

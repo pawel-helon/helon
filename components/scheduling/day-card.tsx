@@ -43,12 +43,12 @@ export function DayCard(props: {
     try {
       const addingRecurringSlot = await addRecurringSlot(props.day)
       if (addingRecurringSlot.status !== 201) {
-        toast.error('Failed to add slot');
+        toast.error(addingRecurringSlot.message);
         return;
-      } else {
-        router.refresh();
       }
-    } catch {
+      router.refresh();
+    } catch (error) {
+      console.error(error)
       toast.error('An unexpected error occurred. Please try again later.');
     }
   }

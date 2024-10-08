@@ -99,6 +99,16 @@ export async function addSlot(day: string): Promise<{message: string, status: nu
   return response;
 }
 
+export async function addRecurringSlot() {
+  const request = await fetch(`/api/database/scheduling/add-recurring-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+
 // scheduling endpoint - days
 
 
