@@ -3,13 +3,14 @@
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { addRecurringSlot, addSlot } from "@/actions/server-actions";
+import { addRecurringSlot } from "@/actions/server-actions";
 import { Text } from "@/components/typography";
 import { TimeSlot } from "@/components/scheduling/time-slot";
 import { ActionsOnDayCard } from "@/components/scheduling/actions-on-day-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Slot } from "@prisma/client";
+import { addSlot } from "@/actions/database-actions";
 
 const DAYSOFWEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -28,12 +29,12 @@ export function DayCard(props: {
     try {
       const addingSlot = await addSlot(props.day);
       if (addingSlot.status !== 201) {
-        toast.error('Failed to add slot');
+        toast.error(addingSlot.message);
         return;
-      } else {
-        router.refresh();
       }
-    } catch {
+      router.refresh();
+    } catch (error) {
+      console.error(error)
       toast.error('An unexpected error occurred. Please try again later.');
     }
   }

@@ -138,7 +138,7 @@ export async function addRecurringSlot(day: string) {
   for (const date of recurringDates) {
     const recurringSlot = await db.slot.create({
       data: {
-        dateTime: `${date.toISOString().split('T')[0]}T${availableTimes[0]}:00.000Z`,
+        dateTime: new Date(`${date.toISOString().split('T')[0]}T${availableTimes[0]}:00.000Z`),
         recurring: true
       }
     })
@@ -190,8 +190,8 @@ export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating
   const slots = await db.slot.deleteMany({
     where: {
       dateTime: {
-        gte: `${dayToDuplicate}T00:00:00.000Z`,
-        lte: `${dayToDuplicate}T23:59:59.999Z`
+        gte: new Date(`${dayToDuplicate}T00:00:00.000Z`),
+        lte: new Date(`${dayToDuplicate}T23:59:59.999Z`)
       },
     },
   });
@@ -203,7 +203,7 @@ export async function duplicateSlots(dayToDuplicate: string, slotsForDuplicating
       const time = slot.dateTime.toISOString().split('T')[1];
       await db.slot.create({
         data: {
-          dateTime: `${dayToDuplicate}T${time}`
+          dateTime: new Date(`${dayToDuplicate}T${time}`)
         }
       });
     }
@@ -218,8 +218,8 @@ export async function duplicateDay(days: string[], slots: Slot[]) {
     const currentSlots = await db.slot.findMany({
       where: {
         dateTime: {
-          gte: `${day}T00:00:00.000Z`,
-          lte: `${day}T23:59:59.999Z`
+          gte: new Date(`${day}T00:00:00.000Z`),
+          lte: new Date(`${day}T23:59:59.999Z`)
         }
       }
     }) as Slot[];
@@ -232,8 +232,8 @@ export async function duplicateDay(days: string[], slots: Slot[]) {
     const deleteSlots = await db.slot.deleteMany({
       where: {
         dateTime: {
-          gte: `${day}T00:00:00.000Z`,
-          lte: `${day}T23:59:59.999Z`
+          gte: new Date(`${day}T00:00:00.000Z`),
+          lte: new Date(`${day}T23:59:59.999Z`)
         }
       }
     })
@@ -244,7 +244,7 @@ export async function duplicateDay(days: string[], slots: Slot[]) {
       const time = slot.dateTime.toISOString().split('T')[1];
       const createSlot = await db.slot.create({
         data: {
-          dateTime: `${day}T${time}`,
+          dateTime: new Date(`${day}T${time}`),
           recurring: slot.recurring
         }
       })
@@ -261,8 +261,8 @@ export async function undoDuplicateDay(days: { day: string, slots: Slot[] }[]) {
     const deleteSlots = await db.slot.deleteMany({
       where: {
         dateTime: {
-          gte: `${day.day}T00:00:00.000Z`,
-          lte: `${day.day}T23:59:59.999Z`
+          gte: new Date(`${day.day}T00:00:00.000Z`),
+          lte: new Date(`${day.day}T23:59:59.999Z`)
         }
       }
     })
@@ -273,7 +273,7 @@ export async function undoDuplicateDay(days: { day: string, slots: Slot[] }[]) {
       const time = slot.dateTime.toISOString().split('T')[1];
       const createSlot = await db.slot.create({
         data: {
-          dateTime: `${day.day}T${time}`,
+          dateTime: new Date(`${day.day}T${time}`),
           recurring: slot.recurring
         }
       })
@@ -355,11 +355,12 @@ export async function disableRecurringSlot(slot: Slot) {
     let recurringSlotsDeleted = false;
     for (const date of recurringDates) {
       const deletedSlot = await db.slot.delete({
-        where: { dateTime: new Date(date.setHours(
-          slot.dateTime.getHours(),
-          slot.dateTime.getMinutes(),
-          slot.dateTime.getSeconds(),
-          slot.dateTime.getMilliseconds()
+        where: {
+          dateTime: new Date(date.setHours(
+            slot.dateTime.getHours(),
+            slot.dateTime.getMinutes(),
+            slot.dateTime.getSeconds(),
+            slot.dateTime.getMilliseconds()
         ))}
       })
       if (deletedSlot) {
@@ -468,7 +469,9 @@ export async function addSlots(day: string, slots: Slot[]) {
 export async function setRecurringDay(day: string, slots: Slot[]) {
   try {
     const startRecurringDate = await db.recurringDate.create({
-      data: { dateTime: new Date(day) }
+      data: {
+        dateTime: new Date(day)
+      }
     })
     if (!startRecurringDate) {
       return { message: 'Failed to create recurring day', status: 500 }

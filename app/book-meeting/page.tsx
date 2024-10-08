@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
 import { RiLoaderFill } from "react-icons/ri";
-import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot, unblockSlots, deletePastSlots, createSampleSlots } from "@/actions/database-actions";
+import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot, unblockSlots, deletePastSlots } from "@/actions/database-actions";
 import { Calendar } from "@/components/ui/calendar";
 import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
@@ -24,8 +24,7 @@ export default function ChooseSlotPage() {
       try {
         await deletePastSlots();
         await unblockSlots();
-        await createSampleSlots();
-      } catch (error) {
+      } catch {
         toast.error("Error initializing slots.")
       }
     }

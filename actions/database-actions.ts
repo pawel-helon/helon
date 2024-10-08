@@ -1,5 +1,6 @@
 import { Meeting, Slot } from "@prisma/client";
 
+// book-meeting endpoint
 export async function unblockSlots(): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/database/unblock-slots", {
     method: "PUT",
@@ -84,11 +85,20 @@ export async function bookSlot(slotId: string, fullName: string, email: string, 
   return response;
 }
 
-export async function createSampleSlots(): Promise<{ message: string, status: number }> {
-  const request = await fetch("/api/database/create-sample-slots", {
+// scheduling endpoint - slots
+
+export async function addSlot(day: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/database/scheduling/add-slot`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day
+    })
   })
   const response = await request.json();
   return response;
 }
+
+// scheduling endpoint - days
+
+

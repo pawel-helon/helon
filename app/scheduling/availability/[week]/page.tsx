@@ -6,9 +6,7 @@ import { Slot } from '@prisma/client';
 
 type DaySlots = { day: string, slots: Slot[] };
 
-const cachedGetSlotsForWeek = cache(getSlotsForWeek)
-
-const getWeekDays = cache((weekNumber: number) => {
+const cachedWeekDays = cache((weekNumber: number) => {
   const today = new Date()
   const yearStart = new Date(today.getFullYear(), 0, 1)
   const dayOfWeek = yearStart.getDay()
@@ -20,10 +18,12 @@ const getWeekDays = cache((weekNumber: number) => {
   })
 })
 
+const cachedGetSlotsForWeek = cache(getSlotsForWeek)
+
 export default async function WeekAvailabilityPage(props: { params: { week: string } }) {
   const weekNumber = Number(props.params.week.split('-')[1])
-  const weekDays = getWeekDays(weekNumber)
 
+  const weekDays = cachedWeekDays(weekNumber)
   const slotsForWeek = await cachedGetSlotsForWeek(weekDays);
   const weekSlots = slotsForWeek.weekSlots as DaySlots[];
 
