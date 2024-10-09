@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
-import { addSlots, checkRecurringDay, deleteSlots, disableRecurringDay, setRecurringDay } from "@/actions/server-actions";
-import { DuplicateDay } from "./duplicate-day";
+import { deleteSlots, disableRecurringDay, setRecurringDay, undoDeleteSlots } from "@/actions/database-actions";
+import { checkRecurringDay } from "@/actions/server-actions";
+import { DuplicateDay } from "@/components/scheduling/duplicate-day";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@prisma/client";
@@ -98,7 +99,7 @@ export function ActionsOnDayCard(props: {
       const deletingSlots = await deleteSlots(props.day);
       if (deletingSlots.status !== 204) {
         setDropdownOpened(!dropdownOpened)
-        toast.error('An unexpected error occurred. Please try again later.')
+        toast.error(deletingSlots.message);
         return
       }
       toast.success('Slots have been deleted', {
@@ -106,9 +107,9 @@ export function ActionsOnDayCard(props: {
           label: 'Undo',
           onClick: () => {
             async function initUndoDeleteSlots() {
-              const undoDeleteSlots = await addSlots(props.day, props.slots);
-              if (undoDeleteSlots.status !== 201) {
-                toast.error('Failed to undo delete slots');
+              const undoingDeleteSlots = await undoDeleteSlots(deletingSlots.prevSlots!);
+              if (undoingDeleteSlots.status !== 201) {
+                toast.error(undoingDeleteSlots.message);
                 return;
               }
               router.refresh();

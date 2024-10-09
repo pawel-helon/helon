@@ -1,21 +1,52 @@
 'use client'
 
-import { deleteSlot, disableRecurringSlot, setRecurringSlot, undoDeleteSlot } from "@/actions/server-actions";
-import { Button } from "../ui/button"
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { EllipsisVertical, Trash2 } from "lucide-react";
-import { Slot } from "@prisma/client";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { EllipsisVertical, Trash2 } from "lucide-react";
+import { deleteSlot, undoDeleteSlot, setRecurringSlot, disableRecurringSlot } from "@/actions/database-actions";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button"
+import { Slot } from "@prisma/client";
 
 export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   const router = useRouter();
   const [actionsOnSlotDropdownOpened, setActionsOnSlotDropdownOpened] = useState<boolean>(false);
   
+  async function handleDeleteSlot() {
+   try {
+     const deletingSlot = await deleteSlot(props.slot.id);
+     if (deletingSlot.status !== 202) {
+       toast.error(deletingSlot.message);
+       return;
+     }
+     router.refresh();
+     toast.success(deletingSlot.message, {
+       action: {
+         label: 'Undo',
+         onClick: () => {
+           async function initUndoDeleteSlot() {
+             const undoDeletingSlot = await undoDeleteSlot(props.slot.dateTime.toISOString());
+             if (undoDeletingSlot.status !== 201) {
+               toast.error(undoDeletingSlot.message);
+               return;
+             }
+             router.refresh();
+           }
+           initUndoDeleteSlot();
+         }
+       },
+       duration: 3000
+     });
+   } catch (error) {
+     console.error(error);
+     toast.error('An unexpected error occurred. Please try again later.');
+   }
+  }
+
   async function handleSetRecurringSlot() {
     try {
-      const settingSlotRecurring = await setRecurringSlot(props.slot)
+      const settingSlotRecurring = await setRecurringSlot(props.slot.id, props.slot.dateTime.toISOString());
       if (settingSlotRecurring.status !== 201 ) {
         toast.error(settingSlotRecurring.message)
         return;
@@ -26,9 +57,9 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
           label: 'Undo',
           onClick: () => {
             async function initUndoSetRecurringSlot() {
-              const undoSettingSlotRecurring = await disableRecurringSlot(props.slot);
+              const undoSettingSlotRecurring = await disableRecurringSlot(props.slot.id, props.slot.dateTime.toISOString());
               if (undoSettingSlotRecurring.status !== 204) {
-                toast.error('Failed to undo set recurring slot.');
+                toast.error(undoSettingSlotRecurring.message);
                 return;
               }
               router.refresh();
@@ -38,14 +69,15 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         duration: 3000
       });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error('An unexpected error occurred. Please try again later.');
     }
   }
 
   async function handleDisableRecurringSlot() {
     try {
-      const settingSlotRecurring = await disableRecurringSlot(props.slot)
+      const settingSlotRecurring = await disableRecurringSlot(props.slot.id, props.slot.dateTime.toISOString())
       if (settingSlotRecurring.status !== 204 ) {
         toast.error(settingSlotRecurring.message)
         return;
@@ -56,9 +88,9 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
           label: 'Undo',
           onClick: () => {
             async function initUndoDisableRecurringSlot() {
-              const undoDisableSlotRecurring = await setRecurringSlot(props.slot);
+              const undoDisableSlotRecurring = await setRecurringSlot(props.slot.id, props.slot.dateTime.toISOString());
               if (undoDisableSlotRecurring.status !== 201) {
-                toast.error('Failed to undo disable recurring slot.');
+                toast.error(undoDisableSlotRecurring.message);
                 return;
               }
               router.refresh();
@@ -68,44 +100,17 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         duration: 3000
       });
       setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error('An unexpected error occurred. Please try again later.');
     }
   }
   
-  async function handleDeleteSlot(slotId: string) {
-    try {
-      const deletingSlot = await deleteSlot(slotId);
-      if (deletingSlot.status !== 202) {
-        toast.error('Failed to delete slot.');
-        return;
-      }
-      router.refresh();
-      toast.success('Slot deleted successfully.', {
-        action: {
-          label: 'Undo',
-          onClick: () => {
-            async function initUndoDeleteSlot() {
-              const undoDeletingSlot = await undoDeleteSlot(props.slot);
-              if (undoDeletingSlot.status !== 201) {
-                toast.error('Failed to undo delete slot.');
-                return;
-              }
-              router.refresh();
-            }
-            initUndoDeleteSlot();
-          }
-        },
-        duration: 3000
-      });
-    } catch {
-      toast.error('An unexpected error occurred. Please try again later.');
-    }
-  }
+
   
   return (
     <div className="w-full flex justify-end gap-1">
-      <Button onClick={() => handleDeleteSlot(props.slot.id)} size="icon" variant="outline" className="size-8">
+      <Button onClick={handleDeleteSlot} size="icon" variant="outline" className="size-8">
         <Trash2 size={16} />
       </Button>
       <DropdownMenu open={actionsOnSlotDropdownOpened} onOpenChange={setActionsOnSlotDropdownOpened}>

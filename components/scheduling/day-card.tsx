@@ -3,14 +3,13 @@
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { addRecurringSlot } from "@/actions/server-actions";
+import { addRecurringSlot, addSlot } from "@/actions/database-actions";
 import { Text } from "@/components/typography";
 import { TimeSlot } from "@/components/scheduling/time-slot";
 import { ActionsOnDayCard } from "@/components/scheduling/actions-on-day-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Slot } from "@prisma/client";
-import { addSlot } from "@/actions/database-actions";
 
 const DAYSOFWEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 

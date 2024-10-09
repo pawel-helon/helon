@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayCard } from "@/components/scheduling/day-card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slot } from "@prisma/client";
+import { deletePastSlots } from "@/actions/database-actions";
 
 type DaySlots = { day: string, slots: Slot[] };
 
@@ -13,6 +14,18 @@ export function DayGrid(props: {
   weekDays: string[];
 }) {
   const [recurringOnly, setRecurringOnly] = useState<boolean>(false);
+  
+  useEffect(() => {
+    async function initDeletePastSlots() {
+      try {
+        deletePastSlots()
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    initDeletePastSlots();
+  })
+  
   return (
     <>
       <div className='w-full flex justify-end items-center gap-2 mb-4'>

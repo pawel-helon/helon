@@ -4,13 +4,13 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RiLoaderFill } from "react-icons/ri";
 import { toast } from "sonner";
-import { duplicateDay, undoDuplicateDay } from "@/actions/server-actions";
+import { duplicateDay, undoDuplicateDay } from "@/actions/database-actions";
 import { Dialog, DialogClose, DialogContent, DialogTitleH as DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/typography";
 import { CheckboxDays } from "@/components/ui/checkbox";
-import { Slot } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { Slot } from "@prisma/client";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -43,9 +43,10 @@ export function DuplicateDay(props: {
             label: 'Undo',
             onClick: () => {
               async function initUndoDuplicateDay() {
-                const undoDuplicatingDay = await undoDuplicateDay(duplicatingDay.prevDays!)
+                console.log(duplicatingDay.prevSlots);
+                const undoDuplicatingDay = await undoDuplicateDay(duplicatingDay.prevSlots!);
                 if (undoDuplicatingDay.status !== 201) {
-                  toast.error('Failed to undo duplicate day.');
+                  toast.error(undoDuplicatingDay.message);
                   return;
                 }
                 router.refresh();
