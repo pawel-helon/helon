@@ -25,6 +25,32 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    //Removing starting day
+    const removingStartingDay = await db.recurringDate.delete({
+      where: {
+        dateTime: new Date(day)
+      }
+    });
+    if (!removingStartingDay) {
+      return createResponse("Failed to delete starting day", 503);
+    }
+    
+    // Updating slots in starting day to non-recurring
+    const updatingSlots = await db.slot.updateMany({
+      where: {
+        dateTime: {
+          gte: new Date(`${day}T00:00:00.000Z`),
+          lte: new Date(`${day}T23:59:59.999Z`)
+        }
+      },
+      data: {
+        recurring: false
+      }
+    })
+    if (!updatingSlots) {
+      return createResponse("Failed to update slots", 503);
+    }
+    
     // Removing recurrring dates
     const recurringDates = await generateRecurringDates(day);
     if (!recurringDates) {

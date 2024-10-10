@@ -74,8 +74,8 @@ export function DuplicateDay(props: {
         <form action={handleDuplicateDay} className="grid grid-cols-5 gap-2">
           {props.weekDays.map((dayValue, index) => {
             return (
-              <div key={dayValue} className={cn('col-span-1', props.day === dayValue ? 'opacity-50' : '')}>
-              <CheckboxDays disabled={props.day === dayValue ? true : false} name={index.toString()} value={dayValue}>
+              <div key={dayValue} className={cn('col-span-1', (props.day === dayValue || new Date() > new Date(dayValue)) ? 'opacity-50' : '')}>
+              <CheckboxDays disabled={(props.day === dayValue || new Date() > new Date(dayValue)) ? true : false} name={index.toString()} value={dayValue}>
                 <Text variant='p-small-thin' className="absolute top-1 left-1 text-foreground">
                   {DAYS_OF_WEEK[new Date(dayValue).getDay()]}
                 </Text>

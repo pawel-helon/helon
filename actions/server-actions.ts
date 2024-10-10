@@ -548,9 +548,28 @@ export async function checkRecurringDay(day: string) {
   })
 
   if (!recurringDay) {
-    return { message: 'Recurring day not found', status: 404 }
+    return { message: 'Recurring day not found', status: 204 }
   } else {
     return { message: 'Recurring day found', status: 200 }
+  }
+}
+
+export async function checkRecurringDays(days: string[]) {
+  const recurringDays: string[] = [];
+
+  for (const day of days) {
+    const recurringDay = await db.recurringDate.findUnique({
+      where: { dateTime: new Date(day) }
+    })
+    if (recurringDay) {
+      recurringDays.push(day);
+    }
+  }
+
+  if (recurringDays.length === 0) {
+    return { message: 'No recurring days found', status: 204, recurringDays }
+  } else {
+    return { message: 'Recurring days found', status: 200, recurringDays }
   }
 }
 

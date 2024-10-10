@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown } from "lucide-react";
 import { deleteSlots, disableRecurringDay, setRecurringDay, undoDeleteSlots } from "@/actions/database-actions";
-import { checkRecurringDay } from "@/actions/server-actions";
 import { DuplicateDay } from "@/components/scheduling/duplicate-day";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -13,24 +12,10 @@ export function ActionsOnDayCard(props: {
   day: string;
   slots: Slot[];
   weekDays: string[];
+  isRecurringDay: boolean;
 }) {
   const [dropdownOpened, setDropdownOpened] = useState<boolean>(false);
-  const [recurringDate, setRecurringDate] = useState<boolean>(false);
   const router = useRouter();
-  
-  useEffect(() => {
-    async function checkingRecurringDay() {
-      try {
-        const checkingRecurringDay = await checkRecurringDay(props.day);
-        if ( checkingRecurringDay.status === 200) {
-          setRecurringDate(true);
-        }
-      } catch (error) {
-        toast.error('An unexpected error occurred. Try again later.')
-      }
-    }
-    checkingRecurringDay();
-  },[props.day, setRecurringDate])
 
   async function handleSetRecurringDay() {
     try {
@@ -136,8 +121,8 @@ export function ActionsOnDayCard(props: {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
-          <Button onClick={recurringDate ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-            {recurringDate ? 'Disable recurring' : 'Set recurring'}
+          <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+            {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
           </Button>
           <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
             Delete slots

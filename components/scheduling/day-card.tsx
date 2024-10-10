@@ -10,6 +10,7 @@ import { ActionsOnDayCard } from "@/components/scheduling/actions-on-day-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Slot } from "@prisma/client";
+import { useEffect, useMemo, useState } from "react";
 
 const DAYSOFWEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -18,11 +19,25 @@ export function DayCard(props: {
   slots: Slot[];
   recurringOnly: boolean;
   weekDays: string[];
+  recurringDays: string[];
 }) {
+  const [isToday, setIsToday] = useState<boolean>(false);
   const router = useRouter();
-  const date = new Date(props.day)
+  const date = useMemo(() => new Date(props.day), [props.day]);
+
+  
+  
+  const isRecurringDay = props.recurringDays.includes(props.day);
+  // const isRecurringDay =  props.recurringDays.filter(day => day === props.day).length === 1 ? true : false;
+  // const isRecurringDay = true
   const daysExceptToday = props.weekDays.filter(d => d !== props.day);
   const filteredSlots = props.recurringOnly ? props.slots.filter((s) => s.recurring === true) : props.slots
+
+  useEffect(() => {
+    if (new Date().toDateString() === date.toDateString()) {
+      setIsToday(true);
+    }
+  },[date])
 
   async function handleAddSlot() {
     try {
@@ -53,7 +68,7 @@ export function DayCard(props: {
   }
 
   return (
-    <div style={{ aspectRatio: '3/4' }} className='relative h-full col-span-1 flex flex-col border border-border rounded-md'>
+    <div style={{ aspectRatio: '3/4' }} className={cn(isToday ? 'border-border-h bg-black' : 'border-border bg-background-sh','relative h-full col-span-1 flex flex-col border rounded-md')}>
       <Text variant='p-base-thick' className={cn('p-3 mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>{DAYSOFWEEK[date.getDay()]}</Text>
       <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
         {filteredSlots.length > 0 ? (
@@ -62,7 +77,7 @@ export function DayCard(props: {
               {filteredSlots.map((s) => { return <TimeSlot key={s.id} slot={s} daysExceptToday={daysExceptToday} /> })}
             </div>
             <div className='absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh'>
-              <ActionsOnDayCard day={props.day} slots={props.slots} weekDays={props.weekDays}/>
+              <ActionsOnDayCard day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay}/>
               <Button onClick={props.recurringOnly ? handleAddRecurringSlot : handleAddSlot} size='icon' className={cn('size-8', props.recurringOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
                 <Plus size={16} />
               </Button>

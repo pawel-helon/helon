@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     if (!startingDate) {
       return createResponse("Failed to store starting date", 503);
     }
+    
     //Update slots recurring field to true for initial day
     const updateSlots = await db.slot.updateMany({
       where: {

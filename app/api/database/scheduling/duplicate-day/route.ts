@@ -11,10 +11,12 @@ export async function POST(request: Request) {
     return createResponse("Days and slots are required", 400);
   }
 
+  const filteredDays = days.filter(day => new Date() <= new Date(day));
+
   try {
     // storing all current slots from the selected days
     const currentSlots: { day: string, slots: Slot[] }[] = [];
-    for (const day of days) {
+    for (const day of filteredDays) {
       const slots = await db.slot.findMany({
         where: {
           dateTime: {
@@ -30,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     // deleting all current slots from the selected days
-    for (const day of days) {
+    for (const day of filteredDays) {
       const deletingSlots = await db.slot.deleteMany({
         where: {
           dateTime: {
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
     }
     
     // duplicating slots from chosen day.
-    for (const day of days) {
+    for (const day of filteredDays) {
       for (const slot of slots) {
         const duplicatingSlot = await db.slot.create({
           data: {
