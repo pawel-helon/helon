@@ -26,7 +26,7 @@ export function Breadcrumbs() {
         })}
         <BreadcrumbItem className='text-foreground-h'>
           <BreadcrumbPage>
-            {`${segments()[segments().length - 1].split('-')[0]} ${segments()[segments().length - 1].split('-')[1]}`}
+            {`${segments()[segments().length - 1].split('-')[1].charAt(0).toUpperCase() + segments()[segments().length - 1].split('-')[1].slice(1)} ${segments()[segments().length - 1].split('-')[2]}`}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

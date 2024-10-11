@@ -85,7 +85,7 @@ export async function bookSlot(slotId: string, fullName: string, email: string, 
   return response;
 }
 
-// scheduling endpoint - slots
+// scheduling/availability - slots
 
 export async function addSlot(day: string): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/database/scheduling/add-slot`, {
@@ -188,7 +188,7 @@ export async function updateSlotMinute(slotId: string, dateTime: string, minute:
   const response = await request.json();
   return response;
 } 
-// scheduling endpoint - days
+// scheduling/availability - days
 
 export async function duplicateDay(days: string[], slots: Slot[]): Promise<{message: string, status: number, prevSlots?: { day: string, slots: Slot[] }[]}> {
   const request = await fetch(`/api/database/scheduling/duplicate-day`, {
@@ -264,3 +264,5 @@ export async function disableRecurringDay(day: string, slots: Slot[]): Promise<{
   const response = await request.json();
   return response;
 }
+
+// scheduling/meetings

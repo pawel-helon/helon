@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,9 +9,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button"
 import { Slot } from "@prisma/client";
 
-export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
+export function TimeSlotActions(props: { slot: Slot, daysExceptToday: string[] }) {
   const router = useRouter();
-  const [actionsOnSlotDropdownOpened, setActionsOnSlotDropdownOpened] = useState<boolean>(false);
+  const [isActionsOnSlotDropdownOpened, setIsActionsOnSlotDropdownOpened] = useState<boolean>(false);
   
   async function handleDeleteSlot() {
    try {
@@ -48,7 +48,7 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
     try {
       const settingSlotRecurring = await setRecurringSlot(props.slot.id, props.slot.dateTime.toISOString());
       if (settingSlotRecurring.status !== 201 ) {
-        toast.error(settingSlotRecurring.message)
+        toast.error(settingSlotRecurring.message);
         return;
       }
       router.refresh();
@@ -68,7 +68,7 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         }},
         duration: 3000
       });
-      setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
+      setIsActionsOnSlotDropdownOpened(!isActionsOnSlotDropdownOpened);
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Please try again later.');
@@ -99,23 +99,21 @@ export function ActionsOnTimeSlot(props: { slot: Slot, daysExceptToday: string[]
         }},
         duration: 3000
       });
-      setActionsOnSlotDropdownOpened(!actionsOnSlotDropdownOpened);
+      setIsActionsOnSlotDropdownOpened(!isActionsOnSlotDropdownOpened);
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Please try again later.');
     }
   }
   
-
-  
   return (
     <div className="w-full flex justify-end gap-1">
       <Button onClick={handleDeleteSlot} size="icon" variant="outline" className="size-8">
         <Trash2 size={16} />
       </Button>
-      <DropdownMenu open={actionsOnSlotDropdownOpened} onOpenChange={setActionsOnSlotDropdownOpened}>
+      <DropdownMenu open={isActionsOnSlotDropdownOpened} onOpenChange={setIsActionsOnSlotDropdownOpened}>
         <DropdownMenuTrigger asChild>
-          <Button onClick={() => {}} size="icon" variant="outline" className="size-8">
+          <Button size="icon" variant="outline" className="size-8">
             <EllipsisVertical size={16} />
           </Button>
         </DropdownMenuTrigger>

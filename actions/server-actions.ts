@@ -1,7 +1,9 @@
 "use server"
 
 import { db } from "@/lib/db";
-import { Slot } from "@prisma/client";
+import { Meeting, Slot } from "@prisma/client";
+
+// scheduling/availability
 
 export async function getSlotsForWeek(week: string[]) {
   const weekSlots = [] as {day: string, slots: Slot[]}[]
@@ -656,5 +658,31 @@ export async function disableRecurringDay(day: string, slots: Slot[]) {
     }
   } catch {
     return { mesage: 'An unexpected error occurred. Please try again later', status: 400}
+  }
+}
+
+// scheduling/meetings
+
+export async function getMeetingsForWeek(week: string[]) {
+  const weekMeetings = [] as {day: string, meetings: Meeting[]}[]
+
+  for (const day of week) {
+    const meetings = await db.meeting.findMany({
+      where: {
+        dateTime: {
+          gte: new Date(`${day}T00:00:00.000Z`),
+          lte: new Date(`${day}T23:59:59.999Z`)
+        },
+      },
+      orderBy: {
+        dateTime: "asc" 
+      }
+    }) as Meeting[];
+    weekMeetings.push({day, meetings})
+  }
+  if (!weekMeetings) {
+    return { message: "No meetings fetched", status: 404, weekMeetings };
+  } else {  
+  return { message: "Meetings fetched", status: 200, weekMeetings };
   }
 }
