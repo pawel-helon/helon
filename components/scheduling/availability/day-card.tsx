@@ -15,6 +15,7 @@ import { Slot } from "@prisma/client";
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export function DayCard(props: {
+  weekNumber: number;
   day: string;
   slots: Slot[];
   isRecurringSlotsOnly: boolean;
@@ -70,7 +71,7 @@ export function DayCard(props: {
               })}
             </div>
             <div className='absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh'>
-              <DayCardActions day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay}/>
+              <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay}/>
               <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} size='icon' className={cn('size-8', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
                 <Plus size={16} />
               </Button>

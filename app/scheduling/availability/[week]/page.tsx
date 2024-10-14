@@ -11,17 +11,41 @@ import { Slot } from '@prisma/client';
 
 type DaySlots = { day: string, slots: Slot[] };
 
-const cachedWeekDays = cache((weekNumber: number) => {
-  const today = new Date()
-  const yearStart = new Date(today.getFullYear(), 0, 1)
-  const dayOfWeek = yearStart.getDay()
-  const firstWeekday = new Date(yearStart.getFullYear(), 0, 1 + (weekNumber - 1) * 7 - dayOfWeek + 1)
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(firstWeekday)
-    date.setDate(firstWeekday.getDate() + i)
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-  })
-})
+const cachedWeekDays = cache((year: number, week: number) => {
+  const yearStart = new Date(year, 0, 1).getDay();
+  const yearEnd = new Date(year, 11, 31).getDay();
+  let i: number = 0;
+  let weekDay: string = '';
+  let weekDays: string[] = [];
+
+  if (week === 1) {
+    if (yearStart > 0) {
+      for (i = yearStart; i <= 7; i++) {
+        weekDay = `${year}-01-${String(i - yearStart + 1).padStart(2, '0')}`;
+        weekDays.push(weekDay);
+      }
+    } else {
+      weekDay = `${year}-01-01`;
+      weekDays.push(weekDay);
+    }
+  } else if (week === 53) {
+    if (yearEnd > 0) {
+      for (i = 31 - yearEnd + 1; i <= 31; i++) {
+        weekDay = `${year}-12-${String(i).padStart(2, '0')}`;
+        weekDays.push(weekDay);
+      }
+    }
+  } else {
+    const firstWeekday = new Date(year, 0, 1 + (week - 1) * 7 - (yearStart || 7) + 1); // fixed calculation
+    weekDays = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(firstWeekday);
+      date.setDate(firstWeekday.getDate() + i);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    });
+  }
+  return weekDays;
+});
+
 const cachedWeekSlots = cache(async (weekDays: string[]) => {
   const slotsForWeek = await getSlotsForWeek(weekDays);
   const weekSlots = slotsForWeek.weekSlots as DaySlots[];
@@ -53,7 +77,7 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
 
   let prevWeekNumber: number = weekNumber
   if (new Date(weekDays[0]).getFullYear() > new Date(prevWeek[6]).getFullYear()) {
-    prevWeekNumber = 52;
+    prevWeekNumber = 53;
   } else {
     prevWeekNumber = weekNumber - 1;
   }
@@ -68,8 +92,9 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
 }
 
 export default async function WeekAvailabilityPage(props: { params: { week: string } }) {
+  const year = Number(props.params.week.split('-')[0]);
   const weekNumber = Number(props.params.week.split('-')[2]);
-  const weekDays = cachedWeekDays(weekNumber);
+  const weekDays = cachedWeekDays(year, weekNumber);
   const weekSlots = await cachedWeekSlots(weekDays);
   const recurringDays = await cachedRecurringDays(weekDays);
   const weekBadgeVariant = getWeekBadgeVariant(weekNumber);
@@ -95,7 +120,7 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
           <div className="flex items-start gap-2">
             <Text variant="h1">Scheduling</Text>
             <Badge variant={weekBadgeVariant}>
-              {`${String(new Date(weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(weekDays[6]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[6]).getMonth() + 1).padStart(2, '0')}`}
+              {`${String(new Date(weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(weekDays[weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
             </Badge>
           </div>
         </div>
@@ -108,7 +133,7 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
           Availability
         </Link>
       </div>
-      <DayGrid slotsForWeek={weekSlots} weekDays={weekDays} recurringDays={recurringDays}/>
+      <DayGrid slotsForWeek={weekSlots} weekNumber={weekNumber} weekDays={weekDays} recurringDays={recurringDays}/>
     </>
   )
 }

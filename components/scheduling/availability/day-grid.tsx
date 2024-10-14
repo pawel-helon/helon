@@ -11,6 +11,7 @@ type DaySlots = { day: string, slots: Slot[] };
 
 export function DayGrid(props: {
   slotsForWeek: DaySlots[];
+  weekNumber: number;
   weekDays: string[];
   recurringDays: string[];
 }) {
@@ -26,6 +27,13 @@ export function DayGrid(props: {
     }
     initDeletePastSlots();
   })
+
+
+  const emptyCards: number[] = [];
+  let i: number = 0;
+  for (i = 1; i <= 7 - props.weekDays.length; i++) {
+    emptyCards.push(i);
+  }
   
   return (
     <>
@@ -34,11 +42,29 @@ export function DayGrid(props: {
         <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className='data-[state=checked]:bg-teal-500'/>
       </div>
       <div className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16'>
+        {props.weekNumber === 1 && (
+          <>
+            {emptyCards.map((card) => {
+              return (
+                <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+              )
+            })}
+          </>
+        )}
         {props.slotsForWeek.map((day) => {
           return (
-            <DayCard key={day.day} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
+            <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
           )
         })}
+        {props.weekNumber === 53 && (
+          <>
+            {emptyCards.map((card) => {
+              return (
+                <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+              )
+            })}
+          </>
+        )}
       </div>
     </>
   )

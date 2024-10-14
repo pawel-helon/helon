@@ -18,6 +18,7 @@ const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 
 export function DayCardActions(props: {
   day: string;
+  weekNumber: number;
   slots: Slot[];
   weekDays: string[];
   isRecurringDay: boolean;
@@ -47,7 +48,6 @@ export function DayCardActions(props: {
             label: 'Undo',
             onClick: () => {
               async function initUndoDuplicateDay() {
-                console.log(duplicatingDay.prevSlots);
                 const undoDuplicatingDay = await undoDuplicateDay(duplicatingDay.prevSlots!);
                 if (undoDuplicatingDay.status !== 201) {
                   toast.error(undoDuplicatingDay.message);
@@ -160,7 +160,13 @@ export function DayCardActions(props: {
       toast.error('An unexpected error occurred. Please try again later.')
     }
   }
-  
+
+  const emptyCheckboxes: number[] = [];
+  let i: number = 0;
+  for (i = 1; i <= 7 - props.weekDays.length; i++) {
+    emptyCheckboxes.push(i);
+  }
+
   return (
     <div className="flex">
       <Dialog open={isDuplicateDayDialogOpen} onOpenChange={setIsDuplicateDayDialogOpen}>
@@ -172,6 +178,15 @@ export function DayCardActions(props: {
         <DialogContent aria-describedby='' className='min-h-[400px] min-w-[480px] flex flex-col flex-start bg-background-sh'>
           <DialogTitle className='mb-8'>Duplicate</DialogTitle>
           <form action={handleDuplicateDay} className="grid grid-cols-5 gap-2">
+            {props.weekNumber === 1 && (
+              <>
+                {emptyCheckboxes.map((checkbox) => {
+                  return (
+                    <CheckboxDays key={checkbox} disabled={true} className="opacity-50" />
+                  )
+                })}
+              </>
+            )}
             {props.weekDays.map((dayValue, index) => {
               return (
                 <div key={dayValue} className={cn('col-span-1', (props.day === dayValue || new Date() > new Date(dayValue)) ? 'opacity-50' : '')}>
@@ -183,6 +198,15 @@ export function DayCardActions(props: {
               </div>
               )
             })}
+            {props.weekNumber === 53 && (
+              <>
+                {emptyCheckboxes.map((checkbox) => {
+                  return (
+                    <CheckboxDays key={checkbox} disabled={true} className="opacity-50" />
+                  )
+                })}
+              </>
+            )}
             <div className="w-full absolute bottom-0 left-0 right-0 flex justify-end p-6 gap-2">
               <DialogClose asChild>
                 <Button variant="ghost">
