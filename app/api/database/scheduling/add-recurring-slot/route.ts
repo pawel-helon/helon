@@ -32,8 +32,8 @@ async function generateAvailableTimes(day: string): Promise<string> {
     unavailableTimes.push(time);
   }
   
-  const firstAvailableTime = allTimes.filter((time) => !unavailableTimes.includes(time))[0];
-  return firstAvailableTime as string;
+  const availableTimes = allTimes.filter((time) => !unavailableTimes.includes(time) && new Date(`${day}T${time}`) > new Date());
+  return availableTimes[0] as string;
 }
 
 async function generateRecurringDates(day: string): Promise<Date[]> {

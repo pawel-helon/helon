@@ -31,9 +31,9 @@ async function generateAvailableTimes(day: string): Promise<string> {
     const time = String(new Date(slot.dateTime).getHours()).padStart(2, '0') + ':' + String(new Date(slot.dateTime).getMinutes()).padStart(2, '0');
     unavailableTimes.push(time);
   }
-  
-  const firstAvailableTime = allTimes.filter((time) => !unavailableTimes.includes(time))[0];
-  return firstAvailableTime as string;
+
+  const availableTimes = allTimes.filter((time) => !unavailableTimes.includes(time) && new Date(`${day}T${time}`) > new Date());
+  return availableTimes[0] as string;
 }
 
 export async function POST(request: Request) {

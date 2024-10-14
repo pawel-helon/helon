@@ -10,7 +10,7 @@ import { DayCardActions } from "@/components/scheduling/availability/day-card-ac
 import { Text } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Slot } from "@prisma/client";
+import { Slot, SLOTTYPE } from "@prisma/client";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -27,7 +27,7 @@ export function DayCard(props: {
   
   const isRecurringDay = props.recurringDays.includes(props.day);
   const daysExceptToday = props.weekDays.filter(d => d !== props.day);
-  const filteredSlots = props.isRecurringSlotsOnly ? props.slots.filter((s) => s.recurring === true) : props.slots;
+  const filteredSlots = props.isRecurringSlotsOnly ? props.slots.filter((s) => s.recurring === true && s.type !== SLOTTYPE.BOOKED) : props.slots.filter((s) => s.type !== SLOTTYPE.BOOKED);
 
   async function handleAddSlot() {
     try {
@@ -59,7 +59,12 @@ export function DayCard(props: {
 
   return (
     <div style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh">
-      <Text variant='p-base-thick' className={cn('p-3 mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>{DAYS_OF_WEEK[date.getDay()]}</Text>
+      <div className="w-full flex justify-between items-center p-3">
+        <Text variant='p-base-thick' className={cn('mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>{DAYS_OF_WEEK[date.getDay()]}</Text>
+        <Text variant='p-small-thin' className={cn('mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
+          {String(date.getDate()).padStart(2, '0')}.{String(date.getMonth() + 1).padStart(2, '0')}
+        </Text>
+      </div>
       <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
         {filteredSlots.length > 0 ? (
           <div>

@@ -28,7 +28,6 @@ export function DayGrid(props: {
     initDeletePastSlots();
   })
 
-
   const emptyCards: number[] = [];
   let i: number = 0;
   for (i = 1; i <= 7 - props.weekDays.length; i++) {

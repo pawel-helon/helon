@@ -2,26 +2,53 @@ import Link from 'next/link';
 import { cache } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getMeetingsForWeek } from '@/actions/server-actions'
+import { DayGrid } from '@/components/scheduling/meetings/day-grid';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Text } from '@/components/typography';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Meeting } from '@prisma/client';
-import { DayGrid } from '@/components/scheduling/meetings/day-grid';
 
 type DayMeetings = { day: string, meetings: Meeting[] };
 
-const cachedWeekDays = cache((weekNumber: number) => {
-  const today = new Date()
-  const yearStart = new Date(today.getFullYear(), 0, 1)
-  const dayOfWeek = yearStart.getDay()
-  const firstWeekday = new Date(yearStart.getFullYear(), 0, 1 + (weekNumber - 1) * 7 - dayOfWeek + 1)
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(firstWeekday)
-    date.setDate(firstWeekday.getDate() + i)
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-  })
-})
+const cachedWeekDays = cache((year: number, week: number) => {
+  const yearStart = new Date(year, 0, 1).getDay();
+  const yearEnd = new Date(year, 11, 31).getDay();
+  let i: number = 0;
+  let weekDay: string = '';
+  let weekDays: string[] = [];
+
+  if (week === 1) {
+    if (yearStart > 0) {
+      for (i = yearStart; i <= 7; i++) {
+        weekDay = `${year}-01-0${i - yearStart + 1}`;
+        weekDays.push(weekDay);
+      }
+    } else {
+      weekDay = `${year}-01-01`;
+      weekDays.push(weekDay);
+    }
+  } else if (week === 53) {
+      if (yearEnd > 0) {
+        for (i = 31 - ( yearEnd - 1 ); i <= 31; i++) {
+          weekDay = `${year}-12-${i}`;
+          weekDays.push(weekDay);
+        }
+      } else {
+        weekDay = `${year}-12-31`;
+        weekDays.push(weekDay);
+      }
+  } else {
+    const firstWeekday = new Date(year, 0, 1 + (week - 1) * 7 - (yearStart || 7) + 1);
+    weekDays = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(firstWeekday);
+      date.setDate(firstWeekday.getDate() + i);
+      return `${year}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    });
+  }
+  return weekDays;
+});
+
 const cachedWeekMeetings = cache(async (weekDays: string[]) => {
   const slotsForWeek = await getMeetingsForWeek(weekDays);
   const weekSlots = slotsForWeek.weekMeetings as DayMeetings[];
@@ -44,17 +71,17 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
   const prevWeek = Array.from({ length: 7 }, (_, i) => new Date(new Date(weekDays[0]).setDate(new Date(weekDays[0]).getDate() + i - 7)).toISOString().split('T')[0]);
   const nextWeek = Array.from({ length: 7 }, (_, i) => new Date(new Date(weekDays[0]).setDate(new Date(weekDays[0]).getDate() + i + 7)).toISOString().split('T')[0]);
   const yearOnBackwardNavigation: number = new Date(prevWeek[0]).getFullYear();
-  const yearOnForewardNavigation: number = new Date(nextWeek[6]).getFullYear();
+  const yearOnForewardNavigation: number = new Date(nextWeek[nextWeek.length -1]).getFullYear();
 
   let prevWeekNumber: number = weekNumber
-  if (new Date(weekDays[0]).getFullYear() > new Date(prevWeek[6]).getFullYear()) {
+  if (new Date(weekDays[0]).getFullYear() > new Date(prevWeek[prevWeek.length - 1]).getFullYear()) {
     prevWeekNumber = 52;
   } else {
     prevWeekNumber = weekNumber - 1;
   }
 
   let nextWeekNumber: number = weekNumber
-  if (new Date(weekDays[6]).getFullYear() < new Date(nextWeek[6]).getFullYear()) {
+  if (new Date(weekDays[6]).getFullYear() < new Date(nextWeek[nextWeek.length - 1]).getFullYear()) {
     nextWeekNumber = 1;
   } else {
     nextWeekNumber = weekNumber + 1;
@@ -63,8 +90,9 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
 }
 
 export default async function WeekMeetingsPage(props: { params: { week: string } }) {
+  const year = Number(props.params.week.split('-')[0]);
   const weekNumber = Number(props.params.week.split('-')[2]);
-  const weekDays = cachedWeekDays(weekNumber);
+  const weekDays = cachedWeekDays(year, weekNumber);
   const weekMeetings = await cachedWeekMeetings(weekDays);
   const weekBadgeVariant = getWeekBadgeVariant(weekNumber);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
@@ -89,7 +117,7 @@ export default async function WeekMeetingsPage(props: { params: { week: string }
           <div className="flex items-start gap-2">
             <Text variant="h1">Scheduling</Text>
             <Badge variant={weekBadgeVariant}>
-              {`${String(new Date(weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(weekDays[6]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[6]).getMonth() + 1).padStart(2, '0')}`}
+              {`${String(new Date(weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(weekDays[weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(weekDays[weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
             </Badge>
           </div>
         </div>
@@ -102,7 +130,7 @@ export default async function WeekMeetingsPage(props: { params: { week: string }
           Availability
         </Link>
       </div>
-      <DayGrid weekMeetings={weekMeetings} weekDays={weekDays} />
+      <DayGrid weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
     </>
   )
 }
