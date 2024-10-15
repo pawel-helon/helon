@@ -51,7 +51,7 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   return (
     <div className="w-full flex justify-between items-center">
       <div className="relative flex gap-2">
-        {props.slot.recurring && <span className="size-2 absolute -top-1 -left-1 rounded-full bg-teal-500"></span>}
+        {props.slot.recurring && <span className="size-2 absolute -top-1 left-0 xs:-left-1 rounded-full bg-teal-500"></span>}
         <DropdownMenu open={isHoursDropdownOpened} onOpenChange={setIsHoursDropdownOpened}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="w-16 min-w-[64px]">

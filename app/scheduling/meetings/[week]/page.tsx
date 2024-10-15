@@ -12,6 +12,10 @@ import { Meeting } from '@prisma/client';
 type DayMeetings = { day: string, meetings: Meeting[] };
 
 const cachedWeekDays = cache((year: number, week: number) => {
+  if (week < 1 || week > 53 || year < 2020 || year > 2100) {
+    throw new Error;
+  }
+  
   const yearStart = new Date(year, 0, 1).getDay();
   const yearEnd = new Date(year, 11, 31).getDay();
   let i: number = 0;
@@ -123,7 +127,7 @@ export default async function WeekMeetingsPage(props: { params: { week: string }
         </div>
       </div>
       <div className="h-11 mb-8 flex border-b border-border">
-        <Link href="/scheduling/meetings" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
+        <Link href="/scheduling/meetings" prefetch={true} className="inline-flex items-center xs:justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
           Meetings
         </Link>
         <Link href="/scheduling/availability" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">

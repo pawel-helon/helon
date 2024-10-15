@@ -50,6 +50,21 @@ const sheetVariants = cva(
   }
 )
 
+const SheetOverlayMuted = React.forwardRef<
+  React.ElementRef<typeof SheetPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <SheetPrimitive.Overlay
+    className={cn(
+      "fixed inset-0 z-50 bg-black/20  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    {...props}
+    ref={ref}
+  />
+))
+SheetOverlayMuted.displayName = SheetPrimitive.Overlay.displayName
+
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {}
@@ -74,6 +89,23 @@ const SheetContent = React.forwardRef<
   </SheetPortal>
 ))
 SheetContent.displayName = SheetPrimitive.Content.displayName
+
+const SheetContentWithoutClose = React.forwardRef<
+  React.ElementRef<typeof SheetPrimitive.Content>,
+  SheetContentProps
+>(({ side = "right", className, children, ...props }, ref) => (
+  <SheetPortal>
+    <SheetOverlayMuted />
+    <SheetPrimitive.Content
+      ref={ref}
+      className={cn(sheetVariants({ side }), className)}
+      {...props}
+    >
+      {children}
+    </SheetPrimitive.Content>
+  </SheetPortal>
+))
+SheetContentWithoutClose.displayName = SheetPrimitive.Content.displayName
 
 const SheetHeader = ({
   className,
@@ -146,6 +178,7 @@ export {
   SheetTrigger,
   SheetClose,
   SheetContent,
+  SheetContentWithoutClose,
   SheetHeader,
   SheetFooter,
   SheetTitle,

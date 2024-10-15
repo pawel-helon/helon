@@ -1,20 +1,16 @@
 "use client"
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ChevronDown } from "lucide-react";
-import { RiLoaderFill } from "react-icons/ri";
-import { deleteSlots, disableRecurringDay, duplicateDay, setRecurringDay, undoDeleteSlots, undoDuplicateDay } from "@/actions/database-actions";
-import { Dialog, DialogClose, DialogContent, DialogTitleH as DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Text } from "@/components/typography";
-import { CheckboxDays } from "@/components/ui/checkbox";
+import { useMedia } from "react-use";
+import { ChevronDown, Plus } from "lucide-react";
+import { addRecurringSlot, addSlot, deleteSlots, disableRecurringDay, setRecurringDay, undoDeleteSlots } from "@/actions/database-actions";
+import { DuplicateDay } from "@/components/scheduling/availability/duplicate-day";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Slot } from "@prisma/client";
-
-const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+import { cn } from "@/lib/utils";
 
 export function DayCardActions(props: {
   day: string;
@@ -22,45 +18,34 @@ export function DayCardActions(props: {
   slots: Slot[];
   weekDays: string[];
   isRecurringDay: boolean;
+  isRecurringSlotsOnly: boolean;
 }) {
+  const isMobile = useMedia("(max-width: 480px)", false);
   const router = useRouter();
   const [isDropdownOpened, setIsDropdownOpened] = useState<boolean>(false);
-  const [isDuplicateDayDialogOpen, setIsDuplicateDayDialogOpen] = useState<boolean>(false);
-  const [isPending, startTransition] = useTransition();
 
-  async function handleDuplicateDay(formData: FormData) {
-    const days = props.weekDays.filter((_, index) => formData.get(index.toString()) !== null)
-    if (days.length === 0) {
-      toast.error('Please select at least one day.');
-      return;
-    }
+  async function handleAddSlot() {
     try {
-      startTransition(async () => {
-        const duplicatingDay = await duplicateDay(days, props.slots);
-        if (duplicatingDay.status !== 201) {
-          toast.error(duplicatingDay.message);
-          return;
-        }
-        router.refresh();
-        setIsDuplicateDayDialogOpen(!isDuplicateDayDialogOpen);
-        toast.success(duplicatingDay.message, {
-          action: {
-            label: 'Undo',
-            onClick: () => {
-              async function initUndoDuplicateDay() {
-                const undoDuplicatingDay = await undoDuplicateDay(duplicatingDay.prevSlots!);
-                if (undoDuplicatingDay.status !== 201) {
-                  toast.error(undoDuplicatingDay.message);
-                  return;
-                }
-                router.refresh();
-              }
-              initUndoDuplicateDay();
-            }
-          },
-          duration: 3000
-        });
-      })
+      const addingSlot = await addSlot(props.day);
+      if (addingSlot.status !== 201) {
+        toast.error(addingSlot.message);
+        return;
+      }
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error('An unexpected error occurred. Please try again later.');
+    }
+  }
+  
+  async function handleAddRecurringSlot() {
+    try {
+      const addingRecurringSlot = await addRecurringSlot(props.day);
+      if (addingRecurringSlot.status !== 201) {
+        toast.error(addingRecurringSlot.message);
+        return;
+      }
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Please try again later.');
@@ -168,73 +153,52 @@ export function DayCardActions(props: {
   }
 
   return (
-    <div className="flex">
-      <Dialog open={isDuplicateDayDialogOpen} onOpenChange={setIsDuplicateDayDialogOpen}>
-        <DialogTrigger asChild>
-          <Button variant='outline' size='sm' className='w-[100px] justify-start rounded-r-none text-left pl-2.5'>
-            Duplicate
-          </Button>
-        </DialogTrigger>
-        <DialogContent aria-describedby='' className='min-h-[400px] min-w-[480px] flex flex-col flex-start bg-background-sh'>
-          <DialogTitle className='mb-8'>Duplicate</DialogTitle>
-          <form action={handleDuplicateDay} className="grid grid-cols-5 gap-2">
-            {props.weekNumber === 1 && (
-              <>
-                {emptyCheckboxes.map((checkbox) => {
-                  return (
-                    <CheckboxDays key={checkbox} disabled={true} className="opacity-50" />
-                  )
-                })}
-              </>
-            )}
-            {props.weekDays.map((dayValue, index) => {
-              return (
-                <div key={dayValue} className={cn('col-span-1', (props.day === dayValue || new Date() > new Date(dayValue)) ? 'opacity-50' : '')}>
-                <CheckboxDays disabled={(props.day === dayValue || new Date() > new Date(dayValue)) ? true : false} name={index.toString()} value={dayValue}>
-                  <Text variant='p-small-thin' className="absolute top-1 left-1 text-foreground">
-                    {DAYS_OF_WEEK[new Date(dayValue).getDay()]}
-                  </Text>
-                </CheckboxDays>
-              </div>
-              )
-            })}
-            {props.weekNumber === 53 && (
-              <>
-                {emptyCheckboxes.map((checkbox) => {
-                  return (
-                    <CheckboxDays key={checkbox} disabled={true} className="opacity-50" />
-                  )
-                })}
-              </>
-            )}
-            <div className="w-full absolute bottom-0 left-0 right-0 flex justify-end p-6 gap-2">
-              <DialogClose asChild>
-                <Button variant="ghost">
-                  Cancel
+    <>
+      {isMobile ? (
+        <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex">
+            <DuplicateDay weekNumber={props.weekNumber} day={props.day} weekDays={props.weekDays} slots={props.slots}/>
+            <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-20 rounded-l-none px-1.5">
+                  <ChevronDown size={16} />
                 </Button>
-              </DialogClose>
-              <Button disabled={isPending} type='submit' className="min-w-[108px]">
-                {isPending ? <RiLoaderFill className="size-5 animate-spin"/>: 'Duplicate'}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
+                <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+                  {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
+                </Button>
+                <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+                  Delete slots
+                </Button>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} className={cn('w-full', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
+            <Plus size={16} className="size-4 -ml-2 mr-2"/>
+            {props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
+          </Button>
+        </div>
+      ) : (
+        <div className="flex">
+          <DuplicateDay weekNumber={props.weekNumber} day={props.day} weekDays={props.weekDays} slots={props.slots}/>
+          <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">
+                <ChevronDown size={16} />
               </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">
-            <ChevronDown size={16} />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
-          <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-            {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
-          </Button>
-          <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-            Delete slots
-          </Button>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
+              <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+                {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
+              </Button>
+              <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
+                Delete slots
+              </Button>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+    </>
   )
 }

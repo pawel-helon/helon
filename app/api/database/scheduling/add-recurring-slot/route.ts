@@ -66,23 +66,17 @@ export async function POST(request: Request) {
   }
 
   try {
-    let addedSlot: boolean = false
-    for (const date of recurringDates) {
-      const addingSlot = await db.slot.create({
-        data: {
-          dateTime: new Date(new Date(date).setHours(Number(firstAvailableTime.split(':')[0]), Number(firstAvailableTime.split(':')[1]), 0, 0)),
-          recurring: true
-        }
-      })
-      if (!addingSlot) {
-        return createResponse("Failed to add slot", 503);
-      }
-      addedSlot = true;
+    const addingSlots = await db.slot.createMany({
+      data: recurringDates.map((date) => ({
+        dateTime: new Date(new Date(date).setHours(Number(firstAvailableTime.split(':')[0]), Number(firstAvailableTime.split(':')[1]), 0, 0)),
+        recurring: true
+      })),
+    })
+
+    if (!addingSlots) {
+      return createResponse("Failed to add slots", 503);
     }
     
-    if (!addedSlot) {
-      return createResponse("Failed to add slot", 503);
-    }
     return createResponse("Slot has been added", 201);
   } catch (error) {
     console.error(error);
