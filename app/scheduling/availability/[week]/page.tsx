@@ -6,6 +6,36 @@ import { Header } from '@/components/scheduling/availability/header';
 import { DayGrid } from '@/components/scheduling/availability/day-grid'
 import { Slot } from '@prisma/client';
 
+type Week = { weekNumber: number; firstDay: string; lastDay: string };
+
+const cachedWeeks = cache((year: number) => {
+  const yearStart = new Date(year, 0, 1).getDay();
+  const yearEnd = new Date(year, 11, 31).getDay();
+  let weekNumber: number = 0;
+  let firstDay: string = '';
+  let lastDay: string = '';
+  const weeks: Week[] = [];
+
+  for (weekNumber = 1; weekNumber <= 53; weekNumber++) {
+    if (weekNumber === 1) {
+      firstDay = `${year}-01-01`;
+      lastDay = `${year}-01-0${8 - yearStart}`;
+      weeks.push({weekNumber, firstDay, lastDay});
+    } else if (weekNumber === 53) {
+      firstDay = `${year}-12-${31 - ( yearEnd - 1 )}`;
+      lastDay = `${year}-12-31`;
+      weeks.push({weekNumber, firstDay, lastDay});
+    } else {
+      const firstDayDate = new Date(year, 0, 1 + (weekNumber - 1) * 7 - (yearStart || 7) + 1);
+      const lastDayDate = new Date(year, 0, 1 + (weekNumber - 1) * 7 - (yearStart || 7) + 7);
+      firstDay = `${firstDayDate.getFullYear()}-${firstDayDate.getMonth() + 1}-${firstDayDate.getDate()}`;
+      lastDay = `${lastDayDate.getFullYear()}-${lastDayDate.getMonth() + 1}-${lastDayDate.getDate()}`;
+      weeks.push({weekNumber, firstDay, lastDay});
+    }
+  }
+  return weeks;
+})
+
 type DaySlots = { day: string, slots: Slot[] };
 
 const cachedWeekDays = cache((year: number, week: number) => {
@@ -85,6 +115,7 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
 
 export default async function WeekAvailabilityPage(props: { params: { week: string } }) {
   const year = Number(props.params.week.split('-')[0]);
+  const weeks = cachedWeeks(year);
   const weekNumber = Number(props.params.week.split('-')[2]);
   const weekDays = cachedWeekDays(year, weekNumber);
   const weekSlots = await cachedWeekSlots(weekDays);
@@ -94,7 +125,7 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
   return (
     <>
       <Breadcrumbs />
-      <Header weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
+      <Header weeks={weeks} weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
       <div className="h-11 mb-8 flex border-b border-border">
         <Link href="/scheduling/meetings" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
           Meetings
