@@ -177,7 +177,7 @@ export function RescheduleMeeting(props: {
       ) : (
         <Dialog onOpenChange={props.setOpenDropdown}>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5 hover:cursor-default">
               Reschedule
             </Button>
           </DialogTrigger>

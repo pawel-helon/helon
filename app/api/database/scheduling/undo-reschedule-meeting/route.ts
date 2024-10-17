@@ -38,7 +38,8 @@ export async function PUT(request: Request) {
         id: meetingId
       },
       data: {
-        dateTime: new Date(blockingInitialSlot.dateTime)
+        dateTime: new Date(blockingInitialSlot.dateTime),
+        slotId: slotId
       }
     })
     if (!undoingRescheduleMeeting) {

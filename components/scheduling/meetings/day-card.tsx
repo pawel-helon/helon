@@ -28,22 +28,22 @@ export function DayCard(props: {
         <div style={{ aspectRatio: "1" }} className="relative h-full col-span-1 flex flex-col bg-background-sh">
           <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
             {props.meetings.length > 0 ? (
-              <div className='w-full h-full flex flex-col gap-4 pt-2 pr-1'>
+              <div className="w-full h-full flex flex-col gap-4 pt-2 pr-1">
                 {props.meetings.map((m) => {
                   return (
                     <div key={m.id} className="flex justify-between gap-2">
-                      <div className="w-full flex gap-2">
-                        <p className="w-full text-nowrap overflow-hidden max-w-[280px] h-8 flex items-center rounded-md border border-input px-3 py-1 font-medium text-xs text-foreground shadow-sm">
+                      <div className="flex grow gap-2">
+                        <p className="h-8 grow text-nowrap overflow-hidden flex items-center rounded-md border border-input px-3 py-1 font-medium text-xs text-foreground shadow-sm">
                           {`${String(new Date(m.dateTime).getHours()).padStart(2, '0')}:${String(new Date(m.dateTime).getMinutes()).padStart(2, '0')} - ${m.userName}`}
                         </p>
                       </div>
                       <DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
                         <DropdownMenuTrigger asChild>
                           <Button size="icon" variant="outline" className="size-8">
-                            <EllipsisVertical size={16}/>
+                            <EllipsisVertical size={16} />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
+                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
                           <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
                           <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
                         </DropdownMenuContent>
@@ -73,22 +73,22 @@ export function DayCard(props: {
           </div>
           <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
             {props.meetings.length > 0 ? (
-              <div className='w-full h-full flex flex-col gap-4 pt-2 pl-3 pr-2'>
+              <div className="w-full h-full flex flex-col gap-4 pt-2 pl-3 pr-2">
                 {props.meetings.map((m) => {
                   return (
                     <div key={m.id} className="flex justify-between gap-2">
-                      <div className="w-full flex gap-2">
-                        <p className="w-full text-nowrap overflow-hidden max-w-[160px] h-8 flex items-center rounded-md border border-input px-3 py-1 font-medium text-xs text-foreground shadow-sm">
+                      <div className="flex grow gap-2">
+                        <p className="h-8 grow text-nowrap overflow-hidden flex items-center rounded-md border border-input px-3 py-1 font-medium text-xs text-foreground shadow-sm">
                           {`${String(new Date(m.dateTime).getHours()).padStart(2, '0')}:${String(new Date(m.dateTime).getMinutes()).padStart(2, '0')} - ${m.userName}`}
                         </p>
                       </div>
                       <DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
                         <DropdownMenuTrigger asChild>
-                          <Button size="icon" variant="outline" className="size-8">
+                          <Button size="icon" variant="outline" className="size-8 ml-2">
                             <EllipsisVertical size={16}/>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
+                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
                           <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
                           <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
                         </DropdownMenuContent>

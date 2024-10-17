@@ -16,7 +16,7 @@ export async function PUT(request: Request) {
     if (!gettingSlotId) {
       return createResponse("Failed to unblock slot", 503);
     }
-    
+
     const unblockingInitialSlot = await db.slot.update({
       where: { id: gettingSlotId.slotId },
       data: { type: SLOTTYPE.AVAILABLE }
@@ -38,7 +38,8 @@ export async function PUT(request: Request) {
         id: meetingId
       },
       data: {
-        dateTime: new Date(blockingNewSlot.dateTime)
+        dateTime: new Date(blockingNewSlot.dateTime),
+        slotId: slotId
       }
     })
     if (!reschedulingMeeting) {
