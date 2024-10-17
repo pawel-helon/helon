@@ -102,7 +102,7 @@ export function DayCard(props: {
       <div style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh">
         <div className="w-full flex justify-between items-center p-3">
           <Text variant='p-base-thick' className={cn('mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>{DAYS_OF_WEEK[date.getDay()]}</Text>
-          <Text variant='p-small-thin' className={cn('mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
+          <Text variant='p-base-thin' className={cn('mb-2', new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
             {String(date.getDate()).padStart(2, '0')}.{String(date.getMonth() + 1).padStart(2, '0')}
           </Text>
         </div>

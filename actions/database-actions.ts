@@ -1,6 +1,6 @@
 import { Meeting, Slot } from "@prisma/client";
 
-// book-meeting endpoint
+// book-meeting
 export async function unblockSlots(): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/database/unblock-slots", {
     method: "PUT",
@@ -266,3 +266,53 @@ export async function disableRecurringDay(day: string, slots: Slot[]): Promise<{
 }
 
 // scheduling/meetings
+
+export async function removeMeeting(meetingId: string): Promise<{message: string, status: number, meeting?: Meeting}> {
+  const request = await fetch(`/api/database/scheduling/remove-meeting`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoRemoveMeeting(meeting: Meeting): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/database/scheduling/undo-remove-meeting`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meeting: meeting,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function rescheduleMeeting(meetingId: string, slotId: string): Promise<{message: string, status: number, prevSlotId?: string}> {
+  const request = await fetch(`/api/database/scheduling/reschedule-meeting`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+      slotId: slotId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoRescheduleMeeting(meetingId: string, slotId: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/database/scheduling/undo-reschedule-meeting`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+      slotId: slotId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
