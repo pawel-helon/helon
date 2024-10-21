@@ -17,8 +17,8 @@ import { Slot } from "@prisma/client";
 const ChooseSlotForm = React.memo(function ChooseSlotForm(props: {
   meetingId: string;
   userName: string;
-  openDropdown: boolean;
-  setOpenDropdown: (openDropdown: boolean) => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }) {
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -68,7 +68,7 @@ const ChooseSlotForm = React.memo(function ChooseSlotForm(props: {
           toast.error(reschedulingMeeting.message);
           return;
         }
-        props.setOpenDropdown(!props.openDropdown);
+        props.setOpen(!props.open);
         router.refresh();
         toast.success(`Meeting with ${props.userName} has been rescheduled`, {
           action: {
@@ -129,7 +129,7 @@ const ChooseSlotForm = React.memo(function ChooseSlotForm(props: {
         )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 flex flex-col xs:flex-row xs:justify-end p-6 gap-2">
-        <Button onClick={() => router.push("/home")} type="button" variant="ghost">
+        <Button onClick={() => props.setOpen(!props.open)} type="button" variant="ghost">
           Close
         </Button>
         <Button type="submit" disabled={isPending} className="min-w-[128px]">
@@ -143,9 +143,8 @@ const ChooseSlotForm = React.memo(function ChooseSlotForm(props: {
 export function RescheduleMeeting(props: {
   meetingId: string;
   userName: string;
-  openDropdown: boolean;
-  setOpenDropdown: (openDropdown: boolean) => void;
 }) {
+  const [open, setOpen] = useState<boolean>(false);
   const isMobile = useMedia("(max-width: 480px)", false);
 
   useEffect(() => {
@@ -163,27 +162,27 @@ export function RescheduleMeeting(props: {
   return (
     <>
       {isMobile ? (
-        <Sheet onOpenChange={props.setOpenDropdown}>
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+            <Button size="sm">
               Reschedule
             </Button>
           </SheetTrigger>
           <SheetContent id="choose-slot-form" className="bg-background-h" aria-describedby="">
             <SheetTitle>Reschedule meeting</SheetTitle>
-            <ChooseSlotForm meetingId={props.meetingId} userName={props.userName} openDropdown={props.openDropdown} setOpenDropdown={props.setOpenDropdown}/>
+            <ChooseSlotForm meetingId={props.meetingId} userName={props.userName} open={open} setOpen={setOpen} />
           </SheetContent>
         </Sheet>
       ) : (
-        <Dialog onOpenChange={props.setOpenDropdown}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5 hover:cursor-default">
+            <Button size="sm">
               Reschedule
             </Button>
           </DialogTrigger>
           <DialogContent id="choose-slot-form" className="max-w-[580px] h-[480px] flex flex-col flex-start bg-background-h" aria-describedby="">
             <DialogTitle>Reschedule meeting</DialogTitle>
-            <ChooseSlotForm meetingId={props.meetingId} userName={props.userName} openDropdown={props.openDropdown} setOpenDropdown={props.setOpenDropdown}/>
+            <ChooseSlotForm meetingId={props.meetingId} userName={props.userName} open={open} setOpen={setOpen}/>
           </DialogContent>
         </Dialog>
       )}

@@ -681,8 +681,23 @@ export async function getMeetingsForWeek(week: string[]) {
     weekMeetings.push({day, meetings})
   }
   if (!weekMeetings) {
-    return { message: "No meetings fetched", status: 404, weekMeetings };
+    return { message: "Failed to fetch meetings", status: 404, weekMeetings };
   } else {  
   return { message: "Meetings fetched", status: 200, weekMeetings };
   }
+}
+
+export async function getDayMeetings(day: string) {
+  const meetings = await db.meeting.findMany({
+    where: {
+      dateTime: {
+        gte: new Date(`${day}T00:00:00.000Z`),
+        lte: new Date(`${day}T23:59:59.999Z`)
+      }
+    }
+  })
+  if (!meetings) {
+    return { message: "Failed to fetch meetings", status: 503 }
+  }
+  return { message: "Meetings fetched", status: 200, meetings }
 }

@@ -4,6 +4,7 @@ import { Meeting, SLOTTYPE } from "@prisma/client";
 interface MeetingRequest {
   slotId: string;
   fullName: string;
+  phoneNumber: string;
   email: string;
   message?: string;
 }
@@ -13,9 +14,9 @@ function createResponse(message: string, status: number, meeting?: Meeting) {
 }
 
 export async function POST(request: Request) {
-  const { slotId, fullName, email, message }: MeetingRequest = await request.json();
+  const { slotId, fullName, phoneNumber, email, message }: MeetingRequest = await request.json();
   
-  if (!slotId || !fullName || !email) {
+  if (!slotId || !fullName || !phoneNumber || !email) {
     return createResponse("Slot id, full name, and email are required", 400);
   }
 
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
       data: {
         dateTime: slot.dateTime,
         userName: fullName,
+        userPhoneNumber: phoneNumber,
         userEmail: email,
         slotId: slotId,
         message: message

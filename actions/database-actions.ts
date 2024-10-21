@@ -70,13 +70,14 @@ export async function unblockSlot(slotId: string): Promise<{ message: string, st
   return response;
 }
 
-export async function bookSlot(slotId: string, fullName: string, email: string, message: string | null): Promise<{ message: string, meeting: Meeting, status: number }> {
+export async function bookSlot(slotId: string, fullName: string, phoneNumber: string, email: string, message: string | null): Promise<{ message: string, meeting: Meeting, status: number }> {
   const request = await fetch(`/api/database/book-slot`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       slotId: slotId,
       fullName: fullName,
+      phoneNumber: phoneNumber,
       email: email,
       message: message
     })

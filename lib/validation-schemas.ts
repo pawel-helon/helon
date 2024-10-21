@@ -5,14 +5,19 @@ export const BookingSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters long" })
     .trim(),
-  email:
-  z.string().email({ message: "Please enter a valid email" }).trim(),
+  phoneNumber: z
+    .string().min(9, { message: "Phone number must be 9 digits long" }).max(9),
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email" })
+    .trim(),
 })
 
 export type BookingFormState =
   | {
       errors?: {
         fullName?: string[];
+        phoneNumber?: string[];
         email?: string[];
       };
       message?: string;

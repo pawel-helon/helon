@@ -67,7 +67,7 @@ export function ConfirmBooking(props: { slotId: string }) {
         }})}}>
           <DialogContent
             id="confirm-booking-form"
-            className="max-w-[580px] h-[480px] flex flex-col justify-start bg-background-h"
+            className="max-w-[580px] h-[560px] flex flex-col justify-start bg-background-h"
             aria-describedby=""
           >
             <ProgressBar />
@@ -95,6 +95,7 @@ function ConfirmBookingForm(props: { slot: Slot }) {
   const handleSubmit = useCallback(async function handleSubmit(formData: FormData) {
     const validatedFields = BookingSchema.safeParse({
       fullName: formData.get("fullName"),
+      phoneNumber: formData.get("phoneNumber"),
       email: formData.get("email"),
     });
 
@@ -103,12 +104,12 @@ function ConfirmBookingForm(props: { slot: Slot }) {
       return;
     }
 
-    const { fullName, email } = validatedFields.data;
+    const { fullName, phoneNumber, email } = validatedFields.data;
     const message = formData.get("message") as string;
 
     try {
       startTransition(async () => {
-        const bookingSlot = await bookSlot(props.slot.id, fullName, email, message);
+        const bookingSlot = await bookSlot(props.slot.id, fullName, phoneNumber, email, message);
         if (bookingSlot.status === 400) {
           toast.error(bookingSlot.message);
           return;
@@ -164,6 +165,22 @@ function ConfirmBookingForm(props: { slot: Slot }) {
             {state?.errors?.fullName ? (
               <Text variant="p-small-thin" className="text-right">
                 {state.errors.fullName}
+              </Text>
+            ) : (
+              <div className="h-[1rem]" />
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="phoneNumber">Phone number</Label>
+            <Input
+              type="number"
+              id="phoneNumber"
+              name="phoneNumber"
+              placeholder="Enter your phone number"
+            />
+            {state?.errors?.phoneNumber ? (
+              <Text variant="p-small-thin" className="text-right">
+                {state.errors.phoneNumber}
               </Text>
             ) : (
               <div className="h-[1rem]" />

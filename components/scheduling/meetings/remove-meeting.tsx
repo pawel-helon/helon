@@ -14,8 +14,6 @@ import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/com
 export function RemoveMeeting(props: {
   meetingId: string;
   userName: string;
-  openDropdown: boolean;
-  setOpenDropdown: (openDropdown: boolean) => void;
 }) {
   const isMobile = useMedia("(max-width: 480px)", false)
   const [isPending, startTransition] = useTransition();
@@ -29,7 +27,6 @@ export function RemoveMeeting(props: {
           toast.error(removingMeeting.message);
           return;
         }
-        props.setOpenDropdown(!props.openDropdown)
         router.refresh();
         toast.success(removingMeeting.message, {
           action: {
@@ -57,9 +54,9 @@ export function RemoveMeeting(props: {
   return (
     <>
       {isMobile ? (
-        <Sheet onOpenChange={props.setOpenDropdown}>
+        <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5">
+            <Button variant="ghost" size="sm">
               Remove
             </Button>
           </SheetTrigger>
@@ -83,9 +80,9 @@ export function RemoveMeeting(props: {
           </SheetContent>
         </Sheet>
       ) : (
-        <Dialog onOpenChange={props.setOpenDropdown}>
+        <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="justify-start text-left pl-2.5 hover:cursor-default">
+            <Button variant="ghost" size="sm">
               Remove
             </Button>
           </DialogTrigger>

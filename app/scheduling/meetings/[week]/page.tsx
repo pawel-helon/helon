@@ -109,14 +109,14 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
 
 export default async function WeekMeetingsPage(props: { params: { week: string } }) {
   const year = Number(props.params.week.split('-')[0]);
-  const weeks = cachedWeeks(year);
   const weekNumber = Number(props.params.week.split('-')[2]);
+  const weeks = cachedWeeks(year);
   const weekDays = cachedWeekDays(year, weekNumber);
   const weekMeetings = await cachedWeekMeetings(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
 
   return (
-    <>
+    <div id="meetings">
       <Breadcrumbs />
       <Header weeks={weeks} weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
       <div className="h-11 mb-8 flex border-b border-border">
@@ -128,6 +128,6 @@ export default async function WeekMeetingsPage(props: { params: { week: string }
         </Link>
       </div>
       <DayGrid weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
-    </>
+    </div>
   )
 }

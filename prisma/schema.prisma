@@ -25,15 +25,16 @@ model Slot {
 }
 
 model Meeting {
-  id          String         @id @default(uuid())
-  slot        Slot           @relation(fields: [slotId], references: [id], onDelete: Cascade)
-  slotId      String         @unique  
-  dateTime    DateTime       @unique
-  userName    String
-  userEmail   String
-  message     String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id                String         @id @default(uuid())
+  slot              Slot           @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId            String         @unique  
+  dateTime          DateTime       @unique
+  userName          String
+  userPhoneNumber   String
+  userEmail         String
+  message           String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 }
 
 model RecurringDate {

@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Meeting } from "@prisma/client";
-import { RescheduleMeeting } from "./reschedule.-meeting";
+import { RescheduleMeeting } from "./reschedule-meeting";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -44,8 +44,8 @@ export function DayCard(props: {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
-                          <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
-                          <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
+                          {/* <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} /> */}
+                          {/* <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} /> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
