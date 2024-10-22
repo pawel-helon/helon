@@ -23,10 +23,10 @@ export default function RootLayout({
         <Toaster position="top-center" toastOptions={{
           unstyled: true,
           classNames: {
-            toast: 'w-[351px] xs:w-[480px] flex gap-2 bg-background-h p-4 border border-border rounded-lg shadow-black shadow-md',
+            toast: 'w-[351px] xs:w-[480px] flex gap-2 bg-background-sh p-4 border border-border rounded-lg shadow-black shadow-sm',
             title: 'text-xs font-base text-white mr-4 xs:mr-6',
             description: 'text-xs font-base text-white',
-            actionButton: 'h-8 inline-flex justify-center items-center px-3 text-xs text-nowrap transition-colors border border-input hover:bg-accent hover:text-accent-foreground rounded-md shadow-sm bg-background'
+            actionButton: 'h-8 inline-flex justify-center items-center px-3 text-xs text-nowrap transition-colors border border-input hover:bg-accent hover:text-accent-foreground rounded-md shadow-sm bg-background-sh'
           }
         }}
         />

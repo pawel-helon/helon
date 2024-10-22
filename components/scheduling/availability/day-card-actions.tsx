@@ -160,11 +160,11 @@ export function DayCardActions(props: {
             <DuplicateDay weekNumber={props.weekNumber} day={props.day} weekDays={props.weekDays} slots={props.slots}/>
             <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-20 rounded-l-none px-1.5">
+                <Button variant="outline" className="w-20 rounded-l-none px-1.5 bg-background-sh">
                   <ChevronDown size={16} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
+              <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
                 <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
                   {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
                 </Button>
@@ -188,7 +188,7 @@ export function DayCardActions(props: {
                 <ChevronDown size={16} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-black shadow-black shadow-md p-1">
+            <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
               <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
                 {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
               </Button>

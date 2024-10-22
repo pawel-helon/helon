@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       return createResponse("Failed to delete recurring slots", 503);
     }
 
-    return createResponse("Recurring slots deleted", 204);
+    return createResponse("Recurring slots have been removed", 204);
   } catch (error) {
     console.error(error);
     return createResponse("An unexpected error occurred", 500);

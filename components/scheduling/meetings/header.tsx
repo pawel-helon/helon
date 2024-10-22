@@ -5,22 +5,10 @@ import { useRouter } from "next/navigation"
 import { useMedia } from "react-use"
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { Text } from "@/components/typography"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-
-function getWeekBadgeVariant(weekNumber: number) {
-  if (weekNumber > 11 && weekNumber < 25) {
-    return "spring";
-  } else if (weekNumber > 24 && weekNumber < 38) {
-    return "summer";
-  } else if (weekNumber > 37 && weekNumber < 51) {
-    return "autumn";
-  } else {
-    return "winter";
-  }
-}
+import { getBadgeVariant } from "@/lib/scheduling"
 
 type Week = { weekNumber: number; firstDay: string; lastDay: string };
 
@@ -35,7 +23,7 @@ export function Header(props: {
 }) {
   const isMobile = useMedia("(max-width: 480px)", false);
   const router = useRouter();
-  const weekBadgeVariant = getWeekBadgeVariant(props.weekNumber);
+  const badgeVariant = getBadgeVariant(props.weekNumber);
 
   return (
     <>
@@ -44,12 +32,12 @@ export function Header(props: {
           <div className="flex justify-between">
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Badge variant={weekBadgeVariant} className="min-w-[8rem] h-min justify-between">
+                <div className={cn(badgeVariant, "min-w-[8rem] h-6 inline-flex items-center justify-between px-2.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
                   {`${String(new Date(props.weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(props.weekDays[props.weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[props.weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
                   <ChevronDown size={16} className="ml-2 -mr-1"/>
-                </Badge>
+                </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="bottom" align="start" className="h-min flex flex-col bg-black shadow-black shadow-md">
+              <DropdownMenuContent side="bottom" align="start" className="h-min flex flex-col bg-background-sh shadow-black shadow-sm">
                 <div className="w-full max-h-[280px] flex flex-col pr-1 gap-0.5 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
                   {props.weeks.map((w) => {
                     const year = new Date(w.firstDay).getFullYear();
@@ -95,12 +83,12 @@ export function Header(props: {
             <Text variant="h1">Scheduling</Text>
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Badge variant={weekBadgeVariant} className="min-w-[8rem] h-min justify-between">
+                <div className={cn(badgeVariant, "min-w-[8rem] h-6 inline-flex justify-between items-center px-3 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
                   {`${String(new Date(props.weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(props.weekDays[props.weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[props.weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
                   <ChevronDown size={16} className="ml-2 -mr-1"/>
-                </Badge>
+                </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="bottom" align="start" className="h-min flex flex-col bg-black shadow-black shadow-md">
+              <DropdownMenuContent side="bottom" align="start" className="h-min flex flex-col shadow-black shadow-sm bg-background-sh">
                 <div className="w-full max-h-[280px] flex flex-col pr-1 gap-0.5 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
                   {props.weeks.map((w) => {
                     const year = new Date(w.firstDay).getFullYear();

@@ -3,13 +3,11 @@
 import { useMemo, useState } from "react";
 import { useMedia } from "react-use";
 import { EllipsisVertical } from "lucide-react";
-import { RemoveMeeting } from "@/components/scheduling/meetings/remove-meeting";
 import { Text } from "@/components/typography";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Meeting } from "@prisma/client";
-import { RescheduleMeeting } from "./reschedule-meeting";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -43,9 +41,7 @@ export function DayCard(props: {
                             <EllipsisVertical size={16} />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
-                          {/* <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} /> */}
-                          {/* <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} /> */}
+                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-sm p-1">
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -88,9 +84,7 @@ export function DayCard(props: {
                             <EllipsisVertical size={16}/>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-md p-1">
-                          <RescheduleMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
-                          <RemoveMeeting meetingId={m.id} userName={m.userName} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />
+                        <DropdownMenuContent align="end" sideOffset={8} className="min-w-[6rem] flex flex-col bg-black shadow-black shadow-sm p-1">
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

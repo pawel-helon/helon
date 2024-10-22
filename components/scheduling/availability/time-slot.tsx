@@ -54,12 +54,12 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
         {props.slot.recurring && <span className="size-2 absolute -top-1 left-0 xs:-left-1 rounded-full bg-teal-500"></span>}
         <DropdownMenu open={isHoursDropdownOpened} onOpenChange={setIsHoursDropdownOpened}>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
+            <Button variant="outline" size="sm" className="w-16 min-w-[64px] bg-background-sh">
               {String(props.slot.dateTime.getHours()).padStart(2, '0')}
               <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="start" className="w-16 min-w-[64px] flex flex-col bg-black shadow-black shadow-md">
+          <DropdownMenuContent side="bottom" align="start" className="w-16 min-w-[64px] flex flex-col shadow-black shadow-sm bg-background-sh">
             <div className="w-full max-h-[320px] flex flex-col pr-1 gap-0.5 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
               {HOURS.map((hour) => {
                 return (
@@ -73,12 +73,12 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
         </DropdownMenu>
         <DropdownMenu open={isMinutesDropdownOpened} onOpenChange={setIsMinutesDropdownOpened}>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="w-16 min-w-[64px]">
+            <Button variant="outline" size="sm" className="w-16 min-w-[64px] bg-background-sh">
               {String(props.slot.dateTime.getMinutes()).padStart(2, '0')}
               <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col bg-background-sh shadow-black shadow-md">
+          <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col shadow-black shadow-sm bg-background-sh">
             <div className="w-full max-h-[140px] flex flex-col gap-0.5">
               {MINUTES.map((minute) => {
                 return (

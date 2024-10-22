@@ -129,7 +129,7 @@ export function DuplicateDay(props: {
       {isMobile ? (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant='outline' className='w-full rounded-r-none'>
+            <Button variant='outline' className='w-full rounded-r-none bg-background-sh'>
               Duplicate
             </Button>
           </SheetTrigger>
@@ -163,7 +163,7 @@ export function DuplicateDay(props: {
       ) : (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant='outline' size='sm' className='w-[100px] justify-start rounded-r-none text-left pl-2.5'>
+          <Button variant='outline' size='sm' className='w-[100px] justify-start rounded-r-none text-left pl-2.5 bg-background-sh'>
             Duplicate
           </Button>
         </DialogTrigger>
