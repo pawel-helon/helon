@@ -175,7 +175,7 @@ export function DayCardActions(props: {
             </DropdownMenu>
           </div>
           <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} className={cn('w-full', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
-            <Plus size={16} className="size-4 -ml-2 mr-2"/>
+            <Plus size={16} className="size-4 -ml-2 mr-1"/>
             {props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
           </Button>
         </div>

@@ -58,7 +58,7 @@ export function DayCard(props: {
           </div>
         </div>
       ) : (
-        <div style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh">
+        <div style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border border-border rounded-md shadow-md bg-background-sh">
           <div className="w-full flex justify-between items-center p-3">
             <Text variant='p-base-thick' className={cn('mb-2', new Date() < new Date(date.setHours(23,59,59,999)) ? 'text-foreground' : 'text-muted-foreground')}>
               {DAYS_OF_WEEK[date.getDay()]}

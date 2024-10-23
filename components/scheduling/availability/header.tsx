@@ -8,7 +8,24 @@ import { Text } from "@/components/typography"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { getBadgeVariant } from "@/lib/scheduling"
+
+export const getBadgeVariant = (weekNumber: number) => {
+  if (weekNumber > 11 && weekNumber < 25) {
+    return "bg-gradient-to-r from-green-500/85 to-green-600/85";
+  } else if (weekNumber > 24 && weekNumber < 38) {
+    return "bg-gradient-to-r from-yellow-400 to-yellow-500";
+  } else if (weekNumber > 37 && weekNumber < 51) {
+    return "bg-gradient-to-r from-orange-500/90 to-orange-600/90";
+  } else {
+    return "bg-gradient-to-r from-stone-300 to-stone-400";
+  }
+}
+
+function getDateRange(from: string, to: string) {
+  const fromDate = `${String(new Date(from).getDate()).padStart(2, '0')}.${String(new Date(from).getMonth() + 1).padStart(2, '0')}`;
+  const toDate = `${String(new Date(to).getDate()).padStart(2, '0')}.${String(new Date(to).getMonth() + 1).padStart(2, '0')}`;
+  return `${fromDate} - ${toDate}`;
+}
 
 type Week = { weekNumber: number; firstDay: string; lastDay: string };
 
@@ -33,7 +50,7 @@ export function Header(props: {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <div className={cn(badgeVariant, "min-w-[8rem] h-6 inline-flex justify-between items-center px-2.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
-                  {`${String(new Date(props.weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(props.weekDays[props.weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[props.weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
+                  {getDateRange(props.weekDays[0], props.weekDays[props.weekDays.length - 1])}
                   <ChevronDown size={16} className="ml-2 -mr-1"/>
                 </div>
               </DropdownMenuTrigger>
@@ -43,7 +60,7 @@ export function Header(props: {
                     const year = new Date(w.firstDay).getFullYear();
                     return (
                       <button key={w.weekNumber} onClick={() => router.push(`/scheduling/availability/${year}-week-${w.weekNumber}`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
-                        {`${String(new Date(w.firstDay).getDate()).padStart(2, '0')}.${String(new Date(w.firstDay).getMonth() + 1).padStart(2, '0')} - ${String(new Date(w.lastDay).getDate()).padStart(2, '0')}.${String(new Date(w.lastDay).getMonth() + 1).padStart(2, '0')}`}
+                        {getDateRange(w.firstDay, w.lastDay)}
                       </button>
                     )
                   })}
@@ -84,7 +101,7 @@ export function Header(props: {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <div className={cn(badgeVariant, "min-w-[8rem] h-6 inline-flex justify-between items-center px-3 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
-                  {`${String(new Date(props.weekDays[0]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[0]).getMonth() + 1).padStart(2, '0')} - ${String(new Date(props.weekDays[props.weekDays.length - 1]).getDate()).padStart(2, '0')}.${String(new Date(props.weekDays[props.weekDays.length - 1]).getMonth() + 1).padStart(2, '0')}`}
+                  {getDateRange(props.weekDays[0], props.weekDays[props.weekDays.length - 1])}
                   <ChevronDown size={16} className="ml-2 -mr-1"/>
                 </div>
               </DropdownMenuTrigger>
@@ -94,7 +111,7 @@ export function Header(props: {
                     const year = new Date(w.firstDay).getFullYear();
                     return (
                       <button key={w.weekNumber} onClick={() => router.push(`/scheduling/availability/${year}-week-${w.weekNumber}`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
-                        {`${String(new Date(w.firstDay).getDate()).padStart(2, '0')}.${String(new Date(w.firstDay).getMonth() + 1).padStart(2, '0')} - ${String(new Date(w.lastDay).getDate()).padStart(2, '0')}.${String(new Date(w.lastDay).getMonth() + 1).padStart(2, '0')}`}
+                        {getDateRange(w.firstDay, w.lastDay)}
                       </button>
                     )
                   })}

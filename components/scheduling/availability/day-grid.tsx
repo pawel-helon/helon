@@ -13,6 +13,33 @@ import { cn } from "@/lib/utils";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+function getDayOfWeek(day: string) {
+  return DAYS_OF_WEEK[new Date(day).getDay()];
+}
+function getDateOfMeeting(day: string) {
+  return `${String(new Date(day).getDate()).padStart(2, '0')}.${String(new Date(day).getMonth() + 1).padStart(2, '0')}`;
+}
+function isBeforeEndOfDay(day: string) {
+  if (new Date() < new Date(`${day}T23:59:59.999Z`)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+function getBadgeVariant(weekNumber: number) {
+  if (weekNumber > 11 && weekNumber < 25) {
+    return "bg-gradient-to-r from-green-500/85 to-green-600/85";
+  } else if (weekNumber > 24 && weekNumber < 38) {
+    return "bg-gradient-to-r from-yellow-400 to-yellow-500";
+  } else if (weekNumber > 37 && weekNumber < 51) {
+    return "bg-gradient-to-r from-orange-500/90 to-orange-600/90";
+  } else {
+    return "bg-gradient-to-r from-stone-300 to-stone-400";
+  }
+}
+
+
 type DaySlots = { day: string, slots: Slot[] };
 
 export function DayGrid(props: {
@@ -23,6 +50,7 @@ export function DayGrid(props: {
 }) {
   const isMobile = useMedia("(max-width: 480px)", false);
   const [isRecurringSlotsOnly, setIsRecurringSlotsOnly] = useState<boolean>(false);
+  const badgeVariant = getBadgeVariant(props.weekNumber);
   
   useEffect(() => {
     async function initDeletePastSlots() {
@@ -49,26 +77,24 @@ export function DayGrid(props: {
             <Label htmlFor='only-recurring' className='text-xs text-muted-foreground'>Recurring only</Label>
             <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className='data-[state=checked]:bg-teal-500'/>
           </div>
-          <Accordion type="single" defaultValue={props.weekDays[0]}>
-            {props.slotsForWeek.map((day) => {
-              return (
-                <AccordionItem key={day.day} value={day.day}>
-                  <AccordionTrigger className="hover:no-underline">
-                    <div className="flex items-end gap-2">
-                      <Text variant='p-base-thick' className={cn('leading-none', new Date() < new Date(`${day.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
-                        {DAYS_OF_WEEK[new Date(day.day).getDay()]}
-                      </Text>
-                      <Text variant='p-small-thin' className={cn('leading-none', new Date() < new Date(`${day.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
-                        {String(new Date(day.day).getDate()).padStart(2, '0')}.{String(new Date(day.day).getMonth() + 1).padStart(2, '0')}
-                      </Text>
+          <Accordion type="single" defaultValue={props.weekDays[0]} className="flex flex-col gap-4">
+            {props.slotsForWeek.map((day) => (
+              <AccordionItem key={day.day} value={day.day} className="border border-border rounded-md shadow-lg shadow-black">
+                <AccordionTrigger className="px-2 hover:no-underline">
+                  <div className="flex items-center gap-2">
+                    <div className={cn(badgeVariant, "h-5 w-fit inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
+                      {getDateOfMeeting(day.day)}
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
-                  </AccordionContent>
-                </AccordionItem>
-              )
-            })}
+                    <Text variant='p-base-thick' className={cn('leading-none', isBeforeEndOfDay(day.day) ? 'text-foreground' : 'text-muted-foreground')}>
+                      {getDayOfWeek(day.day)}
+                    </Text>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-0">
+                  <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
           </Accordion>
         </>
       ) : (

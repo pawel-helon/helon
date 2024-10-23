@@ -42,7 +42,7 @@ export function Breadcrumbs() {
               </BreadcrumbItem>
             ))}
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/scheduling/meetings-temp/${segments[segments.length - 2]}/monday`}>
+              <BreadcrumbLink href={`/scheduling/meetings/${segments[segments.length - 2]}/monday`}>
                 {`${capitalizeFirstLetter(segments[segments.length - 2].split('-')[1])} ${segments[segments.length - 2].split('-')[2]}`}
               </BreadcrumbLink>
             </BreadcrumbItem>

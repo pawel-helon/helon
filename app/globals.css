@@ -65,6 +65,7 @@ input[type=number] {
     --radius: 0.5rem;
 
     --background-sh: 0 0% 4%;
+    --background-sh-hover: 0 0% 6%;
     --background-h: 262 100% 3%;
     --foreground-h: 0 100% 100%;
     --muted-foreground-h: 261 48% 15%;

@@ -7,10 +7,21 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { cn } from "@/lib/utils";
 import { Meeting } from "@prisma/client";
 import { usePathname } from "next/navigation";
-import { getBadgeVariant } from "@/lib/scheduling";
 import Link from "next/link";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const getBadgeVariant = (weekNumber: number) => {
+  if (weekNumber > 11 && weekNumber < 25) {
+    return "bg-gradient-to-r from-green-500/85 to-green-600/85";
+  } else if (weekNumber > 24 && weekNumber < 38) {
+    return "bg-gradient-to-r from-yellow-400 to-yellow-500";
+  } else if (weekNumber > 37 && weekNumber < 51) {
+    return "bg-gradient-to-r from-orange-500/90 to-orange-600/90";
+  } else {
+    return "bg-gradient-to-r from-stone-300 to-stone-400";
+  }
+}
 
 function getDayOfWeek(day: string) {
   return DAYS_OF_WEEK[new Date(day).getDay()];
@@ -20,6 +31,9 @@ function getDateOfMeeting(day: string) {
 }
 function getTimeOfMeeting(dateTime: Date) {
   return `${String(dateTime.getHours()).padStart(2, '0')}:${String(dateTime.getMinutes()).padStart(2, '0')}`;
+}
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 type MeetingsSlots = { day: string, meetings: Meeting[] };
@@ -71,56 +85,52 @@ export function DayList(props: {
             <>
               {emptyCards.map((card) => {
                 return (
-                  <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+                  <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col rounded-md border border-border shadow-black shadow-lg bg-background-sh" />
                 )
               })}
             </>
           )}
           {props.weekMeetings
-            .filter((d) => DAYS_OF_WEEK[new Date(d.day).getDay()] !== day.charAt(0).toUpperCase() + day.slice(1))
-            .map((d) => {
-              return (
-                <Link key={d.day} href={`/scheduling/meetings-temp/${week}/${getDayOfWeek(d.day).charAt(0).toLowerCase() + getDayOfWeek(d.day).slice(1)}#meetings`} className={cn(d.meetings.length > 0 ? "hover:bg-secondary/70 hover:cursor-pointer" : "","min-h-[120px] w-full flex flex-col p-4 border border-border rounded-md shadow-lg bg-background-sh")}>
-                  <div className="w-full flex justify-between mb-8">
-                    <Text variant="p-base-thick">
-                      {getDayOfWeek(d.day)}
-                    </Text>
-                    <div className={cn(badgeVariant, "h-5 inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
-                      {getDateOfMeeting(d.day)}
-                    </div>
+            .filter((d) => DAYS_OF_WEEK[new Date(d.day).getDay()] !== capitalizeFirstLetter(day))
+            .map((d) => (
+              <Link key={d.day} href={`/scheduling/meetings/${week}/${getDayOfWeek(d.day).charAt(0).toLowerCase() + getDayOfWeek(d.day).slice(1)}#meetings`} className="hover:bg-background-sh-hover hover:cursor-pointer min-h-[120px] w-full flex flex-col p-4 animation duration-200 transition-colors border border-border rounded-md shadow-black shadow-lg bg-background-sh">
+                <div className="w-full flex justify-between mb-8">
+                  <Text variant="p-base-thick">
+                    {getDayOfWeek(d.day)}
+                  </Text>
+                  <div className={cn(badgeVariant, "h-5 inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
+                    {getDateOfMeeting(d.day)}
                   </div>
-                  {d.meetings.length > 0 ? (
-                    <div className="flex flex-col gap-2">
-                      {d.meetings.map((m) => {
-                        return (
-                          <div key={m.id} className="flex justify-between">
-                            <Text variant="p-small-thick" className="text-muted-foreground">
-                              {m.userName}
-                            </Text>
-                            <Text variant="p-small-thick">
-                              {getTimeOfMeeting(m.dateTime)}
-                            </Text>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    <div className="relative h-[120px]">
-                      <Text variant="p-small-thick" className="absolute top-1/3 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center text-balance text-muted-foreground">
-                        {`You don't have any meetings scheduled for ${getDayOfWeek(d.day)}`}
-                      </Text>
-                    </div>
-                  )}
-                </Link>
-              )
-          })}
+                </div>
+                {d.meetings.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {d.meetings.map((m) => {
+                      return (
+                        <div key={m.id} className="flex justify-between">
+                          <Text variant="p-small-thick" className="text-muted-foreground">
+                            {m.userName}
+                          </Text>
+                          <Text variant="p-small-thick">
+                            {getTimeOfMeeting(m.dateTime)}
+                          </Text>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="relative h-[120px]">
+                    <Text variant="p-small-thick" className="absolute top-1/3 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center text-balance text-muted-foreground">
+                      {`You don't have any meetings scheduled on ${getDayOfWeek(d.day)}`}
+                    </Text>
+                  </div>
+                )}
+              </Link>
+          ))}
           {props.weekNumber === 53 && (
             <>
-              {emptyCards.map((card) => {
-                return (
-                  <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
-                )
-              })}
+              {emptyCards.map((card) => (
+                <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+              ))}
             </>
           )}
         </div>

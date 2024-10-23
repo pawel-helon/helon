@@ -11,7 +11,7 @@ async function getWeek() {
   return { year, weekNumber };
 }
 
-export default async function MeetingsPage() {
+export default async function MeetingsRootPage() {
   const { year, weekNumber } = await getWeek();
-  redirect(`/scheduling/meetings/${year}-week-${weekNumber}`);
+  redirect(`/scheduling/meetings/${year}-week-${weekNumber}/monday`);
 }

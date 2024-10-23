@@ -73,6 +73,7 @@ const config: Config = {
         "accent-orange-h": "hsl(var(--accent-orange-h))",
         "accent-pink-h": "hsl(var(--accent-pink-h))",
         "border-h": "hsl(var(--border-h))",
+        "background-sh-hover": "hsl(var(--background-sh-hover))"
       },
       borderRadius: {
         lg: "var(--radius)",

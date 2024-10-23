@@ -1,16 +1,9 @@
-import { redirect } from "next/navigation";
 import { cache } from "react";
+import { getDayMeetings } from "@/actions/server-actions";
+import { Meeting } from "@prisma/client";
+import { DayMeetings } from "@/components/scheduling/meetings/day-meetings";
 
-async function getWeek() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const dayOfWeek = today.getDay();
-  const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
-  const monday = new Date(today.setDate(today.getDate() + diffToMonday));
-  const yearStart = new Date(monday.getFullYear(), 0 , 1);
-  const weekNumber = Math.ceil((((monday.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  return { year, weekNumber };
-}
+const DAYS_OF_WEEK = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
 const cachedWeekDays = cache((year: number, week: number) => {
   if (week < 1 || week > 53 || year < 2020 || year > 2100) {
@@ -53,12 +46,16 @@ const cachedWeekDays = cache((year: number, week: number) => {
   return weekDays;
 });
 
-const DAYS_OF_WEEK = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
-export default async function MeetingsPage() {
-  const { year, weekNumber } = await getWeek();
+export default async function MeetingsWeekDayPage(props: {
+  params: { week: string; day: string }
+}) {
+  const year = Number(props.params.week.split('-')[0]);
+  const weekNumber = Number(props.params.week.split('-')[2]);
   const weekDays = cachedWeekDays(year, weekNumber);
-  const day = DAYS_OF_WEEK[new Date(weekDays[0]).getDay()];
+  const day = weekDays.filter((d) => DAYS_OF_WEEK[new Date(d).getDay()] === props.params.day);
+  const gettingDayMeetings = await getDayMeetings(day[0]);
+  const meetings = gettingDayMeetings.meetings as Meeting[];
 
-  redirect(`/scheduling/meetings-temp/${year}-week-${weekNumber}/${day}`);
+  return <DayMeetings weekNumber={weekNumber} day={day[0]} meetings={meetings} />;
 }

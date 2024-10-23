@@ -1,40 +1,16 @@
-import Link from 'next/link';
-import { cache } from 'react'
-import { getMeetingsForWeek } from '@/actions/server-actions'
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { Header } from '@/components/scheduling/meetings/header';
-import { DayGrid } from '@/components/scheduling/meetings/day-grid';
-import { Meeting } from '@prisma/client';
+import { redirect } from "next/navigation";
+import { cache } from "react";
 
-type Week = { weekNumber: number; firstDay: string; lastDay: string };
-
-const cachedWeeks = cache((year: number) => {
-  const yearStart = new Date(year, 0, 1).getDay();
-  const yearEnd = new Date(year, 11, 31).getDay();
-  let weekNumber: number = 0;
-  let firstDay: string = '';
-  let lastDay: string = '';
-  const weeks: Week[] = [];
-
-  for (weekNumber = 1; weekNumber <= 53; weekNumber++) {
-    if (weekNumber === 1) {
-      firstDay = `${year}-01-01`;
-      lastDay = `${year}-01-0${8 - yearStart}`;
-      weeks.push({weekNumber, firstDay, lastDay});
-    } else if (weekNumber === 53) {
-      firstDay = `${year}-12-${31 - ( yearEnd - 1 )}`;
-      lastDay = `${year}-12-31`;
-      weeks.push({weekNumber, firstDay, lastDay});
-    } else {
-      const firstDayDate = new Date(year, 0, 1 + (weekNumber - 1) * 7 - (yearStart || 7) + 1);
-      const lastDayDate = new Date(year, 0, 1 + (weekNumber - 1) * 7 - (yearStart || 7) + 7);
-      firstDay = `${firstDayDate.getFullYear()}-${firstDayDate.getMonth() + 1}-${firstDayDate.getDate()}`;
-      lastDay = `${lastDayDate.getFullYear()}-${lastDayDate.getMonth() + 1}-${lastDayDate.getDate()}`;
-      weeks.push({weekNumber, firstDay, lastDay});
-    }
-  }
-  return weeks;
-})
+async function getWeek() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const dayOfWeek = today.getDay();
+  const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+  const monday = new Date(today.setDate(today.getDate() + diffToMonday));
+  const yearStart = new Date(monday.getFullYear(), 0 , 1);
+  const weekNumber = Math.ceil((((monday.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return { year, weekNumber };
+}
 
 const cachedWeekDays = cache((year: number, week: number) => {
   if (week < 1 || week > 53 || year < 2020 || year > 2100) {
@@ -77,57 +53,12 @@ const cachedWeekDays = cache((year: number, week: number) => {
   return weekDays;
 });
 
-type DayMeetings = { day: string, meetings: Meeting[] };
+const DAYS_OF_WEEK = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
-const cachedWeekMeetings = cache(async (weekDays: string[]) => {
-  const slotsForWeek = await getMeetingsForWeek(weekDays);
-  const weekSlots = slotsForWeek.weekMeetings as DayMeetings[];
-  return weekSlots;
-})
-
-function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
-  const prevWeek = Array.from({ length: 7 }, (_, i) => new Date(new Date(weekDays[0]).setDate(new Date(weekDays[0]).getDate() + i - 7)).toISOString().split('T')[0]);
-  const nextWeek = Array.from({ length: 7 }, (_, i) => new Date(new Date(weekDays[0]).setDate(new Date(weekDays[0]).getDate() + i + 7)).toISOString().split('T')[0]);
-  const yearOnBackwardNavigation: number = new Date(prevWeek[0]).getFullYear();
-  const yearOnForewardNavigation: number = new Date(nextWeek[nextWeek.length -1]).getFullYear();
-
-  let prevWeekNumber: number = weekNumber
-  if (new Date(weekDays[0]).getFullYear() > new Date(prevWeek[prevWeek.length - 1]).getFullYear()) {
-    prevWeekNumber = 52;
-  } else {
-    prevWeekNumber = weekNumber - 1;
-  }
-
-  let nextWeekNumber: number = weekNumber
-  if (new Date(weekDays[weekDays.length - 1]).getFullYear() < new Date(nextWeek[nextWeek.length - 1]).getFullYear()) {
-    nextWeekNumber = 1;
-  } else {
-    nextWeekNumber = weekNumber + 1;
-  }
-  return { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation };
-}
-
-export default async function WeekMeetingsPage(props: { params: { week: string } }) {
-  const year = Number(props.params.week.split('-')[0]);
-  const weekNumber = Number(props.params.week.split('-')[2]);
-  const weeks = cachedWeeks(year);
+export default async function MeetingsPage() {
+  const { year, weekNumber } = await getWeek();
   const weekDays = cachedWeekDays(year, weekNumber);
-  const weekMeetings = await cachedWeekMeetings(weekDays);
-  const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
+  const day = DAYS_OF_WEEK[new Date(weekDays[0]).getDay()];
 
-  return (
-    <div id="meetings">
-      <Breadcrumbs />
-      <Header weeks={weeks} weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
-      <div className="h-11 mb-8 flex border-b border-border">
-        <Link href="/scheduling/meetings" prefetch={true} className="inline-flex items-center xs:justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
-          Meetings
-        </Link>
-        <Link href="/scheduling/availability" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
-          Availability
-        </Link>
-      </div>
-      <DayGrid weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
-    </div>
-  )
+  redirect(`/scheduling/meetings/${year}-week-${weekNumber}/${day}`);
 }

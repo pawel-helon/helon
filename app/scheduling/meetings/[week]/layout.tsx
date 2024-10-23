@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cache } from "react";
 import { getMeetingsForWeek } from "@/actions/server-actions";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { SelectDayOfWeek } from "@/components/scheduling/meetings/select-day-of-week";
 import { DayList } from "@/components/scheduling/meetings/day-list";
 import { Header } from "@/components/scheduling/meetings/header";
 import { Meeting } from "@prisma/client";
@@ -119,7 +120,7 @@ export default async function MeetingsLayout(props: {
   const weekDays = cachedWeekDays(year, weekNumber);
   const weekMeetings = await cachedWeekMeetings(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
-
+  
   return (
     <div id="meetings">
       <Breadcrumbs />
@@ -132,11 +133,12 @@ export default async function MeetingsLayout(props: {
           Availability
         </Link>
       </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 flex flex-col gap-4">
+      <SelectDayOfWeek year={year} weekNumber={weekNumber} weekDays={weekDays}/>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:pt-9">
+        <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
           {props.children}
         </div>
-        <div className="col-span-1 flex flex-col gap-4">
+        <div className="hidden md:col-span-1 md:flex flex-col gap-4">
           <DayList weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
         </div>
       </div>
