@@ -1,12 +1,13 @@
 "use client"
 
-import { useMedia } from "react-use"
-import { RemoveMeeting } from "./remove-meeting"
-import { RescheduleMeeting } from "./reschedule-meeting"
-import { Text } from "@/components/typography"
+import { useMedia } from "react-use";
+import { Text } from "@/components/typography";
+import { Accordion, AccordionContent, AccordionTrigger, AccordionItem } from "@/components/ui/accordion";
+import { RemoveMeeting } from "@/components/scheduling/meetings/remove-meeting";
+import { RescheduleMeetingMobile } from "@/components/scheduling/meetings/reschedule-meeting-mobile";
+import { RescheduleMeetingDesktop } from "@/components/scheduling/meetings/reschedule-meeting-desktop";
 import { cn } from "@/lib/utils";
 import { Meeting } from "@prisma/client";
-import { Accordion, AccordionContent, AccordionTrigger, AccordionItem } from "@/components/ui/accordion"
 
 function getBadgeVariant(weekNumber: number) {
   if (weekNumber > 11 && weekNumber < 25) {
@@ -70,7 +71,7 @@ export function DayMeetings(props: { weekNumber: number, day: string, meetings: 
                     </div>
                     <div className="w-full flex flex-col gap-2 my-2">
                       <RemoveMeeting meetingId={m.id} userName={m.userName} />
-                      <RescheduleMeeting meetingId={m.id} userName={m.userName} />
+                      <RescheduleMeetingMobile meetingId={m.id} userName={m.userName} />
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -122,7 +123,7 @@ export function DayMeetings(props: { weekNumber: number, day: string, meetings: 
                     </div>
                     <div className="w-full flex justify-end gap-2 mt-8">
                       <RemoveMeeting meetingId={m.id} userName={m.userName} />
-                      <RescheduleMeeting meetingId={m.id} userName={m.userName} />
+                      <RescheduleMeetingDesktop meetingId={m.id} userName={m.userName} />
                     </div>
                   </div>
               ))}

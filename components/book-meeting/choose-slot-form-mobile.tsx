@@ -22,7 +22,7 @@ function getSlotDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export const ChooseSlotFormMobile = React.memo(function ChooseSlotForm() {
+export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -114,7 +114,7 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotForm() {
                       {slots.filter((s, i) => displayedFirstSlot <= i && i < displayedLastSlot).map((s) => (
                         <RadioGroup key={s.id} name="slotId">
                           <RadioGroupItem key={s.id} value={s.id} onClick={() => setSelectedSlot(s.id)} className="w-full" asChild>
-                            <Button variant={selectedSlot === s.id ? "default" : "outline"} size="sm" className="w-full">
+                            <Button variant={selectedSlot === s.id ? "secondary" : "outline"} size="sm" className={selectedSlot === s.id ? "w-full bg-accent" : "w-full"}>
                               {getSlotTime(s.dateTime)}
                             </Button>
                           </RadioGroupItem>

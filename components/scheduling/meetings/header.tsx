@@ -60,7 +60,7 @@ export function Header(props: {
                   {props.weeks.map((w) => {
                     const year = new Date(w.firstDay).getFullYear();
                     return (
-                      <button key={w.weekNumber} onClick={() => router.push(`/scheduling/meetings/${year}-week-${w.weekNumber}`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
+                      <button key={w.weekNumber} onClick={() => router.push(`/scheduling/meetings/${year}-week-${w.weekNumber}/monday`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
                         {getDateRange(w.firstDay, w.lastDay)}
                       </button>
                     )
@@ -69,12 +69,12 @@ export function Header(props: {
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex gap-2 items-center">
-              <Link href={`/scheduling/meetings/${props.yearOnBackwardNavigation}-week-${props.prevWeekNumber}`}>
+              <Link href={`/scheduling/meetings/${props.yearOnBackwardNavigation}-week-${props.prevWeekNumber}/monday`}>
                 <Button size="icon" variant="outline" className="focus-visible:ring-transparent rounded-full">
                   <ChevronLeft size={18}/>
                 </Button>
               </Link>
-              <Link href={`/scheduling/meetings/${props.yearOnForewardNavigation}-week-${props.nextWeekNumber}`}>
+              <Link href={`/scheduling/meetings/${props.yearOnForewardNavigation}-week-${props.nextWeekNumber}/monday`}>
                 <Button size="icon" variant="outline" className="focus-visible:ring-transparent rounded-full">
                   <ChevronRight size={18}/>
                 </Button>
@@ -86,12 +86,12 @@ export function Header(props: {
       ) : (
         <div className="flex flex-col gap-2 my-[4rem]">
           <div className="flex gap-2 items-center">
-            <Link href={`/scheduling/meetings/${props.yearOnBackwardNavigation}-week-${props.prevWeekNumber}`}>
+            <Link href={`/scheduling/meetings/${props.yearOnBackwardNavigation}-week-${props.prevWeekNumber}/monday`}>
               <Button size="icon" variant="outline" className="focus-visible:ring-transparent rounded-full">
                 <ChevronLeft size={18}/>
               </Button>
             </Link>
-            <Link href={`/scheduling/meetings/${props.yearOnForewardNavigation}-week-${props.nextWeekNumber}`}>
+            <Link href={`/scheduling/meetings/${props.yearOnForewardNavigation}-week-${props.nextWeekNumber}/monday`}>
               <Button size="icon" variant="outline" className="focus-visible:ring-transparent rounded-full">
                 <ChevronRight size={18}/>
               </Button>
@@ -111,7 +111,7 @@ export function Header(props: {
                   {props.weeks.map((w) => {
                     const year = new Date(w.firstDay).getFullYear();
                     return (
-                      <button key={w.weekNumber} onClick={() => router.push(`/scheduling/meetings/${year}-week-${w.weekNumber}`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
+                      <button key={w.weekNumber} onClick={() => router.push(`/scheduling/meetings/${year}-week-${w.weekNumber}/monday`)} className={cn(w.weekNumber === props.weekNumber ? "bg-accent" : "" ,"h-8 text-xs text-left px-1.5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground")}>
                         {getDateRange(w.firstDay, w.lastDay)}
                       </button>
                     )
