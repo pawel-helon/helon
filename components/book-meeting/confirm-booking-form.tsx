@@ -21,7 +21,7 @@ function getSlotDateAndTime(date: Date) {
   const day = String(new Date(date).getDate()).padStart(2, "0");
   const year = new Date(date).getFullYear();
   const time = String(new Date(date).getHours()).padStart(2, "0") + ":" + String(new Date(date).getMinutes()).padStart(2, "0");
-  return <span>{dayOfWeek}, {month} {day}, {year} <span className="text-muted-foreground">at</span> {time}</span>;
+  return `${dayOfWeek}, ${month} ${day}, ${year} at ${time}`;
 }
 
 export function ConfirmBookingForm(props: {
@@ -31,13 +31,6 @@ export function ConfirmBookingForm(props: {
   const router = useRouter();
   const [state, setState] = useState<BookingFormState | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
-
-  const utcDate = new Date(props.slotDateTime);
-  const dayOfTheWeek = utcDate.toLocaleDateString("en-US", { weekday: "long" });
-  const month = utcDate.toLocaleDateString("en-US", { month: "long" });
-  const year = utcDate.getFullYear();
-  const day = String(utcDate.getDate()).padStart(2, "0");
-  const time = utcDate.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false}).slice(0, 5);
 
   const handleSubmit = useCallback(async function handleSubmit(formData: FormData) {
     const validatedFields = BookingSchema.safeParse({
@@ -65,12 +58,10 @@ export function ConfirmBookingForm(props: {
         await sendBookingConfirmation(bookingSlot.meeting);
         router.push("/home");
         
-        toast.success(`Your meeting has been booked on ${dayOfTheWeek}, ${month} ${day}, ${year} at ${time}. We'll reach out to you soon.`, {
+        toast.success(`Your meeting has been booked on ${getSlotDateAndTime(props.slotDateTime)}. We'll reach out to you soon.`, {
           action: {
             label: "Close",
-            onClick: () => {
-              toast.dismiss();
-            },
+            onClick: () => { toast.dismiss() },
           },
           duration: Infinity,
         });
@@ -78,7 +69,7 @@ export function ConfirmBookingForm(props: {
     } catch (e) {
       toast.error("An unexpected error occurred. Please try again later.");
     }
-  },[day, dayOfTheWeek, month, props.slotID, router, time, year])
+  },[props.slotDateTime, props.slotID, router])
 
   async function handleCancel() {
     try {
@@ -110,19 +101,19 @@ export function ConfirmBookingForm(props: {
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-4">
-      <div className="w-full flex justify-between items-center p-4 gap-4 mb-6 border border-border rounded-sm">
-        <Text variant="p-small-thin">
+      <div className="w-full flex flex-col xs:flex-row justify-between items-center p-2 xs:p-4 gap-4 mb-6 border border-border rounded-sm">
+        <Text variant="p-small-thin" className="text-center xs:text-left">
           You have selected meeting on{" "}<span className="text-foreground-h">{getSlotDateAndTime(props.slotDateTime)}</span>
         </Text>
-        <Button onClick={handleChangeSlot} type="button" className="focus-visible:ring-transparent" variant="outline" size="sm">
+        <Button onClick={handleChangeSlot} type="button" className="w-full xs:w-fit focus-visible:ring-transparent" variant="outline" size="sm">
           Change
         </Button>
       </div>
-      <div className="w-full flex gap-4">
+      <div className="w-full flex flex-col xs:flex-row gap-4">
         <div className="w-full flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="fullName">Full name</Label>
-            <Input id="fullName" name="fullName" placeholder="Enter your full name" />
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="fullName" className="text-xs font-normal text-foreground-h">Full name</Label>
+            <Input id="fullName" name="fullName" placeholder="Enter your full name" className="text-xs font-medium text-foreground-h" />
             {state?.errors?.fullName ? (
               <Text variant="p-small-thin" className="text-right">
                 {state.errors.fullName}
@@ -131,14 +122,9 @@ export function ConfirmBookingForm(props: {
               <div className="h-[1rem]" />
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="phoneNumber">Phone number</Label>
-            <Input
-              type="number"
-              id="phoneNumber"
-              name="phoneNumber"
-              placeholder="Enter your phone number"
-            />
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="phoneNumber" className="text-xs font-normal text-foreground-h">Phone number</Label>
+            <Input type="number" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" className="text-xs font-medium text-foreground-h" />
             {state?.errors?.phoneNumber ? (
               <Text variant="p-small-thin" className="text-right">
                 {state.errors.phoneNumber}
@@ -147,13 +133,9 @@ export function ConfirmBookingForm(props: {
               <div className="h-[1rem]" />
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              placeholder="Enter your email address"
-            />
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="email" className="text-xs font-normal text-foreground-h">Email</Label>
+            <Input id="email" name="email" placeholder="Enter your email address" className="text-xs font-medium text-foreground-h" />
             {state?.errors?.email ? (
               <Text variant="p-small-thin" className="text-right">
                 {state.errors.email}
@@ -163,20 +145,15 @@ export function ConfirmBookingForm(props: {
             )}
           </div>
         </div>
-        <div className="w-full grow flex flex-col gap-2">
-          <Label htmlFor="message">Message</Label>
-          <Textarea
-            id="message"
-            name="message"
-            placeholder="Briefly describe your needs."
-            className="grow resize-none overflow-y-scroll scrollbar scrollbar-thumb-border scrollbar-thumb-rounded-full scrollbar-track-card-background max-h-[100vh] scrollbar-w-1 scrollbar-h-1"
-          />
+        <div className="w-full grow flex flex-col gap-1">
+          <Label htmlFor="message" className="text-xs font-normal text-foreground-h">Message</Label>
+          <Textarea id="message" name="message" placeholder="Briefly describe your needs." className="text-xs min-h-[160px] xs:min-h-1 xs:grow resize-none overflow-y-scroll scrollbar scrollbar-thumb-border scrollbar-thumb-rounded-full scrollbar-track-card-background max-h-[100vh] scrollbar-w-1 scrollbar-h-1" />
         </div>
-        <div className="w-full absolute bottom-0 right-0 flex p-6 justify-end gap-2">
-            <Button onClick={handleCancel} type="button" variant="ghost">Cancel</Button>
-            <Button disabled={isPending} type="submit" className="min-w-[72px]">
-              {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Book"}
-            </Button>
+        <div className="w-full absolute bottom-0 right-0 flex flex-col xs:flex-row p-6 xs:justify-end gap-2">
+          <Button onClick={handleCancel} type="button" variant="ghost">Cancel</Button>
+          <Button disabled={isPending} type="submit" className="min-w-[72px]">
+            {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Book"}
+          </Button>
         </div>
       </div>
     </form>

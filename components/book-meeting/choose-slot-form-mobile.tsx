@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Text } from "@/components/typography";
 import { RadioGroup, RadioGroupSlotItem as RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -96,7 +96,7 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
 
   return (
     <Sheet open={true} onOpenChange={() => router.push("/home")}>
-      <SheetContent id="choose-slot-form" className="w-fit bg-background-sh" aria-describedby="">
+      <SheetContent id="choose-slot-form" className="min-w-[332px] bg-background-h" aria-describedby="">
         <ProgressBar />
         <SheetTitle className="text-center">Book meeting</SheetTitle>
           <form action={handleOnSubmit} className="flex flex-col gap-4 mt-8">
@@ -121,12 +121,14 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
                         </RadioGroup>
                       ))}
                       {slots.length > 5 && (
-                        <div className="w-full flex justify-end gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronLeft size={16} />
+                        <div className="w-full flex gap-2">
+                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
+                            <ChevronLeft className="size-4 mr-2"/>
+                            Previous
                           </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronRight size={16} />
+                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
+                            Next
+                            <ChevronRight className="size-4 ml-2"/>
                           </Button>
                       </div>
                       )}

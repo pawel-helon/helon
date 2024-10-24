@@ -158,11 +158,13 @@ export const RescheduleMeetingDesktop = React.memo(function RescheduleMeetingDes
                       ))}
                       {slots.length > 5 && (
                         <div className="w-full flex justify-end gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronLeft size={16} />
+                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
+                            <ChevronLeft className="size-4 mr-2"/>
+                            Previous
                           </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronRight size={16} />
+                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
+                            Next
+                            <ChevronRight className="size-4 ml-2"/>
                           </Button>
                       </div>
                       )}
@@ -181,7 +183,7 @@ export const RescheduleMeetingDesktop = React.memo(function RescheduleMeetingDes
               <Button onClick={handleCloseDialog} type="button" variant="ghost">
                 Close
               </Button>
-              <Button type="submit" disabled={isPending || selectedSlot === ""} className="min-w-[64px]">
+              <Button type="submit" disabled={isPending || selectedSlot === ""} className="min-w-[120px]">
                 {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Reschedule"}
               </Button>
             </div>

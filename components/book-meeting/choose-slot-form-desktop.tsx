@@ -97,7 +97,7 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop()
 
   return (
     <Dialog open={true} onOpenChange={() => router.push("/home")} >
-      <DialogContent id="choose-slot-form" className="h-[560px] max-w-[580px] flex flex-col flex-start bg-background-sh" aria-describedby="">
+      <DialogContent id="choose-slot-form" className="h-[560px] max-w-[580px] flex flex-col flex-start bg-background-h" aria-describedby="">
         <ProgressBar />
         <DialogTitle>Book meeting</DialogTitle>
           <form action={handleOnSubmit} className="flex gap-4 mt-8">
@@ -122,11 +122,13 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop()
                       ))}
                       {slots.length > 5 && (
                         <div className="w-full flex justify-end gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronLeft size={16} />
+                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
+                            <ChevronLeft className="size-4 mr-2"/>
+                            Previous
                           </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" size="icon" variant="outline" className="rounded-full">
-                            <ChevronRight size={16} />
+                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
+                            Next
+                            <ChevronRight className="size-4 ml-2"/>
                           </Button>
                       </div>
                       )}
