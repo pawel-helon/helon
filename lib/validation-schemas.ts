@@ -9,7 +9,7 @@ export const BookingSchema = z.object({
     .string().min(9, { message: "Phone number must be 9 digits long" }).max(9),
   email: z
     .string()
-    .email({ message: "Please enter a valid email" })
+    .email({ message: "Enter a valid email" })
     .trim(),
 })
 

@@ -21,7 +21,7 @@ export async function PUT(request: Request) {
     if (!slot) {
       return createResponse("Slot not found", 503);
     } else {
-      return createResponse("Slot has been unblocked", 201);
+      return createResponse("Slot has been unblocked", 200);
     }
   } catch (error) {
     return createResponse("An unexpected error has occurred", 500);

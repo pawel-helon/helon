@@ -22,6 +22,9 @@ export async function GET(request: Request) {
         },
         type: SLOTTYPE.AVAILABLE,
       },
+      orderBy: {
+        dateTime: "asc"
+      }
     });
     
     if (!slots) {
