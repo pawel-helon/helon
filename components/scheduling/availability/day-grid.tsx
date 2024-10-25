@@ -73,9 +73,9 @@ export function DayGrid(props: {
     <>
       {isMobile ? (
         <>
-          <div className='w-full flex justify-end items-center gap-2 mb-4'>
-            <Label htmlFor='only-recurring' className='text-xs text-muted-foreground'>Recurring only</Label>
-            <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className='data-[state=checked]:bg-teal-500'/>
+          <div className="w-full flex justify-end items-center gap-2 mb-4">
+            <Label htmlFor="only-recurring" className="text-xs text-muted-foreground">Recurring only</Label>
+            <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className="data-[state=checked]:bg-teal-500" />
           </div>
           <Accordion type="single" defaultValue={props.weekDays[0]} className="flex flex-col gap-4">
             {props.slotsForWeek.map((day) => (
@@ -85,7 +85,7 @@ export function DayGrid(props: {
                     <div className={cn(badgeVariant, "h-5 w-fit inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
                       {getDateOfMeeting(day.day)}
                     </div>
-                    <Text variant='p-base-thick' className={cn('leading-none', isBeforeEndOfDay(day.day) ? 'text-foreground' : 'text-muted-foreground')}>
+                    <Text variant="p-base-thick" className={cn("leading-none", isBeforeEndOfDay(day.day) ? "text-foreground" : "text-muted-foreground")}>
                       {getDayOfWeek(day.day)}
                     </Text>
                   </div>
@@ -99,16 +99,16 @@ export function DayGrid(props: {
         </>
       ) : (
         <>
-          <div className='w-full flex justify-end items-center gap-2 mb-4'>
+          <div className="w-full flex justify-end items-center gap-2 mb-4">
             <Label htmlFor='only-recurring' className='text-xs text-muted-foreground'>Recurring only</Label>
-            <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className='data-[state=checked]:bg-teal-500'/>
+            <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className="data-[state=checked]:bg-teal-500"/>
           </div>
-          <div className='grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16'>
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16">
             {props.weekNumber === 1 && (
               <>
                 {emptyCards.map((card) => {
                   return (
-                    <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+                    <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
                   )
                 })}
               </>
@@ -122,7 +122,7 @@ export function DayGrid(props: {
               <>
                 {emptyCards.map((card) => {
                   return (
-                    <div key={card} style={{ aspectRatio: '3/4' }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+                    <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
                   )
                 })}
               </>

@@ -15,18 +15,18 @@ enum SLOTTYPE {
 }
 
 model Slot {
-  id          String         @id @default(uuid())
-  type        SLOTTYPE       @default(AVAILABLE)
-  dateTime    DateTime       @unique
-  recurring   Boolean        @default(false)
-  meeting     Meeting[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id                String         @id @default(uuid())
+  type              SLOTTYPE       @default(AVAILABLE)
+  dateTime          DateTime       @unique
+  recurring         Boolean        @default(false)
+  meeting           Meeting[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 }
 
 model Meeting {
   id                String         @id @default(uuid())
-  slot              Slot           @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slot              Slot           @relation(fields: [slotId], references: [id])
   slotId            String         @unique  
   dateTime          DateTime       @unique
   userName          String
@@ -38,6 +38,6 @@ model Meeting {
 }
 
 model RecurringDate {
-  id          String        @id @default(uuid())
-  dateTime    DateTime      @unique
+  id                String        @id @default(uuid())
+  dateTime          DateTime      @unique
 }

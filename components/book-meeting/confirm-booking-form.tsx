@@ -92,7 +92,7 @@ export function ConfirmBookingForm(props: {
         toast.error(unblockingSlot.message);
         return;
       }
-      router.back();
+      router.push('/book-meeting?param=change-slot');
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error occurred. Try again later.")

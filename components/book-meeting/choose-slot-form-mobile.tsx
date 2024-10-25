@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
-import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent as SheetContentWithAnimation, SheetContentWithoutAnimation, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Text } from "@/components/typography";
 import { RadioGroup, RadioGroupSlotItem as RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,13 @@ import { Slot } from "@prisma/client";
 function getSlotTime(date: Date) {
   return String(new Date(date).getHours()).padStart(2, "0") + ":" + String(new Date(date).getMinutes()).padStart(2, "0");
 }
-
 function getSlotDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
+export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(props: {
+  isChangingSlot: boolean;
+}) {
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -31,6 +32,7 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
   const [displayedLastSlot, setDisplayedLastSlot] = useState<number>(5); 
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const SheetContent = props.isChangingSlot ? SheetContentWithoutAnimation : SheetContentWithAnimation;
 
   useEffect(() => {
     if (!date) return;

@@ -6,9 +6,12 @@ import { useMedia } from "react-use";
 import { unblockSlots, deletePastSlots } from "@/actions/database-actions";
 import { ChooseSlotFormDesktop } from "@/components/book-meeting/choose-slot-form-desktop";
 import { ChooseSlotFormMobile } from "@/components/book-meeting/choose-slot-form-mobile";
+import { useSearchParams } from "next/navigation";
 
 export default function ChooseSlotPage() {
   const isMobile = useMedia("(max-width: 480px)", false);
+  const searchParams = useSearchParams();
+  const isChangingSlot = Boolean(searchParams.get("param"));
 
   useEffect(() => {
     async function initSlots() {
@@ -22,5 +25,5 @@ export default function ChooseSlotPage() {
     initSlots();
   },[])
   
-  return <>{isMobile ? <ChooseSlotFormMobile /> : <ChooseSlotFormDesktop />}</>;
+  return <>{isMobile ? <ChooseSlotFormMobile isChangingSlot={isChangingSlot} /> : <ChooseSlotFormDesktop isChangingSlot={isChangingSlot} />}</>;
 }

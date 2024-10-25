@@ -3,27 +3,28 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RiLoaderFill } from "react-icons/ri";
 import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
-import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent as DialogContentWithAnimation, DialogContentWithoutAnimation, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Text } from "@/components/typography";
 import { RadioGroup, RadioGroupSlotItem as RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@prisma/client";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 function getSlotTime(date: Date) {
   const time = String(new Date(date).getHours()).padStart(2, "0") + ":" + String(new Date(date).getMinutes()).padStart(2, "0");
   return time;
 }
-
 function getSlotDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop() {
+export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(props: {
+  isChangingSlot: boolean;
+}) {
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -32,6 +33,7 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop()
   const [displayedLastSlot, setDisplayedLastSlot] = useState<number>(5); 
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const DialogContent = props.isChangingSlot ? DialogContentWithoutAnimation : DialogContentWithAnimation;
   
   useEffect(() => {
     if (!date) return;
