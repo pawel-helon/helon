@@ -1,6 +1,95 @@
 import { Meeting, Slot } from "@prisma/client";
 
-// book-meeting
+// helon
+
+export async function unblockSlotsHelon(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/database/helon/unblock-slots", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function deletePastSlotsHelon(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/database/helon/delete-past-slots", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function getAvailableSlotsForDateHelon(date: string): Promise<{ message: string, slots: Slot[], status: number }> {
+  const request = await fetch(`/api/database/helon/get-available-slots-for-date?date=${date}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function checkSlotAvailabilityHelon(slotId: string): Promise<{ message: string, status: number }> {
+  const request = await fetch(`/api/database/helon/check-slot-availability?slotId=${slotId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function blockSlotHelon(slotId: string): Promise<{ message: string, status: number }> {
+  const request = await fetch(`/api/database/helon/block-slot`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function getSlotHelon(slotId: string): Promise<{ message: string, slot: Slot, status: number }> {
+  const request = await fetch(`/api/database/helon/get-slot?slotId=${slotId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function unblockSlotHelon(slotId: string): Promise<{ message: string, status: number }> {
+  const request = await fetch(`/api/database/helon/unblock-slot`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function bookSlotHelon(slotId: string, fullName: string, phoneNumber: string, email: string, message: string | null): Promise<{ message: string, meeting: Meeting, status: number }> {
+  const request = await fetch(`/api/database/helon/book-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      fullName: fullName,
+      phoneNumber: phoneNumber,
+      email: email,
+      message: message
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+// features
+
+// scheduling-book-meeting
 export async function unblockSlots(): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/database/unblock-slots", {
     method: "PUT",

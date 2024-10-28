@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
-import { getSlot, unblockSlot } from "@/actions/database-actions";
+import { getSlotHelon, unblockSlotHelon } from "@/actions/database-actions";
+import { ConfirmBookingForm } from "@/components/book-meeting/confirm-booking-form";
 import { ProgressBar } from "@/components/progress-bar";
 import { Sheet, SheetContentWithoutAnimation as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContentWithoutAnimation as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Slot, SLOTTYPE } from "@prisma/client";
-import { ConfirmBookingForm } from "./book-meeting/confirm-booking-form";
 
 export function ConfirmBooking(props: { slotId: string }) {
   const [slot, setSlot] = useState<Slot>({id: "", type: SLOTTYPE.AVAILABLE, dateTime: new Date(), recurring: false, createdAt: new Date(), updatedAt: new Date()});
@@ -19,7 +19,7 @@ export function ConfirmBooking(props: { slotId: string }) {
   useEffect(() => {
     async function fetchSlot() {
       try {
-        const response = await getSlot(props.slotId)
+        const response = await getSlotHelon(props.slotId)
         if (response.status !== 200) {
           toast.error(response.message);
         } else {
@@ -34,7 +34,7 @@ export function ConfirmBooking(props: { slotId: string }) {
 
   async function handleOnOpenChange() {
     try {
-      const unblockingSlot = await unblockSlot(props.slotId)
+      const unblockingSlot = await unblockSlotHelon(props.slotId)
       if (unblockingSlot.status !== 200 ) {
         toast.error(unblockingSlot.message);
         return;

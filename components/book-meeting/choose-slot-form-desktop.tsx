@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RiLoaderFill } from "react-icons/ri";
-import { getAvailableSlotsForDate, checkSlotAvailability, blockSlot } from "@/actions/database-actions";
+import { getAvailableSlotsForDateHelon, checkSlotAvailabilityHelon, blockSlotHelon } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent as DialogContentWithAnimation, DialogContentWithoutAnimation, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
@@ -43,7 +43,7 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
       setDisplayedFirstSlot(0);
       setDisplayedLastSlot(5);
       const initSlots = async () => {
-        const gettingAvailableSlotsForDate = await getAvailableSlotsForDate(getSlotDate(date));
+        const gettingAvailableSlotsForDate = await getAvailableSlotsForDateHelon(getSlotDate(date));
         if (gettingAvailableSlotsForDate.status !== 200) {
           toast.error(gettingAvailableSlotsForDate.message);
           return;
@@ -79,12 +79,12 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
     
     startTransition(async () => {
       try {
-        const checkingSlotAvailability = await checkSlotAvailability(slotId);
+        const checkingSlotAvailability = await checkSlotAvailabilityHelon(slotId);
         if (checkingSlotAvailability.status !== 200) {
           toast.error(checkingSlotAvailability.message);
           return;
         }
-        const blockingSlot = await blockSlot(slotId);
+        const blockingSlot = await blockSlotHelon(slotId);
         if (blockingSlot.status !== 201) {
           toast.error(blockingSlot.message);
           return;

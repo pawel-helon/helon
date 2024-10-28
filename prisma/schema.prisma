@@ -8,6 +8,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// helon
+
+model SlotHelon {
+  id                String         @id @default(uuid())
+  type              SLOTTYPE       @default(AVAILABLE)
+  dateTime          DateTime       @unique
+  recurring         Boolean        @default(false)
+  meeting           MeetingHelon[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model MeetingHelon {
+  id                String         @id @default(uuid())
+  slot              SlotHelon       @relation(fields: [slotId], references: [id])
+  slotId            String         @unique  
+  dateTime          DateTime       @unique
+  userName          String
+  userPhoneNumber   String
+  userEmail         String
+  message           String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model RecurringDateHelon {
+  id                String        @id @default(uuid())
+  dateTime          DateTime      @unique
+}
+// features
+
+// scheduling
+
 enum SLOTTYPE {
   AVAILABLE
   BLOCKED

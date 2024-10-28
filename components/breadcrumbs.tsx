@@ -1,23 +1,23 @@
 "use client"
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { useMedia } from 'react-use';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useMedia } from "react-use";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function constructUrl(segments: string[], index: number) {
-  return '/' + segments.slice(0, index + 1).join('/');
+  return "/" + segments.slice(0, index + 1).join("/");
 }
 
 export function Breadcrumbs() {
   const pathname = usePathname();
-  const segments = pathname.split('/').filter(Boolean);
-  const [parentID, setParentID] = useState<string>('');
-  const isDesktop = useMedia('(min-width: 480px)', false);
+  const segments = pathname.split("/").filter(Boolean);
+  const [parentID, setParentID] = useState<string>("");
+  const isDesktop = useMedia("(min-width: 480px)", false);
 
   useEffect(() => {
     const parentElement = document.getElementById("meetings");

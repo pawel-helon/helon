@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RiLoaderFill } from "react-icons/ri";
 import { sendBookingConfirmation } from "@/actions/email-actions";
-import { bookSlot, unblockSlot } from "@/actions/database-actions";
+import { bookSlotHelon, unblockSlotHelon } from "@/actions/database-actions";
 import { BookingFormState, BookingSchema } from "@/lib/validation-schemas";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -49,7 +49,7 @@ export function ConfirmBookingForm(props: {
 
     try {
       startTransition(async () => {
-        const bookingSlot = await bookSlot(props.slotID, fullName, phoneNumber, email, message);
+        const bookingSlot = await bookSlotHelon(props.slotID, fullName, phoneNumber, email, message);
         if (bookingSlot.status === 400) {
           toast.error(bookingSlot.message);
           return;
@@ -73,7 +73,7 @@ export function ConfirmBookingForm(props: {
 
   async function handleCancel() {
     try {
-      const unblockingSlot = await unblockSlot(props.slotID)
+      const unblockingSlot = await unblockSlotHelon(props.slotID)
       if (unblockingSlot.status !== 200 ) {
         toast.error(unblockingSlot.message);
         return;
@@ -87,7 +87,7 @@ export function ConfirmBookingForm(props: {
 
   async function handleChangeSlot() {
     try {
-      const unblockingSlot = await unblockSlot(props.slotID)
+      const unblockingSlot = await unblockSlotHelon(props.slotID)
       if (unblockingSlot.status !== 200 ) {
         toast.error(unblockingSlot.message);
         return;

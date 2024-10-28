@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
-
 const getBadgeVariant = (weekNumber: number) => {
   if (weekNumber > 11 && weekNumber < 25) {
     return "bg-gradient-to-r from-green-500/85 to-green-600/85";

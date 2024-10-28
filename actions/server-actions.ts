@@ -3,11 +3,13 @@
 import { db } from "@/lib/db";
 import { Meeting, Slot } from "@prisma/client";
 
+// features
+
 // scheduling/availability
 
 export async function getSlotsForWeek(week: string[]) {
   const weekSlots = [] as {day: string, slots: Slot[]}[]
-
+  
   for (const day of week) {
     const slots = await db.slot.findMany({
       where: {

@@ -1,6 +1,6 @@
 "use client"
 
-import { ConfirmBooking } from "@/components/confirm-booking";
+import { ConfirmBooking } from "@/components/book-meeting/confirm-booking";
 export default function ConfirmBookingPage(props: { params: { slotId: string }}) {
   return <ConfirmBooking slotId={props.params.slotId} />;
 }
