@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RiLoaderFill } from "react-icons/ri";
-import { getAvailableSlotsForDateHelon, checkSlotAvailabilityHelon, blockSlotHelon } from "@/actions/database-actions";
+import { checkSlotAvailabilityHelon, blockSlotHelon, getAvailableSlotsForDateHelon } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent as DialogContentWithAnimation, DialogContentWithoutAnimation, DialogTitleH as DialogTitle } from "@/components/ui/dialog";

@@ -3,7 +3,7 @@
 import React, { useEffect  } from "react";
 import { toast } from "sonner";
 import { useMedia } from "react-use";
-import { deletePastSlots, unblockSlotsHelon } from "@/actions/database-actions";
+import { deletePastSlotsHelon, unblockSlotsHelon } from "@/actions/database-actions";
 import { ChooseSlotFormDesktop } from "@/components/book-meeting/choose-slot-form-desktop";
 import { ChooseSlotFormMobile } from "@/components/book-meeting/choose-slot-form-mobile";
 import { useSearchParams } from "next/navigation";
@@ -16,7 +16,7 @@ export default function ChooseSlotPage() {
   useEffect(() => {
     async function initSlots() {
       try {
-        await deletePastSlots();
+        await deletePastSlotsHelon();
         await unblockSlotsHelon();
       } catch {
         toast.error("Error initializing slots.")
