@@ -1,4 +1,4 @@
-import { Meeting, Slot } from "@prisma/client";
+import { Device, Meeting, ROLE, Slot, STATE, STATUS, User } from "@prisma/client";
 
 // helon
 
@@ -335,6 +335,67 @@ export async function undoRescheduleMeeting(meetingId: string, slotId: string): 
     body: JSON.stringify({
       meetingId: meetingId,
       slotId: slotId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+// q
+
+// qr-codes
+
+export async function getUser(userID: number): Promise<{message: string, status: number, user?: User}> {
+  const request = await fetch(`/api/q/get-user?userID=${userID}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function getDevice(deviceID: number): Promise<{message: string, status: number, device?: Device}> {
+  const request = await fetch(`/api/q/get-device?deviceID=${deviceID}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function updateDeviceStatus(deviceID: number, deviceStatus: STATUS): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/update-device-status`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      deviceID: deviceID,
+      deviceStatus: deviceStatus
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function updateDeviceState(deviceID: number, deviceState: STATE): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/update-device-state`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      deviceID: deviceID,
+      deviceState: deviceState
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function updateUserRole(userID: number, userRole: ROLE): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/update-user-role`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userID: userID,
+      userRole: userRole
     })
   })
   const response = await request.json();

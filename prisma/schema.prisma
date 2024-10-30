@@ -74,3 +74,125 @@ model RecurringDate {
   id                String        @id @default(uuid())
   dateTime          DateTime      @unique
 }
+
+// remaining features
+
+model VerificationCode {
+  id              String    @id @default(uuid()) 
+  value           String
+  name            String
+  email           String    @unique
+  emailVerified   Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum ROLE {
+  ADMIN
+  OWNER
+  ENDUSER
+}
+
+model User {
+  id                    Int             @id @default(autoincrement())
+  email                 String          @unique
+  name                  String?
+  password              String
+  role                  ROLE
+  onboarding            Onboarding[]
+  devices               Device[]        @relation("UserDevices")
+  accessibleDevices     Device[]        @relation("AccessibleDevices")
+  notifications         Notification[]
+  stateLogs             StateLog[]
+  imageUrl              String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  onboardingCompleted   Boolean         @default(false)
+}
+
+model Onboarding {
+  id                          Int             @id @default(autoincrement())
+  user                        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                      Int             @unique
+  initCompleted               Boolean         @default(false)
+  requestAccessCompleted      Boolean         @default(false)
+  requestOwnershipCompleted   Boolean         @default(false)
+  addDeviceCompleted          Boolean         @default(false)
+  accountCompleted            Boolean         @default(false)
+  tabsCompleted               Boolean         @default(false)
+  docsCompleted               Boolean         @default(false)
+  actionsCompleted            Boolean         @default(false)
+  editCompleted               Boolean         @default(false)
+  accessTabCompleted          Boolean         @default(false)
+  nextPrevCompleted           Boolean         @default(false)
+  guideCompleted              Boolean         @default(false)
+  createdAt                   DateTime        @default(now())
+}
+
+enum STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum STATE {
+  CLOSED
+  OPENED
+}
+
+model StateLog {
+  id              Int       @id @default(autoincrement())
+  device          Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  deviceId        Int
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          Int
+  state           STATE
+  createdAt       DateTime  @default(now())
+}
+
+model Device {
+  id              Int       @id @default(autoincrement())
+  deviceName      String
+  address         String?
+  positionLng     Float
+  positionLat     Float
+  emei            String    @unique
+  model           String
+  SIM             String
+  status          STATUS
+  state           STATE
+  stateLogs       StateLog[]
+  owner           User      @relation(fields: [ownerId], references: [id], onDelete: Cascade, name: "UserDevices")
+  ownerId         Int
+  users           User[]    @relation("AccessibleDevices")
+  usersIds        Int[]
+  disabledFrom    DateTime?
+  disabledTo      DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+enum NOTIFICATIONTYPE {
+  ROLECHANGEREQUEST
+  ACCESSREQUEST
+  OWNERSHIPREQUEST
+  SUPPORTREQUEST
+  ADDDEVICEREQUEST
+  REQUESTAPPROVAL
+  REQUESTREJECTION
+}
+
+model Notification {
+  id                  Int       @id @default(autoincrement())
+  type                NOTIFICATIONTYPE?
+  title               String?
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              Int
+  requesterId         Int
+  requsterName        String
+  requesterAvatar     String
+  requestedRole       ROLE?
+  requestedEMEI       String?
+  supportDevice       Int?
+  addDeviceLink       String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
