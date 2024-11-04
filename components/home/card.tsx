@@ -4,28 +4,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { CheckIcon } from "lucide-react";
 import { IoIosInformationCircle } from "react-icons/io";
-import { useMedia } from "react-use";
 import { Text } from "@/components/typography";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export function Card(props: {
   title: string,
   link: string,
   overview: string[],
   imageSrc: string,
-  colSpan: string,
-  rowSpan: string,
-  aspectRatio?: string
 }) {
-  const isMobile = useMedia("(max-width: 480px)", false);
-  const cardAspectRatio = isMobile ? "1" : props.aspectRatio || "";
-
   return (
     <div
-      style={{ aspectRatio: cardAspectRatio }}
-      className={cn("relative flex flex-col justify-between border border-border rounded-md", props.colSpan, props.rowSpan)}
+      style={{ aspectRatio: "1" }}
+      className="relative flex flex-col justify-between border border-border rounded-md"
       role="article"
       aria-labelledby={`card-title-${props.title.toLowerCase().replace(/\s+g/, '-')}`}
     >

@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link";
 import { useState } from "react";
 import { BookOpenText, UsersRound, Vault, Plus, TrendingUp } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
@@ -14,18 +13,18 @@ import { GuideEnd } from "@/components/features/onboarding/guide-end";
 import { Text } from "@/components/typography";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { Toast } from "@/components/features/onboarding/toast";
 
-const TOTAL_STEPS = 5;
-
-export function useOnboarding() {
+function useOnboarding() {
+  const TOTAL_STEPS = 5;
   const [onboardingStep, setOnboardingStep] = useState<number>(1);
   const nextStep = () => setOnboardingStep(prev => Math.min(prev + 1, TOTAL_STEPS));
   const skipTour = () => setOnboardingStep(TOTAL_STEPS + 1);
   const restart = () => setOnboardingStep(1);
-  return { onboardingStep, setOnboardingStep, nextStep, skipTour, restart };
+  return { onboardingStep, nextStep, skipTour, restart };
 }
 
-export default function Onboarding() {
+export default function OnboardingPage() {
   const { onboardingStep, nextStep, skipTour, restart } = useOnboarding();
   return (
     <>
@@ -145,24 +144,5 @@ export default function Onboarding() {
         </div>
       </div>
     </>
-  )
-}
-
-function Toast(props: { restart: () => void }) {
-  return (
-    <div className="w-full fixed bottom-4 xs:bottom-12 mx-auto flex justify-center px-3 xl:max-w-screen-xl 2xl:max-w-screen-2xl">
-      <div className="flex gap-2 p-1.5 border border-border rounded-full shadow-black shadow-sm bg-background-sh">
-        <div className="flex gap-2">
-          <Link href="/home">
-            <Button variant="ghost" size="sm" className="rounded-full" aria-label="Open home page">
-              Home
-            </Button>
-          </Link>
-          <Button onClick={props.restart} variant="outline" size="sm" className="rounded-full" aria-label="Reload onboarding demo">
-            Reload
-          </Button>
-        </div>
-      </div>
-    </div>
   )
 }

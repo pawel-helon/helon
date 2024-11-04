@@ -108,8 +108,8 @@ const config: Config = {
       },
       animation: {
         "scale": "scale 3s ease-in-out infinite",
-        "scale-140": "scale 2s ease-in-out infinite",
-        "scale-160": "scale 1s ease-in-out infinite",
+        "scale-140": "scale-140 2s ease-in-out infinite",
+        "scale-160": "scale-160 1s ease-in-out infinite",
       },
     },
   },
