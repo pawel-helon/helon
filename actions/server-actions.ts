@@ -703,27 +703,3 @@ export async function getDayMeetings(day: string) {
   }
   return { message: "Meetings fetched", status: 200, meetings }
 }
-
-// onboarding
-
-export async function createOnboarding() {
-  const onboarding = await db.onboardingDemo.create({
-    data: {
-      addDeviceCompleted: false
-    }
-  });
-  if (!onboarding) {
-    return { message: "Failed to create onborading entry", status: 503}
-  }
-  return { message: "Onboarding created", status: 201, onboarding }
-}
-
-export async function getOnboarding(onboardingID: string) {
-  const onboarding = await db.onboardingDemo.findFirst({
-    where: { id: onboardingID },
-  })
-  if (!onboarding) {
-    return { message: "Failed to fetch onborading data", status: 503}
-  }
-  return { message: "Onboarding data fetched", status: 200, onboarding }
-}

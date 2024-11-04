@@ -3,33 +3,27 @@
 import { BookOpenText, CircleUserRound, LogOut } from "lucide-react";
 import { useMedia } from "react-use";
 import { Text } from "@/components/typography";
-import { OnboardingAccount } from "@/components/features/onboarding/onboarding-account";
-import { OnboardingDocs } from "@/components/features/onboarding/onboarding-docs";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export function Account(props: {
-  showAccount: boolean;
-  showDocs?: boolean;
-  onboardingID: string;
+  onboardingStep: number
 }) {
   const isMobile = useMedia("(max-width: 480px)", false);
-  
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild disabled={props.showAccount}>
+      <DropdownMenuTrigger asChild disabled={props.onboardingStep === 2 || props.onboardingStep === 4 ? true : false}>
         <div className="relative">
           <Avatar className="xs:size-9 hover:cursor-pointer">
             <AvatarImage src="/avatar.png" alt="user avatar" className="xs:size-9" />
           </Avatar>
-          {(props.showAccount || props.showDocs) && (
+          {(props.onboardingStep === 2 || (isMobile && props.onboardingStep === 4)) && (
             <div className="absolute -bottom-[8px] xs:bottom-[20px] -right-[8px] flex p-1 bg-secondary rounded-full shadow-sm shadow-black">
               <BookOpenText size={16} />
             </div>
           )}
-          {props.showAccount && <OnboardingAccount onboardingID={props.onboardingID}/>}
-          {props.showDocs && <OnboardingDocs onboardingID={props.onboardingID}/>}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent

@@ -1,33 +1,18 @@
 "use client"
 
 import { useMedia } from "react-use";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { BookOpenText } from "lucide-react";
-import { updateGuideEnd } from "@/actions/database-actions";
 import { Text } from "@/components/typography";
 import { Sheet, SheetContentOnboarding as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContentWithoutClose as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function GuideEnd(props: { onboardingID: string }) {
+export function GuideEnd(props: {
+  onboardingStep: number,
+  skipTour: () => void
+}) {
   const isMobile = useMedia("(max-width: 480px)", false);
-  const router = useRouter();
-  
-  async function handleFinish() {
-    try {
-      const updatingAddDevice = await updateGuideEnd(props.onboardingID)
-      if (updatingAddDevice.status !== 200) {
-        toast.error(updatingAddDevice.message)
-        return;
-      }
-      router.push("/home");
-    } catch (error) {
-      console.error(error);
-      toast.error("An unexpected error occurred. Try again later.")
-    }
-  }
-  
+  if (props.onboardingStep !== 5) return null;
   return (
     <>
       {isMobile ? (
@@ -43,7 +28,7 @@ export function GuideEnd(props: { onboardingID: string }) {
               </Text>
             </div>
             <div className="w-full absolute left-0 right-0 bottom-0 flex p-3">
-              <Button onClick={handleFinish} className="w-full">
+              <Button onClick={props.skipTour} className="w-full" aria-label="Finish onboarding guide">
                 Finish
               </Button>
             </div>
@@ -62,7 +47,7 @@ export function GuideEnd(props: { onboardingID: string }) {
               </Text>
             </div>
             <div className="w-full absolute left-0 right-0 bottom-0 flex justify-end p-6">
-              <Button onClick={handleFinish}>
+              <Button onClick={props.skipTour} aria-label="Finish onboarding guide">
                 Finish
               </Button>
             </div>
