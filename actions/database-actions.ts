@@ -401,3 +401,18 @@ export async function updateUserRole(userID: number, userRole: ROLE): Promise<{m
   const response = await request.json();
   return response;
 }
+
+// tables
+
+export async function updateRole(role: ROLE, ids: number[]): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/q/update-role", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      role: role,
+      ids: ids
+    })
+  })
+  const response = await request.json();
+  return response;
+}

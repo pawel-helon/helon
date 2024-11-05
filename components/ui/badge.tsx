@@ -16,6 +16,9 @@ const badgeVariants = cva(
         summer: "border-transparent bg-yellow-400 text-background-h shadow",
         autumn: "border-transparent bg-orange-500/90 text-background-h shadow",
         winter: "border-transparent bg-neutral-300/90 text-background-h shadow",
+        admin: "justify-center border-transparent text-primary-foreground shadow bg-amber-700",
+        owner: "justify-center border-transparent text-primary-foreground shadow bg-pink-700",
+        endUser: "justify-center border-transparent text-primary-foreground shadow bg-indigo-700"
       },
     },
     defaultVariants: {

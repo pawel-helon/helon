@@ -1,11 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-export function Toast({ restart }: { restart: () => void }) {
+export function Toast(props: { restart: () => void }) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -29,13 +29,7 @@ export function Toast({ restart }: { restart: () => void }) {
                   Back
                 </Button>
               </Link>
-              <Button
-                onClick={restart}
-                variant="tertiary"
-                size="sm"
-                className="rounded-full"
-                aria-label="Reload onboarding demo"
-              >
+              <Button onClick={props.restart} variant="tertiary" size="sm" className="rounded-full" aria-label="Reload onboarding demo">
                 Reload
               </Button>
             </div>
