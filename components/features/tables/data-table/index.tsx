@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center py-3">
         <span className="hidden whitespace-nowrap xs:flex text-xs text-muted-foreground">
           {`${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`}
         </span>

@@ -23,8 +23,8 @@ export function Table<TData, TValue>({
       {isMobile ? (
         <Sheet open={true}>
           <SheetContent side="bottomNoPadding" aria-describedby="">
-            <div className="p-6">
-              <SheetTitle>Users</SheetTitle>
+            <div className="p-3">
+              <SheetTitle className="text-center mb-8">Users</SheetTitle>
               <DataTable data={data} columns={columns} />
             </div>
             <Toast />
@@ -32,7 +32,7 @@ export function Table<TData, TValue>({
         </Sheet>
       ) : (
         <Dialog open={true}>
-          <DialogContent aria-describedby="" className="h-[560px] flex flex-col justify-start">
+          <DialogContent className="h-[560px] flex flex-col justify-start" aria-describedby="">
             <DialogTitle className="mb-8">Users</DialogTitle>
             <DataTable data={data} columns={columns} />
             <Toast />

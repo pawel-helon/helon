@@ -37,7 +37,7 @@ export function Card(props: {
       />
       <div className="z-20 w-full flex justify-end p-3 bg-gradient-to-t from-background-sh to-background-sh/40">
         <Link href={props.link} aria-label={`View demo for ${props.title}`}>
-          <Button variant="outline" className="w-full xs:w-fit">
+          <Button variant="outline" className="w-full xs:w-fit bg-background-sh hover:bg-[#252322]">
             Demo
           </Button>
         </Link>
@@ -57,7 +57,7 @@ function Overview(props: {
       </PopoverTrigger>
       <PopoverContent side="bottom" sideOffset={8} align="end" className="w-fit flex flex-col gap-4 pb-8 bg-background-sh">
         <Text variant="p-base-thick">Overview</Text>
-        <ul className="list-none p-0 m-0">
+        <ul className="list-none space-y-2 p-0 m-0">
           {props.overview.map((entry, index) => (
             <li key={index} className="flex items-center gap-2">
               <div className='size-4 relative rounded-full text-background-sh shadow-md bg-green-600'>

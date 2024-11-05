@@ -35,8 +35,8 @@ export default async function HomePage() {
         <Card
           title="Tables"
           link="/features/tables"
-          overview={[""]}
-          imageSrc="/temp.png"
+          overview={["filtering", "sorting", "pagination", "actions on rows", "exporting CSV"]}
+          imageSrc="/tables.png"
         />
         <Card
           title="Charts"
