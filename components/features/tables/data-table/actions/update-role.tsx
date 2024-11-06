@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ROLE } from "@prisma/client";
 import { updateRole } from "@/actions/database-actions";
+import { useMedia } from "react-use";
 
 export function UpdateRole<TData>({
   table,
@@ -19,6 +20,7 @@ export function UpdateRole<TData>({
   table: Table<TData>;
   ids: number[];
 }) {
+  const isMobile = useMedia("(max-width: 480px)", false);
   const [visibility, setVisibilty] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -44,24 +46,26 @@ export function UpdateRole<TData>({
       <DropdownMenuTrigger asChild>
         <Button
           size="sm"
-          variant="ghost"
+          variant={isMobile ? "outline" : "ghost"}
           onMouseEnter={() => setVisibilty(true)}
           onMouseLeave={() => setVisibilty(false)}
-          className="flex justify-between items-center gap-1 pr-1"
+          className={cn(isMobile ? "w-[6rem] h-9" : "flex justify-between items-center gap-1 pr-1")}
+          aria-label="Change role"
         >
           Change role
-          <ChevronDown size={20} className={cn(visibility ? "opacity-100" : "opacity-0")} />
+          {!isMobile && <ChevronDown size={20} className={cn(visibility ? "opacity-100" : "opacity-0")} />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
-        className="w-fit min-w-[7rem] flex flex-col bg-background-sh shadow-black shadow-md"
+        align={isMobile ? "end" : "start"}
+        className="w-fit min-w-[6rem] xs:min-w-[7rem] flex flex-col bg-background-sh shadow-black shadow-md"
       >
         <Button
           variant="ghost"
           size="sm"
           className="justify-start pl-2"
           onClick={() => handleRoleChange(ROLE.ENDUSER)}
+          aria-label="Change role to end user"
         >
           End user
         </Button>
@@ -70,6 +74,7 @@ export function UpdateRole<TData>({
           size="sm"
           className="justify-start pl-2"
           onClick={() => handleRoleChange(ROLE.OWNER)}
+          aria-label="Change role to owner"
         >
           Owner
         </Button>
@@ -78,6 +83,7 @@ export function UpdateRole<TData>({
           size="sm"
           className="justify-start pl-2"
           onClick={() => handleRoleChange(ROLE.ADMIN)}
+          aria-label="Change role to admin"
         >
           Admin
         </Button>

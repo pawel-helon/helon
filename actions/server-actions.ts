@@ -760,3 +760,21 @@ export async function getUsers() {
     return { message: "Users fetched", status: 200, users: fetchingUsers };
   }
 }
+
+// docs
+
+export async function getRole() {
+  const gettingRole = await db.user.findUnique({
+    where: {
+      id: 1
+    },
+    select: {
+      role: true
+    }
+  })
+  if (!gettingRole) {
+    return { message: "Failed to fetch role", status: 503 }
+  }
+
+  return { message: "Role fetched", status: 200, role: gettingRole.role}
+}

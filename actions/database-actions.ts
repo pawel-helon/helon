@@ -416,3 +416,17 @@ export async function updateRole(role: ROLE, ids: number[]): Promise<{ message: 
   const response = await request.json();
   return response;
 }
+
+// docs
+
+export async function updateRoleDocsFeature(role: ROLE): Promise<{message: string, status: number}> {
+  const request = await fetch("/api/q/update-role-docs-feature", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      role: role,
+    })
+  })
+  const response = await request.json();
+  return response;
+}

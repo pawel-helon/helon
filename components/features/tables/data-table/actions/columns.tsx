@@ -14,10 +14,10 @@ interface TableColumnsProps<TData> {
 
 export function Columns<TData>({ table }: TableColumnsProps<TData>) {
   return (
-    <div className="absolute z-10 top-[80px] right-2">
+    <div className="absolute z-10 top-[58px] xs:top-[80px] right-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="rounded-full bg-background-sh">
+          <Button variant="outline" size="icon" className="rounded-full bg-background-sh" aria-label="Set visibility of data table columns">
             <Plus size={20}/>
           </Button>
         </DropdownMenuTrigger>
@@ -32,6 +32,7 @@ export function Columns<TData>({ table }: TableColumnsProps<TData>) {
                   className="capitalize text-xs"
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  aria-label={`Toggle visibility of ${column.id}`}
                 >
                   {column.id}
                 </DropdownMenuCheckboxItem>

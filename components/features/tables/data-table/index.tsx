@@ -8,6 +8,8 @@ import { TableBody, TableCell, TableHead, TableHeader, Table, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useMedia } from "react-use";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -20,6 +22,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const isMobile = useMedia("(max-width: 480px)", false);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -50,15 +53,16 @@ export function DataTable<TData, TValue>({
   const pageSize = pagination.pageSize;
 
   return (
-    <div className="flex flex-col">
-      <div className="relative flex justify-end mb-8 py-1 border-b border-border">
-        <Search className="size-5 absolute -z-10 left-0 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+    <div className="w-full flex flex-col">
+      <div className={cn(isMobile ? "w-full relative flex justify-between mb-4" : "relative flex justify-end mb-8 py-1 border-b border-border")}>
+        <Search className={cn(isMobile ? "size-4 absolute -z-10 left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" : "size-4 absolute -z-10 left-0 top-1/2 transform -translate-y-1/2 text-muted-foreground")} />
         <Input
           placeholder="Search by name"
           spellCheck={false}
           value={table.getColumn("name")?.getFilterValue() as string}
           onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
-          className="w-full indent-4 border-none focus-visible:ring-0 focus-visible:bg-transparent"
+          className={cn(isMobile ? "w-fit indent-5 text-xs focus-visible:ring-0 focus-visible:bg-transparent" : "w-full text-xs indent-4 border-none focus-visible:ring-0 focus-visible:bg-transparent")}
+          aria-label="Search by name"
         />
         <Actions table={table} />
       </div>
@@ -70,7 +74,7 @@ export function DataTable<TData, TValue>({
                 <TableRow key={headerGroup.id} className="border-t h-12">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} aria-label={`Sort data by ${header.id}`}>
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     );
@@ -82,7 +86,7 @@ export function DataTable<TData, TValue>({
               {table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="text-xs">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -99,28 +103,28 @@ export function DataTable<TData, TValue>({
         <div className="w-full flex justify-between xs:justify-end xs:gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="px-2 text-muted-foreground text-xs focus-visible:ring-0">
+              <Button variant={isMobile ? "outline" : "ghost"} className="px-2 text-muted-foreground text-xs focus-visible:ring-0" aria-label="Set number of displayed rows">
                 {pageSize} rows
                 <ChevronDown className="ml-2 -mr-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="min-w-[5rem] bg-background-sh shadow-black shadow-md">
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 5})}>
+              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 5})} aria-label="Set number of displayed rows to 5">
                 5
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 10})}>
+              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 10})} aria-label="Set number of displayed rows to 5">
                 10
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 20})}>
+              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 20})} aria-label="Set number of displayed rows to 5">
                 20
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="space-x-2">
-            <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} variant="outline" size="icon" className="bg-background-sh">
+            <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} variant="outline" size="icon" className="bg-background-sh" aria-label="Go to previous page">
               <ChevronLeft />
             </Button>
-            <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} variant="outline" size="icon" className="bg-background-sh">
+            <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} variant="outline" size="icon" className="bg-background-sh" aria-label="Go to next page">
               <ChevronRight />
             </Button>
           </div>

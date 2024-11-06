@@ -51,7 +51,7 @@ export const columns: ColumnDef<User>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent p-0"
+          className="w-[100px] justify-start text-xs hover:bg-transparent p-0"
         >
           Name
           <CaretSortIcon className="ml-2 size-4" />
@@ -66,7 +66,7 @@ export const columns: ColumnDef<User>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent p-0"
+          className="text-xs hover:bg-transparent p-0"
         >
           Email
           <CaretSortIcon className="ml-2 size-4" />
@@ -81,7 +81,7 @@ export const columns: ColumnDef<User>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent p-0"
+          className="text-xs hover:bg-transparent p-0"
         >
           Role
           <CaretSortIcon className="ml-2 size-4" />
