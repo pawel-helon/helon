@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Device } from "@prisma/client";
+import { Device, STATE, STATUS } from "@prisma/client";
 
 function createResponse(message: string, status: number, device?: Device) {
   return new Response(JSON.stringify({ message, status, device }));
@@ -22,9 +22,27 @@ export async function GET(request: Request) {
     });
     
     if (!gettingDevice) {
-      return createResponse(`Device not found`, 503);
+      const creatingDevice = await db.device.create({
+        data: {
+          deviceName: "deviceName",
+          address: "address",
+          positionLng: 0,
+          positionLat: 0,
+          emei: "555555565555344",
+          model: "model",
+          SIM: "600000047",
+          status: STATUS.INACTIVE,
+          state: STATE.CLOSED,
+          ownerId: 1,
+          usersIds: []
+        }
+      })
+      if (!creatingDevice) {
+        return createResponse("Failed to create device", 503);
+      }
+      return createResponse("Device has been created", 201, creatingDevice);
     } else {
-      return createResponse("Slots have been fetched", 200, gettingDevice);
+      return createResponse("Device has been fetched", 200, gettingDevice);
     }
   } catch (error) {
     console.error(error);

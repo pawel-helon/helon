@@ -105,8 +105,15 @@ const config: Config = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.6)"}
         },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" }
+        }
       },
       animation: {
+        "fade-in": "fade-in 0.3s ease-out",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
         "scale": "scale 3s ease-in-out infinite",
         "scale-140": "scale-140 2s ease-in-out infinite",
         "scale-160": "scale-160 1s ease-in-out infinite",

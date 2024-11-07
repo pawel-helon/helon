@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BookOpenText, UsersRound, Vault, Plus, TrendingUp } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
 import { GoBellFill } from "react-icons/go";
+import { ActionsOnboarding } from "@/components/features/onboarding/actions-docs";
 import { Account } from "@/components/features/onboarding/account";
 import { OnboardingAddDevice } from "@/components/features/onboarding/onboarding-add-device";
 import { OnboardingAccount } from "@/components/features/onboarding/onboarding-account";
@@ -13,7 +14,6 @@ import { GuideEnd } from "@/components/features/onboarding/guide-end";
 import { Text } from "@/components/typography";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Toast } from "@/components/features/onboarding/toast";
 
 function useOnboarding() {
   const TOTAL_STEPS = 5;
@@ -28,7 +28,7 @@ export default function OnboardingPage() {
   const { onboardingStep, nextStep, skipTour, restart } = useOnboarding();
   return (
     <>
-      <Toast restart={restart} />
+      <ActionsOnboarding restart={restart} />
       {onboardingStep === 5 && <GuideEnd onboardingStep={onboardingStep} skipTour={skipTour}/>}
       <div className="xs:hidden fixed top-0 left-3 right-3 z-50 flex justify-between pt-3 pb-2 bg-background">
         <div className="flex gap-1">

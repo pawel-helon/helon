@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { getDevice, getUser, updateDeviceState, updateDeviceStatus, updateUserRole } from "@/actions/database-actions";
+import { ActionsQRCodes } from "@/components/features/qr-codes/actions-qr-codes";
 import { RadioGroup, RadioGroupItemQR as RadioGroupItem } from "@/components/ui/radio-group";
 import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
@@ -23,7 +23,6 @@ const deviceStates = [STATE.OPENED, STATE.CLOSED];
 const deviceStatuses = [STATUS.ACTIVE, STATUS.INACTIVE];
 
 export default function QRCodesPage() {
-  const router = useRouter();
   const isMobile = useMedia("(max-width: 480px)", false)
   const [selectedUserRole, setSelectedUserRole] = useState<ROLE>();
   const [selectedDeviceStatus, setSelectedDeviceStatus] = useState<STATUS>();
@@ -134,27 +133,31 @@ export default function QRCodesPage() {
   return (
     <>
       {isMobile ? (
-        <Sheet open={true} onOpenChange={() => router.push("/home")}>
-          <SheetContent side="bottom" className="min-h-[85vh]" aria-describedby="">
-            <SheetTitle className="text-center mb-8">QR codes</SheetTitle>
-            <div className="w-full flex flex-col gap-8 mb-15">
-              <div className="w-full flex flex-col items-center gap-2">
-                <Image src="/qr-demo.png" alt="QR code" width={200} height={200} className="rounded-md overflow-hidden"priority />
+        <Sheet open={true}>
+          <SheetContent side="bottomNoPadding" className="min-h-[85vh]" aria-describedby="">
+            <ActionsQRCodes />
+            <div className="p-6">
+              <SheetTitle className="text-center mb-8">QR codes</SheetTitle>
+              <div className="w-full flex flex-col gap-8 mb-15">
+                <div className="w-full flex flex-col items-center gap-2">
+                  <Image src="/qr-demo.png" alt="QR code" width={200} height={200} className="rounded-md overflow-hidden"priority />
+                </div>
+                {options}
               </div>
-              {options}
-            </div>
-            <div className="w-full absolute left-0 right-0 bottom-0 flex p-3">
-              <Link href="/home" className="w-full">
-                <Button className="w-full pl-2 pr-4 shadow-black shadow-xl">
-                  <ChevronLeft className="size-5 mr-1"/>Back
-                </Button>
-              </Link>
+              <div className="w-full absolute left-0 right-0 bottom-0 flex p-3">
+                <Link href="/home" className="w-full">
+                  <Button className="w-full pl-2 pr-4 shadow-black shadow-xl">
+                    <ChevronLeft className="size-5 mr-1"/>Back
+                  </Button>
+                </Link>
+              </div>
             </div>
           </SheetContent>
         </Sheet>
       ) : (
-        <Dialog open={true} onOpenChange={() => router.push("/home")}>
+        <Dialog open={true}>
           <DialogContent aria-describedby="" className="min-w-[600px]">
+            <ActionsQRCodes />
             <DialogTitle className="mb-8">QR codes</DialogTitle>
             <div className="grid grid-cols-3 gap-8 mb-20">
               <div className="col-span-2 flex flex-col gap-8">
