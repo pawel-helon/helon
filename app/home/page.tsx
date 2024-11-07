@@ -29,8 +29,8 @@ export default async function HomePage() {
         <Card
           title="Forms"
           link="/features/forms"
-          overview={[""]}
-          imageSrc="/temp.png"
+          overview={["multiple steps", "prefilling data", "client side validation", "server side validation"]}
+          imageSrc="/forms.png"
         />
         <Card
           title="Tables"

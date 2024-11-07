@@ -12,14 +12,11 @@ interface TableProps<TData, TValue> {
   data: TData[];
 }
 
-export function Table<TData, TValue>({
-    data,
-    columns,
-  }: TableProps<TData, TValue>) {
-    const isMobile = useMedia("(max-width: 480px)", false);
+export function Table<TData, TValue>({ data, columns }: TableProps<TData, TValue>) {
+  const isMobile = useMedia("(max-width: 480px)", false);
 
-    return (
-      <>
+  return (
+    <>
       {isMobile ? (
         <Sheet open={true}>
           <SheetContent side="bottomNoPadding" aria-describedby="">

@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { useMedia } from "react-use";
 import { cn } from "@/lib/utils";
 
+const PAGE_SIZES = [5,10,20]
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -103,21 +105,17 @@ export function DataTable<TData, TValue>({
         <div className="w-full flex justify-between xs:justify-end xs:gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={isMobile ? "outline" : "ghost"} className="px-2 text-muted-foreground text-xs focus-visible:ring-0" aria-label="Set number of displayed rows">
+              <Button variant={isMobile ? "outline" : "ghost"} className="min-w-[6rem] px-2 text-muted-foreground text-xs focus-visible:ring-0" aria-label="Set number of displayed rows">
                 {pageSize} rows
                 <ChevronDown className="ml-2 -mr-1" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="min-w-[5rem] bg-background-sh shadow-black shadow-md">
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 5})} aria-label="Set number of displayed rows to 5">
-                5
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 10})} aria-label="Set number of displayed rows to 5">
-                10
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setPagination({pageIndex: 0, pageSize: 20})} aria-label="Set number of displayed rows to 5">
-                20
-              </DropdownMenuItem>
+            <DropdownMenuContent align="center" className="min-w-[6rem] bg-background-sh shadow-black shadow-md">
+              {PAGE_SIZES.filter((entry) => entry !== pageSize).map((pageSize) => (
+                <DropdownMenuItem key={pageSize} onSelect={() => setPagination({pageIndex: 0, pageSize: pageSize})} aria-label={`Set number of displayed rows to ${pageSize}`}>
+                  {pageSize}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="space-x-2">

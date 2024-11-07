@@ -36,3 +36,31 @@ export type DuplicateDaySlotsFormState =
       message?: string;
     }
   | undefined;
+
+// forms
+
+export const AddDeviceSchema = z.object({
+  deviceName: z
+    .string()
+    .min(2, { message: "Device name must be at least 2 characters long" })
+    .trim(),
+  owner: z.string().min(1, { message: "Select owner" }),
+  emei: z.string()
+    .min(15, { message: "EMEI number must be 15 digits long" })
+    .max(15),
+  model: z.string().min(1, { message: "Select model" }),
+  SIM: z.string().min(1, { message: "Enter SIM card number" }).trim(),
+});
+
+export type AddDeviceFormState =
+  | {
+      errors?: {
+        deviceName?: string[];
+        owner?: string[];
+        emei?: string[];
+        model?: string[];
+        SIM?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
