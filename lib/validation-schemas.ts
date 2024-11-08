@@ -39,26 +39,71 @@ export type DuplicateDaySlotsFormState =
 
 // forms
 
-export const AddDeviceSchema = z.object({
+export const DeviceNameSchema = z.object({
   deviceName: z
     .string()
     .min(2, { message: "Device name must be at least 2 characters long" })
     .trim(),
-  owner: z.string().min(1, { message: "Select owner" }),
-  emei: z.string()
-    .min(15, { message: "EMEI number must be 15 digits long" })
-    .max(15),
-  model: z.string().min(1, { message: "Select model" }),
-  SIM: z.string().min(1, { message: "Enter SIM card number" }).trim(),
 });
 
-export type AddDeviceFormState =
+export type DeviceNameFormState =
   | {
       errors?: {
         deviceName?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const OwnerSchema = z.object({
+  owner: z.string().min(1, { message: "Select owner" }),
+});
+
+export type OwnerFormState =
+  | {
+      errors?: {
         owner?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+  
+export const EMEISchema = z.object({
+  emei: z.string()
+    .min(15, { message: "EMEI number must be 15 digits long" })
+    .max(15),
+});
+
+export type EMEIFormState =
+  | {
+      errors?: {
         emei?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const ModelSchema = z.object({
+  model: z.string().min(1, { message: "Select model" }),
+});
+
+export type ModelFormState =
+  | {
+      errors?: {
         model?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+
+export const PhoneNumberSchema = z.object({
+  SIM: z.string().min(1, { message: "Enter SIM card number" }).trim(),
+});
+
+export type PhoneNumberFormState =
+  | {
+      errors?: {
         SIM?: string[];
       };
       message?: string;

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react";
-import { AddDeviceFormState, AddDeviceSchema } from "@/lib/validation-schemas";
+import { AddDeviceFormState, DeviceNameSchema, EMEISchema, ModelSchema, OwnerSchema, PhoneNumberSchema } from "@/lib/validation-schemas";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Text } from "@/components/typography";
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RiLoaderFill } from "react-icons/ri";
+import { addDevice, checkDeviceEMEI, checkDeviceName, checkDevicePhoneNumber } from "@/actions/database-actions";
 
 const USERS = ["Alex Atkins", "Bob Berkley", "Clair Clarkson", "David Daniels", "Ethan Edwards", "Frank Fisher", "Greg Goodwin", "Hank Henderson", "Ian Igins" ]
 
@@ -41,36 +42,108 @@ const phonePrefixesEurope = [
   { value: "0046", label: "+46" },
 ];
 
-
 export function AddDeviceForm() {
   const router = useRouter();
   const [state, setState] = useState<AddDeviceFormState | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
-   
+  const [deviceNameServerStateError, setDeviceNameServerStateError] = useState<string | undefined>(undefined);
+  const [emeiServerStateError, setEmeiServerStateError] = useState<string | undefined>(undefined);
+  const [phoneNumberServerStateError, setPhoneNumberServerStateError] = useState<string | undefined>(undefined);
+  
 
   async function handleSubmit(formData: FormData) {
-    const validatedFields = AddDeviceSchema.safeParse({
-      deviceName: formData.get("deviceName"),
-      owner: formData.get("owner"),
-      emei: formData.get("emei"),
-      model: formData.get("model"),
-      SIM: formData.get("SIM"),
-    })
-    
-    if (!validatedFields.success) {
-      setState({ errors: validatedFields.error.flatten().fieldErrors });
-      return;
-    }
-
-    const { deviceName } = validatedFields.data;
-    
     try {
-      startTransition(async () => {
-        setTimeout(() => {
-          toast.success(`${deviceName} device has been added to the platform`);
-          router.refresh();
-        }, 1000)
+      // Device nama validation
+      const validatedDeviceName = DeviceNameSchema.safeParse({
+        deviceName: formData.get("deviceName")
       })
+      
+      if (!validatedDeviceName.success) {
+        setState({ errors: validatedDeviceName.error.flatten().fieldErrors });
+        return;
+      }
+  
+      const { deviceName } = validatedDeviceName.data
+  
+      const checkingDeviceName = await checkDeviceName(deviceName);
+      if (checkingDeviceName.status !== 204) {
+        setDeviceNameServerStateError(checkingDeviceName.message)
+        return;
+      } 
+      setDeviceNameServerStateError(undefined);
+
+      // Owner validation
+      const validatedOwner = OwnerSchema.safeParse({
+        owner: formData.get("owner")
+      })
+
+      if (!validatedOwner.success) {
+        setState({ errors: validatedOwner.error.flatten().fieldErrors });
+        return;
+      }
+
+      // EMEI validation
+      const validatedEMEI = EMEISchema.safeParse({
+        emei: formData.get("emei")
+      })
+      
+      if (!validatedEMEI.success) {
+        setState({ errors: validatedEMEI.error.flatten().fieldErrors });
+        return;
+      }
+  
+      const { emei } = validatedEMEI.data
+  
+      const checkingDeviceEMEI = await checkDeviceEMEI(emei);
+      if (checkingDeviceEMEI.status !== 204) {
+        setEmeiServerStateError(checkingDeviceEMEI.message);
+        return;
+      }
+      setEmeiServerStateError(undefined);
+
+      // Model validation
+      const validatedModel = ModelSchema.safeParse({
+        model: formData.get("model")
+      })
+
+      if (!validatedModel.success) {
+        setState({ errors: validatedModel.error.flatten().fieldErrors })
+        return;
+      } 
+      
+      // Phone number validation
+      const validatedPhoneNumber = PhoneNumberSchema.safeParse({
+        SIM: formData.get("SIM")
+      })
+      
+      if (!validatedPhoneNumber.success) {
+        setState({ errors: validatedPhoneNumber.error.flatten().fieldErrors });
+        return;
+      }
+  
+      const { SIM } = validatedPhoneNumber.data
+      const prefix = formData.get("prefix")
+      const phoneNumber = `${prefix}-${SIM}`
+  
+      const checkingDevicePhoneNumber = await checkDevicePhoneNumber(phoneNumber);
+      if (checkingDevicePhoneNumber.status !== 204) {
+        setPhoneNumberServerStateError(checkingDevicePhoneNumber.message);
+        return;
+      }
+      setPhoneNumberServerStateError(undefined);
+
+      startTransition(async () => {
+        const addingDevice = await addDevice(deviceName, emei, phoneNumber);
+        if (addingDevice.status !== 201) {
+          toast.error(addingDevice.message);
+          return;
+        }
+        toast.success(addingDevice.message);
+        setTimeout(() => {
+          window.location.reload();
+        },500)
+      })
+
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error occurred. Please try again later.");
@@ -88,11 +161,19 @@ export function AddDeviceForm() {
           spellCheck="false"
           className="text-xs placeholder:text-foreground"
         />
-        {state?.errors?.deviceName ? (
-          <Text variant="p-small-thin" className="text-right">{state.errors.deviceName}</Text>
-        ) : (
-          <div className="h-[1rem]" />
-        )}
+        <>
+          {deviceNameServerStateError ? (
+            <Text variant="p-small-thin" className="text-right">{deviceNameServerStateError}</Text>
+          ) : (
+            <>
+              {state?.errors?.deviceName ? (
+                <Text variant="p-small-thin" className="text-right">{state.errors.deviceName}</Text>
+              ) : (
+                <div className="h-[1rem]" />
+              )}
+            </>
+          )}
+        </>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="owner" className="text-xs">Owner</Label>
@@ -126,11 +207,19 @@ export function AddDeviceForm() {
           spellCheck="false"
           className="text-xs placeholder:text-foreground"
         />
-        {state?.errors?.emei ? (
-          <Text variant="p-small-thin" className="text-right">{state.errors.emei}</Text>
-        ) : (
-          <div className="h-[1rem]" />
-        )}
+        <>
+          {emeiServerStateError ? (
+            <Text variant="p-small-thin" className="text-right">{emeiServerStateError}</Text>
+          ) : (
+            <>
+              {state?.errors?.emei ? (
+                <Text variant="p-small-thin" className="text-right">{state.errors.emei}</Text>
+              ) : (
+                <div className="h-[1rem]" />
+              )}
+            </>
+          )}
+        </>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="model" className="text-xs">Model</Label>
@@ -185,11 +274,19 @@ export function AddDeviceForm() {
             className="text-xs w-full placeholder:text-foreground"
           />
         </div>
-        {state?.errors?.SIM ? (
-          <Text variant="p-small-thin" className="text-right">{state.errors.SIM}</Text>
-        ) : (
-          <div className="h-[1rem]" />
-        )}
+        <>
+          {phoneNumberServerStateError ? (
+            <Text variant="p-small-thin" className="text-right">{phoneNumberServerStateError}</Text>
+          ) : (
+            <>
+              {state?.errors?.SIM ? (
+                <Text variant="p-small-thin" className="text-right">{state.errors.SIM}</Text>
+              ) : (
+                <div className="h-[1rem]" />
+              )}
+            </>
+          )}
+        </>
       </div>
       <div className="absolute xs:fixed bottom-0 left-0 right-0 flex flex-col xs:flex-row justify-end px-3 xs:px-6 py-3 gap-2 bg-background-sh">
       <div className="xs:hidden">

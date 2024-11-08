@@ -151,13 +151,13 @@ model StateLog {
 
 model Device {
   id              Int       @id @default(autoincrement())
-  deviceName      String
+  deviceName      String    @unique
   address         String?
   positionLng     Float
   positionLat     Float
   emei            String    @unique
   model           String
-  SIM             String
+  SIM             String    @unique
   status          STATUS
   state           STATE
   stateLogs       StateLog[]

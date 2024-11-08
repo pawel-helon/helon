@@ -430,3 +430,46 @@ export async function updateRoleDocsFeature(role: ROLE): Promise<{message: strin
   const response = await request.json();
   return response;
 }
+
+// forms
+
+export async function checkDeviceEMEI(emei: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/check-device-emei?emei=${emei}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function checkDevicePhoneNumber(phoneNumber: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/check-device-phone-number?phoneNumber=${phoneNumber}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function checkDeviceName(deviceName: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/check-device-name?deviceName=${deviceName}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function addDevice(deviceName: string, emei: string, phoneNumber: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/add-device`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      deviceName: deviceName,
+      emei: emei,
+      phoneNumber: phoneNumber
+    })
+  })
+  const response = await request.json();
+  return response;
+}
