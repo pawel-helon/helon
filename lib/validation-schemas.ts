@@ -39,17 +39,17 @@ export type DuplicateDaySlotsFormState =
 
 // forms
 
-export const DeviceNameSchema = z.object({
-  deviceName: z
+export const NameSchema = z.object({
+  name: z
     .string()
     .min(2, { message: "Device name must be at least 2 characters long" })
     .trim(),
 });
 
-export type DeviceNameFormState =
+export type NameFormState =
   | {
       errors?: {
-        deviceName?: string[];
+        name?: string[];
       };
       message?: string;
     }
