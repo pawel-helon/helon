@@ -23,7 +23,7 @@ export function ModelField(props: {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right">
+      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right" role="alert">
         {props.clientState?.errors?.model ? props.clientState.errors.model : " "}
       </Text>
     </div>

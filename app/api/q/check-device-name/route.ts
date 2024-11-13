@@ -6,16 +6,16 @@ function createResponse(message: string, status: number) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const deviceName = searchParams.get("deviceName");
+  const name = searchParams.get("name");
 
-  if (!deviceName) {
+  if (!name) {
     return createResponse("Device name is required", 400);
   }
 
   try {
     const gettingDevice = await db.device.findUnique({
       where: {
-       deviceName: deviceName
+       deviceName: name
       },
      
     });

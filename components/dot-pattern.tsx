@@ -11,8 +11,8 @@ interface DotPatternProps {
 
 export function DotPattern({
   dotSize = 2,
-  dotColor = '#1E1234',
-  backgroundColor = '#05000D',
+  dotColor = '#262629',
+  backgroundColor = '#0C0A09',
   gap = 20,
 }: DotPatternProps = {}) {
   const patternSize = gap + dotSize

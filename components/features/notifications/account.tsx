@@ -1,20 +1,24 @@
 "use client"
 
 import { CircleUserRound, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { useMedia } from "react-use";
+import { IoIosInformationCircle } from "react-icons/io";
 import { Text } from "@/components/typography";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { Notifications } from "./notifications";
+import { cn } from "@/lib/utils";
 import { Notification } from "@prisma/client";
+import { useState } from "react";
 
 export function Account(props: { notifications: Notification[]}) {
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const isMobile = useMedia("(max-width: 480px)", false);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild >
+    <DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
+      <DropdownMenuTrigger asChild>
         <div className="relative">
           <Avatar className="xs:size-9 hover:cursor-pointer">
             <AvatarImage src="/avatar.png" alt="user avatar" className="xs:size-9" />
@@ -42,12 +46,12 @@ export function Account(props: { notifications: Notification[]}) {
           <Text variant="p-base-thin">alex.atkins@q.com</Text>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="relative flex justify-between cursor-pointer">
+        <DropdownMenuItem onSelect={() => toast.success("This action has been disabled", { icon: <IoIosInformationCircle size={18} />, duration: 1000 })} className="relative flex justify-between cursor-pointer">
           Account
           <CircleUserRound size={20} />
         </DropdownMenuItem>
-        <Notifications data={props.notifications}/>
-        <DropdownMenuItem className="flex justify-between items-center w-full">
+        {isMobile && <Notifications data={props.notifications} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}/>}
+        <DropdownMenuItem onSelect={() => toast.success("This action has been disabled", { icon: <IoIosInformationCircle size={18} />, duration: 1000 })} className="flex justify-between items-center w-full">
           Sign out
           <LogOut size={20} />
         </DropdownMenuItem>

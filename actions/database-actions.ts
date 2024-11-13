@@ -451,8 +451,8 @@ export async function checkDevicePhoneNumber(phoneNumber: string): Promise<{mess
   return response;
 }
 
-export async function checkDeviceName(deviceName: string): Promise<{message: string, status: number}> {
-  const request = await fetch(`/api/q/check-device-name?deviceName=${deviceName}`, {
+export async function checkDeviceName(name: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/q/check-device-name?name=${name}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   })

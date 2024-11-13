@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 
-const FEATURES_LINKS = ['/features/auth','/features/forms','/features/tables','/features/charts','/features/qr-codes','/features/onboarding','/features/scheduling','/features/notifications','/features/docs']
+const FEATURES_LINKS = ['/features/forms','/features/tables','/features/charts','/features/qr-codes','/features/onboarding','/features/scheduling','/features/notifications','/features/docs']
 
 const getNextPrevFeaturesLinks = (pathname: string) => {
   let prevFeatureLink: string = '';

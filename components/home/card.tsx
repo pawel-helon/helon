@@ -7,17 +7,20 @@ import { IoIosInformationCircle } from "react-icons/io";
 import { Text } from "@/components/typography";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "@/components/ui/button";
+import { useMedia } from "react-use";
 
 export function Card(props: {
   title: string,
   link: string,
   overview: string[],
-  imageSrc: string,
+  mobileImageSrc: string,
+  desktopImageSrc: string,
 }) {
+  const isMobile = useMedia("(max-width: 480px)", false);
   return (
     <div
-      style={{ aspectRatio: "1" }}
-      className="relative flex flex-col justify-between border border-border rounded-md"
+      style={{ aspectRatio: isMobile ? "1" : "3/4" }}
+      className="relative flex flex-col justify-between rounded-md bg-background-sh shadow-md shadow-black border border-[#262629]"
       role="article"
       aria-labelledby={`card-title-${props.title.toLowerCase().replace(/\s+g/, '-')}`}
     >
@@ -26,7 +29,7 @@ export function Card(props: {
         <Overview overview={props.overview} title={props.title}/>
       </div>
       <Image
-        src={props.imageSrc}
+        src={isMobile ? props.mobileImageSrc : props.desktopImageSrc}
         alt={`Illustration for ${props.title}`}
         priority
         width={0}

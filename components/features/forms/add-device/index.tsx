@@ -10,7 +10,7 @@ import { EmeiField } from "./emei-field";
 import { ModelField } from "./model-field";
 import { PhoneNumberField } from "./phone-number-field";
 
-function useFormFieldStates() {
+export function AddDeviceForm(props: { children: React.ReactNode, startTransition: TransitionStartFunction }) {
   const [nameClientState, setNameClientState] = useState<NameFormState | undefined>(undefined);
   const [ownerClientState, setOwnerClientState] = useState<OwnerFormState | undefined>(undefined);
   const [emeiClientState, setEmeiClientState] = useState<EMEIFormState | undefined>(undefined);
@@ -20,29 +20,6 @@ function useFormFieldStates() {
   const [nameServerState, setNameServerState] = useState<string | undefined>(undefined);
   const [emeiServerState, setEmeiServerState] = useState<string | undefined>(undefined);
   const [phoneNumberServerState, setPhoneNumberServerState] = useState<string | undefined>(undefined);
-
-  return {
-    nameClientState,
-    setNameClientState,
-    ownerClientState,
-    setOwnerClientState,
-    emeiClientState,
-    setEmeiClientState,
-    modelClientState,
-    setModelClientState,
-    phoneNumberClientState,
-    setPhoneNumberClientState,
-    nameServerState,
-    setNameServerState,
-    emeiServerState,
-    setEmeiServerState,
-    phoneNumberServerState,
-    setPhoneNumberServerState
-  }
-}
-
-export function AddDeviceForm(props: { children: React.ReactNode, startTransition: TransitionStartFunction }) {
-  const { nameClientState, setNameClientState, ownerClientState, setOwnerClientState, emeiClientState, setEmeiClientState, modelClientState, setModelClientState, phoneNumberClientState, setPhoneNumberClientState, nameServerState, setNameServerState, emeiServerState, setEmeiServerState, phoneNumberServerState, setPhoneNumberServerState } = useFormFieldStates();
 
   async function handleSubmit(formData: FormData) {
     try {

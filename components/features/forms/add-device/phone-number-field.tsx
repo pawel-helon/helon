@@ -68,7 +68,7 @@ export function PhoneNumberField(props: {
           className="text-xs w-full placeholder:text-foreground"
         />
       </div>
-      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right">
+      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right" role="alert">
         {props.serverState ? props.serverState : props.clientState?.errors?.SIM ? props.clientState.errors.SIM : " "}
       </Text>
     </div>

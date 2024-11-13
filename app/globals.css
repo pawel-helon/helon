@@ -74,6 +74,10 @@ input[type=number] {
     --accent-orange-h: 16 100% 67%;
     --accent-pink-h: 338 100% 61%;
     --border-h: 215 27% 25%;
+
+    --chart-primary: 346.8 77.2% 49.8%;
+    --chart-secondary: 240 3.7% 15.9%;
+    --chart-tertiary: 240 5% 64.9%;
   }
 }
 

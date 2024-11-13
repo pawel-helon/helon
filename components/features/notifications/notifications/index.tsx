@@ -11,7 +11,11 @@ import { Notification } from "@prisma/client";
 import { useMedia } from "react-use";
 import { Sheet, SheetTrigger, SheetContent, SheetTitleH as SheetTitle} from "@/components/ui/sheet";
 
-export function Notifications(props: { data: Notification[] }) {
+export function Notifications(props: {
+  data: Notification[],
+  openDropdown?: boolean,
+  setOpenDropdown?: (openDropdown: boolean) => void
+}) {
   const isMobile = useMedia("(max-width: 480px)", false);
   const [notifications, setNotifications] = useState<Notification[]>(props.data)
   const [open, setOpen] = useState(false);
@@ -39,10 +43,11 @@ export function Notifications(props: { data: Notification[] }) {
             {notifications.length > 0 ? (
               <Items notifications={notifications} setNotifications={setNotifications} />
             ) : (
-              <div className="flex flex-col justify-center items-center xs:w-[429px] h-[320px] xs:h-[120px]">
+              <div className="flex flex-col m-6 gap-4 justify-center items-center xs:w-[429px] h-[320px] xs:h-[120px] border border-border border-dashed rounded-sm">
                 <Text variant="p-small-thin" className="text-foreground-h">
                   You don&apos;t have any notifications.
                 </Text>
+                <Button onClick={() => props.setOpenDropdown!(!props.openDropdown)} variant="outline" size="sm">Close</Button>
               </div>
             )}
           </SheetContent>

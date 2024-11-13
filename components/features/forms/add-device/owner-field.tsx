@@ -25,7 +25,7 @@ export function OwnerField(props: {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right">
+      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right" role="alert">
         {props.clientState?.errors?.owner ? props.clientState.errors.owner : " "}
       </Text>
     </div>

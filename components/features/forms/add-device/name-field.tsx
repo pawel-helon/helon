@@ -17,7 +17,7 @@ export function NameField(props: {
         spellCheck="false"
         className="text-xs placeholder:text-foreground"
       />
-      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right">
+      <Text variant="p-base-thin" className="min-h-[1rem] text-xs text-right" role="alert">
         {props.serverState ? props.serverState : props.clientState?.errors?.name ? props.clientState.errors.name : ""}
       </Text>
     </div>

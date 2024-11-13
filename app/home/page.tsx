@@ -19,60 +19,62 @@ export default async function HomePage() {
         <span className="absolute top-[57%] xs:top-[40%] left-[5%] xs:left-[20%] animate-scale-140 rounded-full size-3  bg-gradient-to-r from-accent-orange-h to-accent-pink-h" />
         <span className="absolute bottom-[10%] right-[30%] animate-scale rounded-full size-5 bg-gradient-to-r from-accent-yellow-h to-accent-orange-h"/>
       </div>
-      <div className="flex flex-col xs:grid grid-cols-2 grid-rows-4 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card
-          title="Auth"
-          link="/features/auth"
-          overview={[""]}
-          imageSrc="/temp.png"
-        />
+      <div className="flex flex-col xs:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <Card
           title="Forms"
           link="/features/forms"
           overview={["multiple steps", "prefilling data", "client side validation", "server side validation"]}
-          imageSrc="/forms.png"
+          mobileImageSrc="/mobile-forms.png"
+          desktopImageSrc="/desktop-forms.png"
         />
         <Card
           title="Tables"
           link="/features/tables"
           overview={["filtering", "sorting", "pagination", "actions on rows", "exporting CSV"]}
-          imageSrc="/tables.png"
+          mobileImageSrc="/mobile-tables.png"
+          desktopImageSrc="/desktop-tables.png"
         />
         <Card
           title="Charts"
           link="/features/charts"
           overview={[""]}
-          imageSrc="/temp.png"
+          mobileImageSrc="/mobile-charts.png"
+          desktopImageSrc="/desktop-charts.png"
         />
         <Card
           title="QR codes"
           link="/features/qr-codes"
           overview={["one qr code for various cases (e.g. multiple user roles)"]}
-          imageSrc="/qr-codes.png"
+          mobileImageSrc="/mobile-qr-codes.png"
+          desktopImageSrc="/desktop-qr-codes.png"
         />
         <Card
           title="Onboarding"
           link="/features/onboarding"
           overview={["separate flow for each user role"]}
-          imageSrc="/onboarding.png"
+          mobileImageSrc="/mobile-onboarding.png"
+          desktopImageSrc="/desktop-onboarding.png"
         />
         <Card
           title="Scheduling"
           link="/features/scheduling"
           overview={["quickly setup your availability", "easily manage appointments", "get confirmations to your inbox"]}
-          imageSrc="/scheduling.png"
+          mobileImageSrc="/mobile-scheduling.png"
+          desktopImageSrc="/desktop-scheduling.png"
         />
         <Card
           title="Notifications"
           link="/features/notifications"
           overview={[""]}
-          imageSrc="/temp.png"
+          mobileImageSrc="/mobile-notifications.png"
+          desktopImageSrc="/desktop-notifications.png"
         />
         <Card
           title="Docs"
           link="/features/docs"
           overview={["separate docs for each user role"]}
-          imageSrc="/docs.png"
+          mobileImageSrc="/mobile-docs.png"
+          desktopImageSrc="/desktop-docs.png"
         />
       </div>
     </div>

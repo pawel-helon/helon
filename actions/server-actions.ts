@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db";
-import { Meeting, NOTIFICATIONTYPE, ROLE, Slot } from "@prisma/client";
+import { Meeting, NOTIFICATIONTYPE, ROLE, Slot, STATE, STATUS } from "@prisma/client";
 
 // features
 
@@ -829,4 +829,109 @@ export async function getNotifications() {
     const gettingNotifications = await db.notification.findMany()
     return { message: "Notifications fetched", status: 200, notifications: gettingNotifications }
   }
+}
+
+// charts
+
+export async function getDevices() {
+  const count = await db.device.count();
+  if (count === 0) {
+    const creatingDevices = await db.device.createMany({
+      data: [
+        {
+          deviceName: "Blue",
+          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+          positionLng: -89.295031,
+          positionLat: 33.137635,
+          emei: "555555555555544",
+          model: "MZ-12",
+          SIM: "001-5555555",
+          status: STATUS.ACTIVE,
+          state: STATE.CLOSED,
+          ownerId: 2,
+          createdAt: new Date(2024, 8, 11)
+        },
+        {
+          deviceName: "Green",
+          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+          positionLng: -89.295031,
+          positionLat: 33.137635,
+          emei: "555555555555544",
+          model: "MZ-12",
+          SIM: "001-5555555",
+          status: STATUS.INACTIVE,
+          state: STATE.CLOSED,
+          ownerId: 2,
+          createdAt: new Date(2024, 7, 11)
+        },
+        {
+          deviceName: "Red",
+          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+          positionLng: -89.295031,
+          positionLat: 33.137635,
+          emei: "555555555555544",
+          model: "MZ-12",
+          SIM: "001-5555555",
+          status: STATUS.ACTIVE,
+          state: STATE.CLOSED,
+          ownerId: 2,
+          createdAt: new Date(2024, 6, 11)
+        },
+      ]
+    })
+    if (!creatingDevices) {
+      return { message: "Failed to create devices", status: 503 };
+    } else {
+      const fetchingDevices = await db.device.findMany();
+      return { message: "Devices fetched", status: 200, users: fetchingDevices };
+    }
+  } else {
+    const fetchingDevices = await db.device.findMany();
+    return { message: "Devices fetched", status: 200, users: fetchingDevices };
+  }
+}
+
+export async function countNewDevicesByMonth() {
+  const months = [
+    { name: "January", from: new Date(2024, 0, 1), to: new Date(2024, 0, 31) },
+    { name: "February", from: new Date(2024, 1, 1), to: new Date(2024, 1, 29) },
+    { name: "March", from: new Date(2024, 2, 1), to: new Date(2024, 2, 31) },
+    { name: "April", from: new Date(2024, 3, 1), to: new Date(2024, 3, 30) },
+    { name: "May", from: new Date(2024, 4, 1), to: new Date(2024, 4, 31) },
+    { name: "June", from: new Date(2024, 5, 1), to: new Date(2024, 5, 30) },
+    { name: "July", from: new Date(2024, 6, 1), to: new Date(2024, 6, 31) },
+    { name: "August", from: new Date(2024, 7, 1), to: new Date(2024, 7, 31) },
+    { name: "September", from: new Date(2024, 8, 1), to: new Date(2024, 8, 30)},
+    { name: "October", from: new Date(2024, 9, 1), to: new Date(2024, 9, 31) },
+    { name: "November", from: new Date(2024, 10, 1), to: new Date(2024, 10, 30)},
+    { name: "December", from: new Date(2024, 11, 1), to: new Date(2024, 11, 31)},
+  ];
+
+  const results = [];
+  for (const month of months) {
+    const count = await db.device.count({
+      where: {
+        createdAt: {
+          gte: month.from,
+          lte: month.to,
+        },
+      },
+    });
+    results.push({ month: month.name, count: count });
+  }
+  return results;
+}
+
+export async function countActiveDevices() {
+  const count = await db.device.count({
+    where: {
+      status: STATUS.ACTIVE,
+    },
+  });
+  return count;
+}
+
+export async function countAllDevices() {
+  const count = await db.device.count();
+  return count;
 }
