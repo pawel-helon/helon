@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { RiLoaderFill } from "react-icons/ri";
 import { checkSlotAvailabilityHelon, blockSlotHelon, getAvailableSlotsForDateHelon } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
@@ -21,16 +21,16 @@ function getSlotDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(props: {
-  isChangingSlot: boolean;
-}) {
+export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop() {
+  const searchParams = useSearchParams();
+  const isChangingSlot = Boolean(searchParams.get("param"));
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const DialogContent = props.isChangingSlot ? DialogContentWithoutAnimation : DialogContentWithAnimation;
+  const DialogContent = isChangingSlot ? DialogContentWithoutAnimation : DialogContentWithAnimation;
   
   useEffect(() => {
     if (!date) return;

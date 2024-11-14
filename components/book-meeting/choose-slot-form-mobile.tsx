@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { RiLoaderFill } from "react-icons/ri";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAvailableSlotsForDateHelon, blockSlotHelon, checkSlotAvailabilityHelon } from "@/actions/database-actions";
@@ -21,9 +21,9 @@ function getSlotDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(props: {
-  isChangingSlot: boolean;
-}) {
+export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile() {
+  const searchParams = useSearchParams();
+  const isChangingSlot = Boolean(searchParams.get("param"));
   const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
@@ -32,7 +32,7 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(pro
   const [displayedLastSlot, setDisplayedLastSlot] = useState<number>(5); 
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const SheetContent = props.isChangingSlot ? SheetContentWithoutAnimation : SheetContentWithAnimation;
+  const SheetContent = isChangingSlot ? SheetContentWithoutAnimation : SheetContentWithAnimation;
 
   useEffect(() => {
     if (!date) return;

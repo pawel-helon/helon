@@ -8,10 +8,9 @@ import { deletePastSlotsHelon, unblockSlotsHelon } from "@/actions/database-acti
 import { ChooseSlotFormDesktop } from "@/components/book-meeting/choose-slot-form-desktop";
 import { ChooseSlotFormMobile } from "@/components/book-meeting/choose-slot-form-mobile";
 
+
 export default function ChooseSlotPage() {
   const isMobile = useMedia("(max-width: 480px)", false);
-  const searchParams = useSearchParams();
-  const isChangingSlot = Boolean(searchParams.get("param"));
 
   useEffect(() => {
     async function initSlots() {
@@ -27,7 +26,7 @@ export default function ChooseSlotPage() {
   
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      {isMobile ? <ChooseSlotFormMobile isChangingSlot={isChangingSlot} /> : <ChooseSlotFormDesktop isChangingSlot={isChangingSlot} />}
+      {isMobile ? <ChooseSlotFormMobile /> : <ChooseSlotFormDesktop />}
     </Suspense>
   )
 }
