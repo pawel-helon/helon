@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect  } from "react";
+import React, { Suspense, useEffect  } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useMedia } from "react-use";
@@ -25,5 +25,9 @@ export default function ChooseSlotPage() {
     initSlots();
   },[])
   
-  return <>{isMobile ? <ChooseSlotFormMobile isChangingSlot={isChangingSlot} /> : <ChooseSlotFormDesktop isChangingSlot={isChangingSlot} />}</>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      {isMobile ? <ChooseSlotFormMobile isChangingSlot={isChangingSlot} /> : <ChooseSlotFormDesktop isChangingSlot={isChangingSlot} />}
+    </Suspense>
+  )
 }
