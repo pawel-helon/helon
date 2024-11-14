@@ -5,7 +5,7 @@ import { Card } from "@/components/home/card";
 
 export default async function HomePage() {
   return (
-    <div className="mb-16">
+    <div>
       <div className="relative h-[80vh] justify-center items-center flex flex-col gap-8">
         <Text variant="h1" className="text-5xl xs:text-6xl">Web apps</Text>
         <Text variant="p-base-thin">
@@ -13,13 +13,13 @@ export default async function HomePage() {
           <span className="text-white">Next.js</span>
         </Text>
         <Link href="/book-meeting" prefetch={true}>
-          <Button size="lg" variant="tertiary" className="rounded-full">Book meeting</Button>
+          <Button size="lg" className="rounded-full">Book meeting</Button>
         </Link>
-        <span className="absolute top-[5%] right-[10%] animate-scale-160 rounded-full size-1 bg-accent-pink-h" />
+        <span className="absolute top-[8%] right-[10%] animate-scale-160 rounded-full size-1 bg-accent-pink-h" />
         <span className="absolute top-[57%] xs:top-[40%] left-[5%] xs:left-[20%] animate-scale-140 rounded-full size-3  bg-gradient-to-r from-accent-orange-h to-accent-pink-h" />
         <span className="absolute bottom-[10%] right-[30%] animate-scale rounded-full size-5 bg-gradient-to-r from-accent-yellow-h to-accent-orange-h"/>
       </div>
-      <div className="flex flex-col xs:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="flex flex-col xs:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-16">
         <Card
           title="Forms"
           link="/features/forms"
@@ -37,7 +37,7 @@ export default async function HomePage() {
         <Card
           title="Charts"
           link="/features/charts"
-          overview={[""]}
+          overview={["bar charts", "pie charts"]}
           mobileImageSrc="/mobile-charts.png"
           desktopImageSrc="/desktop-charts.png"
         />
@@ -65,7 +65,7 @@ export default async function HomePage() {
         <Card
           title="Notifications"
           link="/features/notifications"
-          overview={[""]}
+          overview={["multiple notification types", "email confirmations"]}
           mobileImageSrc="/mobile-notifications.png"
           desktopImageSrc="/desktop-notifications.png"
         />

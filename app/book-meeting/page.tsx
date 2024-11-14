@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect  } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useMedia } from "react-use";
 import { deletePastSlotsHelon, unblockSlotsHelon } from "@/actions/database-actions";
 import { ChooseSlotFormDesktop } from "@/components/book-meeting/choose-slot-form-desktop";
 import { ChooseSlotFormMobile } from "@/components/book-meeting/choose-slot-form-mobile";
-import { useSearchParams } from "next/navigation";
 
 export default function ChooseSlotPage() {
   const isMobile = useMedia("(max-width: 480px)", false);

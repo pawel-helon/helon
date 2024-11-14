@@ -42,7 +42,7 @@ export default function FormsPage() {
             <div className="p-6">
               <DialogTitle className="mb-8">Add device</DialogTitle>
               <AddDeviceForm startTransition={startTransition} >
-                <div className="fixed bottom-0 left-0 right-0 flex justify-end px-6 py-3 gap-2 bg-background-sh">
+                <div className="fixed bottom-0 left-0 right-0 flex justify-end px-6 pb-6 gap-2 bg-background-sh">
                   <DialogClose asChild>
                     <Button variant="ghost" onClick={() => router.push("/home")}>Cancel</Button>
                   </DialogClose>

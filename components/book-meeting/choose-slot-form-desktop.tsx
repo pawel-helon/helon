@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RiLoaderFill } from "react-icons/ri";
 import { checkSlotAvailabilityHelon, blockSlotHelon, getAvailableSlotsForDateHelon } from "@/actions/database-actions";
 import { ProgressBar } from "@/components/progress-bar";
@@ -29,8 +28,6 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>("");
-  const [displayedFirstSlot, setDisplayedFirstSlot] = useState<number>(0); 
-  const [displayedLastSlot, setDisplayedLastSlot] = useState<number>(5); 
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const DialogContent = props.isChangingSlot ? DialogContentWithoutAnimation : DialogContentWithAnimation;
@@ -40,8 +37,6 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
     try {
       setIsLoading(true);
       setSelectedSlot("");
-      setDisplayedFirstSlot(0);
-      setDisplayedLastSlot(5);
       const initSlots = async () => {
         const gettingAvailableSlotsForDate = await getAvailableSlotsForDateHelon(getSlotDate(date));
         if (gettingAvailableSlotsForDate.status !== 200) {
@@ -57,18 +52,6 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
         toast.error("Error initializing slots.");
       }
   },[date])
-
-  function handlePrevSlots() {
-    setSelectedSlot("");
-    setDisplayedFirstSlot(displayedFirstSlot - 5);
-    setDisplayedLastSlot(displayedLastSlot - 5);
-  }
-
-  function handleNextSlots() {
-    setSelectedSlot("");
-    setDisplayedFirstSlot(displayedFirstSlot + 5);
-    setDisplayedLastSlot(displayedLastSlot + 5);
-  }
 
   async function handleOnSubmit(formData: FormData) {
     const slotId = formData.get("slotId") as string;
@@ -99,21 +82,21 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
 
   return (
     <Dialog open={true} onOpenChange={() => router.push("/home")} >
-      <DialogContent id="choose-slot-form" className="h-[560px] max-w-[580px] flex flex-col flex-start bg-background-h" aria-describedby="">
+      <DialogContent id="choose-slot-form" className="h-[560px] max-w-[580px] flex flex-col flex-start bg-background-sh" aria-describedby="">
         <ProgressBar />
         <DialogTitle>Book meeting</DialogTitle>
           <form action={handleOnSubmit} className="flex gap-4 mt-8">
             <Calendar initialFocus selected={date} onSelect={setDate} mode="single" />
             <div className="w-full flex flex-col gap-2">
               {isLoading ? (
-                <div className="w-full flex py-2 justify-center items-center border border-input bg-background shadow-sm">
+                <div className="w-full flex py-2 justify-center items-center border border-input bg-background-sh shadow-sm">
                   <RiLoaderFill className="size-5 text-muted-foreground animate-spin"/>
                 </div>
               ) : (
                 <>
                   {slots.length > 0 ? (
-                    <>
-                      {slots.filter((s, i) => displayedFirstSlot <= i && i < displayedLastSlot).map((s) => (
+                    <div className="max-h-[288px] pr-1 flex flex-col gap-2 overflow-y-scroll scrollbar scrollbar-thumb-border scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+                      {slots.map((s) => (
                         <RadioGroup key={s.id} name="slotId">
                           <RadioGroupItem key={s.id} value={s.id} onClick={() => setSelectedSlot(s.id)} className="w-full" asChild>
                             <Button variant={selectedSlot === s.id ? "secondary" : "outline"} size="sm" className={selectedSlot === s.id ? "w-full bg-accent" : "w-full"}>
@@ -122,19 +105,7 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
                           </RadioGroupItem>
                         </RadioGroup>
                       ))}
-                      {slots.length > 5 && (
-                        <div className="w-full flex justify-end gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
-                            <ChevronLeft className="size-4 mr-2"/>
-                            Previous
-                          </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
-                            Next
-                            <ChevronRight className="size-4 ml-2"/>
-                          </Button>
-                      </div>
-                      )}
-                    </>
+                    </div>
                   ) : (
                     <div className="w-full flex justify-center items-center">
                       <Text variant="p-small-thin" className="max-w-[32ch] text-center text-balance text-muted-foreground">
@@ -146,9 +117,6 @@ export const ChooseSlotFormDesktop = React.memo(function ChooseSlotFormDesktop(p
               )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 flex flex-col xs:flex-row xs:justify-end p-6 gap-2">
-              <Button onClick={() => router.push("/home")} type="button" variant="ghost">
-                Close
-              </Button>
               <Button type="submit" disabled={isPending || selectedSlot === ""} className="min-w-[64px]">
                 {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Next"}
               </Button>

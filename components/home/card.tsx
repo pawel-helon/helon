@@ -58,9 +58,9 @@ function Overview(props: {
       <PopoverTrigger aria-label={`View overview for ${props.title}`}>
         <IoIosInformationCircle size={18} className="text-muted-foreground animation transition-colors duration-200 hover:text-foreground-h/80"/>
       </PopoverTrigger>
-      <PopoverContent side="bottom" sideOffset={8} align="end" className="flex flex-col gap-4 pb-8 bg-background-sh">
+      <PopoverContent side="bottom" sideOffset={8} align="end" className="w-fit flex flex-col gap-4 pb-8 bg-background-sh">
         <Text variant="p-base-thick">Overview</Text>
-        <ul className="list-none space-y-2.5 p-0 m-0">
+        <ul className="list-none space-y-3.5 p-0 m-0">
           {props.overview.map((entry, index) => (
             <li key={index} className="flex items-center gap-2">
               <div className='size-4 relative rounded-full text-background-sh shadow-md bg-green-600'>

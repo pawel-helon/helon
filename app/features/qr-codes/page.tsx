@@ -1,18 +1,15 @@
 "use client"
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMedia } from "react-use";
 import { toast } from "sonner";
-import { ChevronLeft } from "lucide-react";
 import { getDevice, getUser, updateDeviceState, updateDeviceStatus, updateUserRole } from "@/actions/database-actions";
 import { ActionsQRCodes } from "@/components/features/qr-codes/actions-qr-codes";
 import { RadioGroup, RadioGroupItemQR as RadioGroupItem } from "@/components/ui/radio-group";
-import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContentWithoutClose as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContentWithoutClose as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { ROLE, STATE, STATUS } from "@prisma/client";
 
 function capitalizeFirstLetterOnly(string: string) {
@@ -134,7 +131,7 @@ export default function QRCodesPage() {
     <>
       {isMobile ? (
         <Sheet open={true}>
-          <SheetContent side="bottomNoPadding" className="min-h-[85vh]" aria-describedby="">
+          <SheetContent side="bottomNoPadding" className="pb-16" aria-describedby="">
             <ActionsQRCodes />
             <div className="p-6">
               <SheetTitle className="text-center mb-8">QR codes</SheetTitle>
@@ -144,13 +141,6 @@ export default function QRCodesPage() {
                 </div>
                 {options}
               </div>
-              <div className="w-full absolute left-0 right-0 bottom-0 flex p-3">
-                <Link href="/home" className="w-full">
-                  <Button className="w-full pl-2 pr-4 shadow-black shadow-xl">
-                    <ChevronLeft className="size-5 mr-1"/>Back
-                  </Button>
-                </Link>
-              </div>
             </div>
           </SheetContent>
         </Sheet>
@@ -159,7 +149,7 @@ export default function QRCodesPage() {
           <DialogContent aria-describedby="" className="min-w-[600px]">
             <ActionsQRCodes />
             <DialogTitle className="mb-8">QR codes</DialogTitle>
-            <div className="grid grid-cols-3 gap-8 mb-20">
+            <div className="grid grid-cols-3 gap-8 mb-8">
               <div className="col-span-2 flex flex-col gap-8">
                 {options}
               </div>
@@ -167,13 +157,6 @@ export default function QRCodesPage() {
                 <Label className="text-xs">Scan qr code</Label>
                 <Image src="/qr-demo.png" alt="QR code" width={200} height={200} className="rounded-md overflow-hidden"priority />
               </div>
-            </div>
-            <div className="w-full absolute left-0 right-0 bottom-0 flex justify-end p-6">
-              <Link href="/home">
-                <Button size="lg" className="pl-2 pr-4 shadow-black shadow-xl">
-                  <ChevronLeft className="size-5 mr-1"/>Back
-                </Button>
-              </Link>
             </div>
           </DialogContent>
         </Dialog>

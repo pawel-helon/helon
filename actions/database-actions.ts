@@ -147,6 +147,15 @@ export async function deleteSlot(slotId: string): Promise<{message: string, stat
   return response;
 }
 
+export async function deletePastSlots(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/q/delete-past-slots", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
 export async function undoDeleteSlot(dateTime: string): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/database/scheduling/undo-delete-slot`, {
     method: "POST",

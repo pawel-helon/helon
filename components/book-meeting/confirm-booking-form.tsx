@@ -58,12 +58,13 @@ export function ConfirmBookingForm(props: {
         await sendBookingConfirmation(bookingSlot.meeting);
         router.push("/home");
         
-        toast.success(`Your meeting has been booked on ${getSlotDateAndTime(props.slotDateTime)}. We'll reach out to you soon.`, {
+        toast.success(getSlotDateAndTime(props.slotDateTime), {
           action: {
             label: "Close",
             onClick: () => { toast.dismiss() },
           },
           duration: Infinity,
+          description: `Your meeting has been booked. We'll reach out to you soon.`
         });
       });
     } catch (e) {

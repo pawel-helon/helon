@@ -98,7 +98,7 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(pro
 
   return (
     <Sheet open={true} onOpenChange={() => router.push("/home")}>
-      <SheetContent id="choose-slot-form" className="min-w-[332px] bg-background-h" aria-describedby="">
+      <SheetContent id="choose-slot-form" className="min-w-[332px] bg-background-sh" aria-describedby="">
         <ProgressBar />
         <SheetTitle className="text-center">Book meeting</SheetTitle>
           <form action={handleOnSubmit} className="flex flex-col gap-4 mt-8">
@@ -106,13 +106,23 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(pro
             <div className="h-1 border-b border-border my-2"/>
             <div className="w-full flex flex-col gap-2">
               {isLoading ? (
-                <div className="w-full flex py-2 justify-center items-center border border-input bg-background shadow-sm">
+                <div className="w-full flex py-2 justify-center items-center border border-input bg-background-sh shadow-sm">
                   <RiLoaderFill className="size-5 text-muted-foreground animate-spin"/>
                 </div>
               ) : (
                 <>
                   {slots.length > 0 ? (
                     <>
+                      {slots.length > 5 && (
+                        <div className="w-full flex gap-2">
+                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
+                            <ChevronLeft size={18} />
+                          </Button>
+                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
+                            <ChevronRight size={18} />
+                          </Button>
+                      </div>
+                      )}
                       {slots.filter((s, i) => displayedFirstSlot <= i && i < displayedLastSlot).map((s) => (
                         <RadioGroup key={s.id} name="slotId">
                           <RadioGroupItem key={s.id} value={s.id} onClick={() => setSelectedSlot(s.id)} className="w-full" asChild>
@@ -122,18 +132,6 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(pro
                           </RadioGroupItem>
                         </RadioGroup>
                       ))}
-                      {slots.length > 5 && (
-                        <div className="w-full flex gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
-                            <ChevronLeft className="size-4 mr-2"/>
-                            Previous
-                          </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
-                            Next
-                            <ChevronRight className="size-4 ml-2"/>
-                          </Button>
-                      </div>
-                      )}
                     </>
                   ) : (
                     <div className="w-full flex justify-center items-center">
@@ -146,9 +144,6 @@ export const ChooseSlotFormMobile = React.memo(function ChooseSlotFormMobile(pro
               )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 flex flex-col xs:flex-row xs:justify-end p-6 gap-2">
-              <Button onClick={() => router.push("/home")} type="button" variant="ghost">
-                Close
-              </Button>
               <Button type="submit" disabled={isPending || selectedSlot === ""} className="min-w-[64px]">
                 {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Next"}
               </Button>

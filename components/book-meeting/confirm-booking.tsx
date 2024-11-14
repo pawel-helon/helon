@@ -2,18 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
-import { getSlotHelon, unblockSlotHelon } from "@/actions/database-actions";
+import { getSlotHelon } from "@/actions/database-actions";
 import { ConfirmBookingForm } from "@/components/book-meeting/confirm-booking-form";
 import { ProgressBar } from "@/components/progress-bar";
 import { Sheet, SheetContentWithoutAnimation as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
-import { Dialog, DialogContentWithoutAnimation as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContentWithoutAnimationAndClose as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Slot, SLOTTYPE } from "@prisma/client";
 
 export function ConfirmBooking(props: { slotId: string }) {
   const [slot, setSlot] = useState<Slot>({id: "", type: SLOTTYPE.AVAILABLE, dateTime: new Date(), recurring: false, createdAt: new Date(), updatedAt: new Date()});
-  const router = useRouter();
   const isMobile = useMedia("(max-width: 480px)", false);
 
   useEffect(() => {
@@ -32,33 +30,19 @@ export function ConfirmBooking(props: { slotId: string }) {
     fetchSlot();
   }, [props.slotId]);
 
-  async function handleOnOpenChange() {
-    try {
-      const unblockingSlot = await unblockSlotHelon(props.slotId)
-      if (unblockingSlot.status !== 200 ) {
-        toast.error(unblockingSlot.message);
-        return;
-      }
-      router.push("/home");
-    } catch (error) {
-      console.error(error);
-      toast.error("An unexpected error occurred. Try again later.")
-    }
-  }
-
   return (
     <>
       {isMobile ? (
-        <Sheet open={true} onOpenChange={handleOnOpenChange}>
-          <SheetContent id="confirm-booking-form" className="min-w-[332px] bg-background-h" aria-describedby="">
+        <Sheet open={true}>
+          <SheetContent id="confirm-booking-form" className="min-w-[332px] bg-background-sh" aria-describedby="">
             <ProgressBar />
             <SheetTitle className="text-center mb-8">Book meeting</SheetTitle>
             <ConfirmBookingForm slotID={slot.id} slotDateTime={slot.dateTime} />
           </SheetContent>
         </Sheet>
       ) : (
-        <Dialog open={true} onOpenChange={handleOnOpenChange}>
-          <DialogContent id="confirm-booking-form" className="max-w-[580px] h-[560px] flex flex-col justify-start bg-background-h" aria-describedby="">
+        <Dialog open={true}>
+          <DialogContent id="confirm-booking-form" className="max-w-[580px] h-[560px] flex flex-col justify-start bg-background-sh" aria-describedby="">
             <ProgressBar />
             <DialogTitle className="mb-8">Book meeting</DialogTitle>
             <ConfirmBookingForm slotID={slot.id} slotDateTime={slot.dateTime} />

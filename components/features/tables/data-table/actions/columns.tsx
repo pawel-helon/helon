@@ -14,7 +14,7 @@ interface TableColumnsProps<TData> {
 
 export function Columns<TData>({ table }: TableColumnsProps<TData>) {
   return (
-    <div className="absolute z-10 top-[58px] xs:top-[80px] right-2">
+    <div className="absolute z-10 top-[84px] xs:top-[84px] right-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="rounded-full bg-background-sh" aria-label="Set visibility of data table columns">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useMedia } from "react-use";
-import { deletePastSlotsHelon } from "@/actions/database-actions";
+import { deletePastSlots } from "@/actions/database-actions";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Slot } from "@prisma/client";
@@ -55,7 +55,7 @@ export function DayGrid(props: {
   useEffect(() => {
     async function initDeletePastSlots() {
       try {
-        deletePastSlotsHelon();
+        deletePastSlots();
       } catch (error) {
         console.error(error);
       }

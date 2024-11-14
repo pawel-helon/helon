@@ -22,13 +22,11 @@ export default async function NotificationsPage() {
       <ActionsNotifications />
       <div className="xs:hidden fixed top-0 left-3 right-3 z-50 flex justify-between pt-3 pb-2 bg-background">
         <div className="flex gap-1">
-          <div className="relative">
-            <DisabledAction side="bottom" sideOffset={8} align="start">
-              <Button size="icon" className="relative rounded-full bg-primary hover:bg-primary/90" aria-label="Open devices tab">
-                <Vault size={20}/>
-              </Button>
-            </DisabledAction>
-          </div>
+          <DisabledAction side="bottom" sideOffset={8} align="start">
+            <Button size="icon" className="relative rounded-full bg-primary hover:bg-primary/90" aria-label="Open devices tab">
+              <Vault size={20}/>
+            </Button>
+          </DisabledAction>
           <DisabledAction side="bottom" sideOffset={8} align="start">
             <Button size="icon" className="relative rounded-full bg-border/80 hover:bg-border/60" aria-label="Open users tab">
               <UsersRound size={20}/>
@@ -39,13 +37,11 @@ export default async function NotificationsPage() {
       </div>
       <div className="z-20 hidden xs:flex flex-col fixed h-screen justify-between p-2 pt-24 border-l-[1px] border-r-[1px] border-border">
         <div className="flex flex-col gap-2">
-          <div className="relative">
-            <DisabledAction side="right" sideOffset={12}>
-              <Button size="icon" className="relative rounded-full bg-primary hover:bg-primary/90" aria-label="Open devices tab">
-                <Vault size={20}/>
-              </Button>
-            </DisabledAction>
-          </div>
+          <DisabledAction side="right" sideOffset={12}>
+            <Button size="icon" className="relative rounded-full bg-primary hover:bg-primary/90" aria-label="Open devices tab">
+              <Vault size={20}/>
+            </Button>
+          </DisabledAction>
           <DisabledAction side="right" sideOffset={12}>
             <Button size="icon" className="relative rounded-full bg-border/80 hover:bg-border/60" aria-label="Open users tab">
               <UsersRound size={20}/>
