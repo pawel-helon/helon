@@ -14,6 +14,7 @@ export async function POST(request: Request) {
         id: meeting.id,
         dateTime: new Date(meeting.dateTime),
         userName: meeting.userName,
+        userPhoneNumber: meeting.userPhoneNumber,
         userEmail: meeting.userEmail,
         slotId: meeting.slotId,
         message: meeting.message
