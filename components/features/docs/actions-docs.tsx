@@ -12,21 +12,15 @@ import { ROLE } from "@prisma/client"
 
 const ROLES = [ROLE.ENDUSER, ROLE.OWNER, ROLE.ADMIN];
 
-export default function ActionsDocs() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
+export default function ActionsDocs(props: { initialRole: ROLE }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [role, setRole] = useState<ROLE>(props.initialRole);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    const initRole = async () => {
-      const gettingRole = await getRole();
-      if (!gettingRole.role) return;
-      setRole(gettingRole.role);
-    }
-    initRole();
     const timer = setTimeout(() => setIsVisible(true), 500)
     return () => clearTimeout(timer)
-  }, [setRole])
+  }, [])
 
   async function handleChangeRole(newRole: ROLE) {
     try {
@@ -38,7 +32,8 @@ export default function ActionsDocs() {
           setRole(role);
           return;
         }
-        window.location.reload()
+        setRole(newRole);
+        window.location.reload();
       })
     } catch (error) {
       console.error(error);

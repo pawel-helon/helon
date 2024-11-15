@@ -8,16 +8,20 @@ import { Button } from "@/components/ui/button";
 import { Nav } from "@/components/features/docs/nav";
 import { DisabledAction } from "@/components/disabled-action";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { getRole } from "@/actions/server-actions";
 
 const ActionsDocs = dynamic(() => import('@/components/features/docs/actions-docs'), { ssr: false })
 
 export default async function DocsLayout(props: {
   children: React.ReactNode;
 }) {
+  const gettingRole = await getRole();
+  if (!gettingRole.role) return null;
+  const role = gettingRole.role;
 
   return (
     <>
-      <ActionsDocs />
+      <ActionsDocs initialRole={role} />
       <div className="xs:hidden fixed top-0 left-3 right-3 z-50 flex justify-between pt-3 pb-2 bg-background">
         <div className="flex gap-1">
           <DisabledAction side="bottom" sideOffset={8} align="start">
@@ -85,7 +89,7 @@ export default async function DocsLayout(props: {
           <div className="h-11 mb-8 flex border-b border-border" />
           <div className="flex flex-col-reverse md:grid md:grid-cols-4 gap-4">
             {props.children}
-            <Nav />
+            <Nav role={role} />
           </div>
         </div>
       </div>

@@ -1,10 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { getRole } from "@/actions/database-actions";
 import { Text } from "@/components/typography";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -12,19 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { ROLE } from "@prisma/client";
 
-export function Nav() {
+export function Nav(props: { role: ROLE }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
-
-  useEffect(() => {
-    const initRole = async () => {
-      const gettingRole = await getRole();
-      if (!gettingRole.role) return;
-      setRole(gettingRole.role);
-    }
-    initRole();
-  }, [setRole])
 
   let dropdownLabel = "";
   if (pathname.startsWith("/features/docs/devices") || pathname.startsWith("/features/docs/users")) {
@@ -34,7 +23,7 @@ export function Nav() {
   }
 
   let links = endUserLinks;
-  { role === ROLE.ADMIN ? links = adminLinks.devicesLinks : role === ROLE.OWNER ? links = ownerLinks : endUserLinks };
+  { props.role === ROLE.ADMIN ? links = adminLinks.devicesLinks : props.role === ROLE.OWNER ? links = ownerLinks : endUserLinks };
   
 
   return (
@@ -48,7 +37,7 @@ export function Nav() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="w-fit flex flex-col gap-1 py-2 bg-background-sh shadow-black shadow-md">
-            {role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground my-2 ml-2">DEVICES</Text>}
+            {props.role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground my-2 ml-2">DEVICES</Text>}
             {links.map((i) => (
               <Link key={i.link} href={i.link} prefetch={true}>
                 <Button onClick={() => setOpen(!open)} variant="ghost" size="sm" className="w-full justify-start pl-2">
@@ -56,7 +45,7 @@ export function Nav() {
                 </Button>
               </Link>
             ))}
-            {role === ROLE.ADMIN && (
+            {props.role === ROLE.ADMIN && (
               <>
                 <Separator className="my-2"/>
                 <Text variant="p-small-thick" className="text-muted-foreground my-2 ml-2">USERS</Text>
@@ -80,7 +69,7 @@ export function Nav() {
       </div>
       <div className="h-min hidden md:col-span-1 md:flex flex-col gap-4 px-2 py-4 text-card-foreground border border-border rounded-lg bg-background shadow-black shadow-2xl">
         <div className="space-y-1.5">
-          {role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground mb-2 ml-2">DEVICES</Text> }
+          {props.role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground mb-2 ml-2">DEVICES</Text> }
           <ul className="space-y-1">
             {links!.map((i) => (
               <li key={i.link} className={cn(
@@ -92,7 +81,7 @@ export function Nav() {
             ))}
           </ul>
         </div>
-        {role === ROLE.ADMIN && (
+        {props.role === ROLE.ADMIN && (
           <>
             <Separator className="mb-1"/>
             <div className="space-y-1.5">
