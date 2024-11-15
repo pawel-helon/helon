@@ -20,7 +20,7 @@ export function Card(props: {
   return (
     <div
       style={{ aspectRatio: isMobile ? "1" : "3/4" }}
-      className="relative flex flex-col justify-between rounded-md bg-background-sh shadow-md shadow-black border border-[#262629]"
+      className="overflow-hidden relative flex flex-col justify-between rounded-md bg-background-sh shadow-md shadow-black border border-[#262629]"
       role="article"
       aria-labelledby={`card-title-${props.title.toLowerCase().replace(/\s+g/, '-')}`}
     >
@@ -39,8 +39,8 @@ export function Card(props: {
         className="absolute top-0 bottom-0 left-0 right-0"
       />
       <div className="z-20 w-full flex justify-end p-3 bg-gradient-to-t from-background-sh to-background-sh/40">
-        <Link href={props.link} aria-label={`View demo for ${props.title}`}>
-          <Button variant="outline" className="w-full xs:w-fit bg-background-sh hover:bg-[#252322]">
+        <Link href={props.link} aria-label={`View demo for ${props.title}`} className="w-full xs:w-fit">
+          <Button variant="outline" className="w-full xs:w-fit bg-background-sh xs:hover:bg-[#252322]">
             Demo
           </Button>
         </Link>

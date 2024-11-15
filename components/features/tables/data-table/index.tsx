@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMedia } from "react-use";
+import { User } from "@prisma/client";
 
 const PAGE_SIZES = [5,10,20]
 
@@ -21,7 +22,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data
 }: DataTableProps<TData, TValue>) {
   const isMobile = useMedia("(max-width: 480px)", false);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });

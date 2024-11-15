@@ -1,21 +1,15 @@
-import { getUsers } from "@/actions/server-actions";
 import { UsersRound, Vault } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
 import { GoBellFill } from "react-icons/go";
-import { columns } from "@/components/features/tables/data-table/column-definitions";
 import { Text } from "@/components/typography";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { ActionsTables } from "@/components/features/tables/actions-tables";
 import { DisabledAction } from "@/components/disabled-action";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { User } from "@prisma/client";
-import { DataTable } from "@/components/features/tables/data-table";
+import { DataTableWrapper } from "@/components/features/tables/data-table-wrapper";
 
 export default async function TablesPage() {
-  const gettingUsers = await getUsers();
-  const data = gettingUsers.users as User[];
-
   return (
     <>
       <ActionsTables />
@@ -87,7 +81,7 @@ export default async function TablesPage() {
           <div className="flex items-start my-[4rem] gap-2">
             <Text variant="h1">Users</Text>
           </div>
-          <DataTable data={data} columns={columns} />
+          <DataTableWrapper />
         </div>
       </div>
     </>

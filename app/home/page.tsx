@@ -23,14 +23,14 @@ export default async function HomePage() {
         <Card
           title="Forms"
           link="/features/forms"
-          overview={["multiple steps", "prefilling data", "client side validation", "server side validation"]}
+          overview={["multi-step forms", "prefilling data", "client side validation", "server side validation"]}
           mobileImageSrc="/mobile-forms.png"
           desktopImageSrc="/desktop-forms.png"
         />
         <Card
           title="Tables"
           link="/features/tables"
-          overview={["filtering", "sorting", "pagination", "actions on rows", "exporting CSV"]}
+          overview={["filtering", "sorting", "pagination", "actions on rows", "CSV exports"]}
           mobileImageSrc="/mobile-tables.png"
           desktopImageSrc="/desktop-tables.png"
         />

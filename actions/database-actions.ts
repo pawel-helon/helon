@@ -413,6 +413,15 @@ export async function updateUserRole(userID: number, userRole: ROLE): Promise<{m
 
 // tables
 
+export async function getUsers(): Promise<{message: string, status: number, users?: User[]}> {
+  const request = await fetch("/api/q/get-users", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  })
+  const response = await request.json();
+  return response;
+}
+
 export async function updateRole(role: ROLE, ids: number[]): Promise<{ message: string, status: number }> {
   const request = await fetch("/api/q/update-role", {
     method: "PUT",

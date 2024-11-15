@@ -30,7 +30,7 @@ export function UpdateRole<TData>({
       }
       setOpen(!open);
       table.resetRowSelection();
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error has occurred");

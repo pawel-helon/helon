@@ -3,6 +3,10 @@ import { Text } from "@/components/typography";
 import Image from "next/image";
 import Link from "next/link";
 
+function getYear() {
+  return new Date().getFullYear();
+} 
+
 export default async function HomeLayout(props: { children: React.ReactNode }) {
     return (
       <div className="w-full flex flex-col px-3 border-x-[1px] border-border overflow-y-scroll scrollbar scrollbar-thumb-border scrollbar-thumb-rounded-full scrollbar-track-card-background max-h-[100vh] scrollbar-w-1 scrollbar-h-1">
@@ -16,7 +20,7 @@ export default async function HomeLayout(props: { children: React.ReactNode }) {
         </div>
         <div className="flex justify-end py-4 border-t border-border">
           <Text variant="p-small-thin">
-            © 2024
+            {`© ${getYear()} Helon. All rights reserved.`}
           </Text>
         </div>
         <DotPattern />
