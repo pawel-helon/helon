@@ -9,8 +9,9 @@ import { ToggleRole } from "./toggle-role"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
 
-export function ActionsDocs(props: { role: ROLE }) {
+export default function ActionsDocs(props: { initialRole: ROLE }) {
   const [isVisible, setIsVisible] = useState(false)
+  const [role, setRole] = useState(props.initialRole);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500)
@@ -36,7 +37,7 @@ export function ActionsDocs(props: { role: ROLE }) {
               </Link>
               <NextPrevFeatures />
             </div>
-            <ToggleRole role={props.role} />
+            <ToggleRole role={role} setRole={setRole}/>
           </div>
         </motion.div>
       )}
