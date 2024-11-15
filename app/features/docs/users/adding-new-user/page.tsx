@@ -1,28 +1,12 @@
-"use client"
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import { getRole } from "@/actions/server-actions";
 import { Text } from "@/components/typography";
 import { ROLE } from "@prisma/client";
 
-export default function AddingNewUserDocPage() {
-  const router = useRouter();
-  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
-
-  useEffect(() => {
-    async function init() {
-      try {
-        const gettingRole = await getRole();
-        if (gettingRole.role) {
-          setRole(gettingRole.role);
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    init();
-  }, [setRole])
+export default async function AddingNewUserDocPage() {
+  const gettingRole = await getRole();
+  if (!gettingRole) return;
+  const role = gettingRole.role as ROLE;
   
   if (role === ROLE.ADMIN) {
     return (
@@ -40,6 +24,6 @@ export default function AddingNewUserDocPage() {
       </div>
     )
   } else {
-    router.push("/docs/faq")
+    redirect("/docs/faq")
   }
 }

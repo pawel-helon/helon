@@ -8,27 +8,14 @@ import { NextPrevFeatures } from "@/components/features/next-prev-features"
 import { ToggleRole } from "./toggle-role"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
-import { getRole } from "@/actions/database-actions"
 
-export function ActionsDocs() {
-  const [role, setRole] = useState<ROLE | undefined>(undefined);
-  const [isVisible, setIsVisible] = useState(false);
+export function ActionsDocs(props: { role: ROLE }) {
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    async function init() {
-      try {
-        const gettingRole = await getRole();
-        if (gettingRole.role) {
-          setRole(gettingRole.role);
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    init();
     const timer = setTimeout(() => setIsVisible(true), 500)
     return () => clearTimeout(timer)
-  }, [setRole])
+  }, [])
   
   return (
     <AnimatePresence>
@@ -49,7 +36,7 @@ export function ActionsDocs() {
               </Link>
               <NextPrevFeatures />
             </div>
-            <ToggleRole role={role as ROLE} />
+            <ToggleRole role={props.role} />
           </div>
         </motion.div>
       )}
