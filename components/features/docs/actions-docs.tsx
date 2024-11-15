@@ -1,22 +1,46 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import Link from "next/link"
 import { House } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { NextPrevFeatures } from "@/components/features/next-prev-features"
-import { ToggleRole } from "./toggle-role"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
+import { updateRoleDocsFeature } from "@/actions/database-actions"
+import { toast } from "sonner"
+
+const ROLES = [ROLE.ENDUSER, ROLE.OWNER, ROLE.ADMIN];
 
 export default function ActionsDocs(props: { initialRole: ROLE }) {
   const [isVisible, setIsVisible] = useState(false)
   const [role, setRole] = useState(props.initialRole);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500)
     return () => clearTimeout(timer)
   }, [])
+
+  async function handleChangeRole(newRole: ROLE) {
+    try {
+      setRole(newRole);
+      startTransition(async () => {
+        const updatingRole = await updateRoleDocsFeature(newRole);
+        if (updatingRole.status !== 200) {
+          toast.error(updatingRole.message);
+          setRole(role);
+          return;
+        }
+        window.location.reload()
+      })
+    } catch (error) {
+      console.error(error);
+      toast.error('An unexpected error occurred. Try again later.')
+      setRole(role);
+    }
+  }
+  
   
   return (
     <AnimatePresence>
@@ -37,7 +61,13 @@ export default function ActionsDocs(props: { initialRole: ROLE }) {
               </Link>
               <NextPrevFeatures />
             </div>
-            <ToggleRole role={role} setRole={setRole}/>
+            <div className='flex items-center gap-0.5 p-1.5 border border-border rounded-full shadow-black shadow-sm bg-background-sh'>
+              {ROLES.map((r) => (
+                <Button key={r} disabled={isPending} onClick={() => handleChangeRole(r)} size="sm" variant={r === role ? "tertiary" : "ghost"} className="rounded-full">
+                  {r.toLowerCase()}
+                </Button>
+              ))}
+            </div>
           </div>
         </motion.div>
       )}

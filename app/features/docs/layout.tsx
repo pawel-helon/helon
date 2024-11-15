@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { UsersRound, Vault } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
 import { GoBellFill } from "react-icons/go";
@@ -9,7 +10,6 @@ import { getRole } from "@/actions/server-actions";
 import { Nav } from "@/components/features/docs/nav";
 import { DisabledAction } from "@/components/disabled-action";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import dynamic from "next/dynamic";
 
 const ActionsDocs = dynamic(() => import('@/components/features/docs/actions-docs'), { ssr: false })
 

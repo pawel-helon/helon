@@ -21,7 +21,6 @@ export function ToggleRole(props: { role: ROLE, setRole: (role: ROLE) => void })
         }
         window.location.reload()
       })
-
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Try again later.')
