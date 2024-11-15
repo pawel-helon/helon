@@ -13,16 +13,17 @@ export async function navigateUser() {
 
   if (device.status === STATUS.ACTIVE) {
     if (userRole === ROLE.ADMIN) {
-      redirect("/features/qr-codes/actions/assign-owner");
+      redirect("https://helon.vercel.app/features/qr-codes/actions/assign-owner");
     } else if (userRole === ROLE.OWNER) {
-      redirect("/features/qr-codes/actions/give-access");
+      redirect("https://helon.vercel.app/features/qr-codes/actions/give-access");
     } else {
-      redirect("/features/qr-codes/actions/update-device-state");
+      redirect("https://helon.vercel.app/features/qr-codes/actions/update-device-state");
     }
   } else {
-    if (userRole === ROLE.ADMIN) {redirect("/features/qr-codes/actions/activate-device");
+    if (userRole === ROLE.ADMIN) {
+      redirect("https://helon.vercel.app/features/qr-codes/actions/activate-device");
     } else {
-      redirect("/features/qr-codes/actions/request-device-activation");
+      redirect("https://helon.vercel.app/features/qr-codes/actions/request-device-activation");
     }
   } 
 }

@@ -55,7 +55,7 @@ export function DataTable<TData, TValue>({
   const pageSize = pagination.pageSize;
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="z-10 w-full flex flex-col">
       <div className="relative flex justify-end mb-8 py-1 border-b border-border">
         <Search className="size-4 absolute -z-10 left-0 top-1/2 transform -translate-y-1/2 text-foreground-h" />
         <Input

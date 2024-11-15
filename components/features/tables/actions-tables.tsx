@@ -19,7 +19,7 @@ export function ActionsTables() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className='w-full fixed bottom-4 xs:bottom-20 mx-auto flex justify-center px-3 xl:max-w-screen-xl 2xl:max-w-screen-2xl'
+          className='z-50 w-full fixed bottom-4 xs:bottom-20 mx-auto flex justify-center px-3 xl:max-w-screen-xl 2xl:max-w-screen-2xl'
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}

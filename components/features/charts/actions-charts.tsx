@@ -19,7 +19,7 @@ export function ActionsCharts() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className='z-50 w-full fixed top-4 xs:top-12 mx-auto flex justify-center px-3 xl:max-w-screen-xl 2xl:max-w-screen-2xl'
+          className='z-50 w-full fixed bottom-4 xs:bottom-12 mx-auto flex justify-center px-3 xl:max-w-screen-xl 2xl:max-w-screen-2xl'
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
