@@ -2,25 +2,31 @@
 
 import { useEffect, useState, useTransition } from "react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { House } from "lucide-react"
+import { getRole, updateRoleDocsFeature } from "@/actions/database-actions"
 import { AnimatePresence, motion } from "framer-motion"
 import { NextPrevFeatures } from "@/components/features/next-prev-features"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
-import { updateRoleDocsFeature } from "@/actions/database-actions"
-import { toast } from "sonner"
 
 const ROLES = [ROLE.ENDUSER, ROLE.OWNER, ROLE.ADMIN];
 
-export default function ActionsDocs(props: { initialRole: ROLE }) {
+export default function ActionsDocs() {
   const [isVisible, setIsVisible] = useState(false)
-  const [role, setRole] = useState(props.initialRole);
+  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    const initRole = async () => {
+      const gettingRole = await getRole();
+      if (!gettingRole.role) return;
+      setRole(gettingRole.role);
+    }
+    initRole();
     const timer = setTimeout(() => setIsVisible(true), 500)
     return () => clearTimeout(timer)
-  }, [])
+  }, [setRole])
 
   async function handleChangeRole(newRole: ROLE) {
     try {
@@ -40,7 +46,6 @@ export default function ActionsDocs(props: { initialRole: ROLE }) {
       setRole(role);
     }
   }
-  
   
   return (
     <AnimatePresence>
