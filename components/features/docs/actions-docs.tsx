@@ -30,7 +30,6 @@ export function ActionsDocs(props: { role: ROLE }) {
         return;
       }
       router.refresh();
-      console.log(`Role changed to ${newRole}`);
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Try again later.')
