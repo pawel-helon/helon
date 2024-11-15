@@ -24,7 +24,6 @@ export function Nav(props: { role: ROLE }) {
 
   let links = endUserLinks;
   { props.role === ROLE.ADMIN ? links = adminLinks.devicesLinks : props.role === ROLE.OWNER ? links = ownerLinks : endUserLinks };
-  
 
   return (
     <>

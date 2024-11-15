@@ -39,7 +39,6 @@ function getBadgeVariant(weekNumber: number) {
   }
 }
 
-
 type DaySlots = { day: string, slots: Slot[] };
 
 export function DayGrid(props: {
@@ -55,7 +54,7 @@ export function DayGrid(props: {
   useEffect(() => {
     async function initDeletePastSlots() {
       try {
-        deletePastSlots();
+        await deletePastSlots();
       } catch (error) {
         console.error(error);
       }

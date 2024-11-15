@@ -27,7 +27,7 @@ export async function getSlotsForWeek(week: string[]) {
   if (!weekSlots) {
     return { message: "No slots fetched", status: 404 };
   } else {  
-  return { message: "Slots fetched", status: 200, weekSlots };
+    return { message: "Slots fetched", status: 200, weekSlots };
   }
 }
 

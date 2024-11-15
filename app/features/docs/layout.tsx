@@ -1,27 +1,29 @@
-import dynamic from "next/dynamic";
 import { UsersRound, Vault } from "lucide-react";
 import { FaQuestion } from "react-icons/fa";
 import { GoBellFill } from "react-icons/go";
 import { Text } from "@/components/typography";
+import { ActionsDocs } from "@/components/features/docs/actions-docs";
 import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Nav } from "@/components/features/docs/nav";
 import { DisabledAction } from "@/components/disabled-action";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getRole } from "@/actions/server-actions";
+import { ROLE } from "@prisma/client";
 
-const ActionsDocs = dynamic(() => import('@/components/features/docs/actions-docs'), { ssr: false })
+const gettingRole = async () => {
+  const gettingRole = await getRole();
+  const role = gettingRole.role as ROLE;
+  return role;
+}
 
 export default async function DocsLayout(props: {
   children: React.ReactNode;
 }) {
-  const gettingRole = await getRole();
-  if (!gettingRole.role) return null;
-  const role = gettingRole.role;
-
+  const role = await gettingRole();
   return (
     <>
-      <ActionsDocs initialRole={role} />
+      <ActionsDocs role={role} />
       <div className="xs:hidden fixed top-0 left-3 right-3 z-50 flex justify-between pt-3 pb-2 bg-background">
         <div className="flex gap-1">
           <DisabledAction side="bottom" sideOffset={8} align="start">

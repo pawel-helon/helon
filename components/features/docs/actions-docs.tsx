@@ -1,21 +1,21 @@
 'use client'
 
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { House } from "lucide-react"
-import { getRole, updateRoleDocsFeature } from "@/actions/database-actions"
+import { updateRoleDocsFeature } from "@/actions/database-actions"
 import { AnimatePresence, motion } from "framer-motion"
 import { NextPrevFeatures } from "@/components/features/next-prev-features"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
+import { useRouter } from "next/navigation"
 
 const ROLES = [ROLE.ENDUSER, ROLE.OWNER, ROLE.ADMIN];
 
-export default function ActionsDocs(props: { initialRole: ROLE }) {
+export function ActionsDocs(props: { role: ROLE }) {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
-  const [role, setRole] = useState<ROLE>(props.initialRole);
-  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500)
@@ -24,21 +24,16 @@ export default function ActionsDocs(props: { initialRole: ROLE }) {
 
   async function handleChangeRole(newRole: ROLE) {
     try {
-      setRole(newRole);
-      startTransition(async () => {
-        const updatingRole = await updateRoleDocsFeature(newRole);
-        if (updatingRole.status !== 200) {
-          toast.error(updatingRole.message);
-          setRole(role);
-          return;
-        }
-        setRole(newRole);
-        window.location.reload();
-      })
+      const updatingRole = await updateRoleDocsFeature(newRole);
+      if (updatingRole.status !== 200) {
+        toast.error(updatingRole.message);
+        return;
+      }
+      router.refresh();
+      console.log(`Role changed to ${newRole}`);
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Try again later.')
-      setRole(role);
     }
   }
   
@@ -63,7 +58,7 @@ export default function ActionsDocs(props: { initialRole: ROLE }) {
             </div>
             <div className='flex items-center gap-0.5 p-1.5 border border-border rounded-full shadow-black shadow-sm bg-background-sh'>
               {ROLES.map((r) => (
-                <Button key={r} disabled={isPending} onClick={() => handleChangeRole(r)} size="sm" variant={r === role ? "tertiary" : "ghost"} className="rounded-full">
+                <Button key={r} onClick={() => handleChangeRole(r)} size="sm" variant={r === props.role ? "tertiary" : "ghost"} className="rounded-full">
                   {r.toLowerCase()}
                 </Button>
               ))}
