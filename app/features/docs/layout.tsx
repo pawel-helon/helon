@@ -21,6 +21,7 @@ export default async function DocsLayout(props: {
   children: React.ReactNode;
 }) {
   const role = await gettingRole();
+  console.log(role);
   return (
     <>
       <ActionsDocs role={role} />
