@@ -436,6 +436,14 @@ export async function updateRole(role: ROLE, ids: number[]): Promise<{ message: 
 }
 
 // docs
+export async function getRole(): Promise<{message: string, status: number, role: ROLE}> {
+  const request = await fetch("/api/q/get-role", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
 
 export async function updateRoleDocsFeature(role: ROLE): Promise<{message: string, status: number}> {
   const request = await fetch("/api/q/update-role-docs-feature", {
