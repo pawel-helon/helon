@@ -1,15 +1,31 @@
+"use client"
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { getRole } from "@/actions/server-actions";
 import { ROLE } from "@prisma/client";
-import { redirect } from "next/navigation";
 
-export default async function DocsUsersPage() {
-  const gettingRole = await getRole();
-  if (!gettingRole) return;
-  const role = gettingRole.role as ROLE;
+export default function DocsUsersPage() {
+  const router = useRouter();
+  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const gettingRole = await getRole();
+        if (gettingRole.role) {
+          setRole(gettingRole.role);
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    init();
+  }, [setRole])
   
   if (role !== ROLE.ADMIN) {
-    redirect("/features/docs/devices/adding-new-device");
+    router.push("/features/docs/devices/adding-new-device");
   } else {
-    redirect("/features/docs/users/adding-new-user");
+    router.push("/features/docs/users/adding-new-user");
   }
 }

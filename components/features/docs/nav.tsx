@@ -1,24 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Link from "next/link";
-
+import { getRole } from "@/actions/database-actions";
 import { Text } from "@/components/typography";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
 import { cn } from "@/lib/utils";
 import { ROLE } from "@prisma/client";
-import { getRole } from "@/actions/database-actions";
 
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [role, setRole] = useState<ROLE | undefined>(undefined);
+  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
 
   useEffect(() => {
     async function init() {

@@ -1,6 +1,6 @@
 import { Text } from "@/components/typography";
 
-export default async function ActivateAndDeactivateDocPage() {
+export default function ActivateAndDeactivateDocPage() {
   return (
     <div className="h-min col-span-3 flex flex-col gap-4 p-4 pb-6 text-card-foreground border border-border rounded-lg bg-background shadow-black shadow-2xl">
       <Text variant="h3">How to activate or deactivate device?</Text>

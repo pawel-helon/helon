@@ -1,13 +1,28 @@
-import { redirect } from "next/navigation";
+"use client"
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { getRole } from "@/actions/server-actions";
 import { Text } from "@/components/typography";
 import { ROLE } from "@prisma/client";
 
-export default async function RemovingUserDocPage() {
-  const gettingRole = await getRole();
-  if (!gettingRole) return;
-  const role = gettingRole.role as ROLE;
+export default function RemovingUserDocPage() {
+  const router = useRouter();
+  const [role, setRole] = useState<ROLE>(ROLE.ENDUSER);
 
+  useEffect(() => {
+    async function init() {
+      try {
+        const gettingRole = await getRole();
+        if (gettingRole.role) {
+          setRole(gettingRole.role);
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    init();
+  }, [setRole])
   if (role === ROLE.ADMIN) {
     return (
       <div className="h-min col-span-3 flex flex-col gap-4 p-4 pb-6 text-card-foreground border border-border rounded-lg bg-background shadow-black shadow-2xl">
@@ -27,6 +42,6 @@ export default async function RemovingUserDocPage() {
       </div>
     )
   } else {
-    redirect("/docs/faq")
+    router.push("/docs/faq")
   }
 }
