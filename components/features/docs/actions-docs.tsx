@@ -1,5 +1,6 @@
 'use client'
 
+import { revalidatePath } from "next/cache"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { toast } from "sonner"
