@@ -30,7 +30,7 @@ export function ActionsDocs(props: { role: ROLE }) {
         toast.error(updatingRole.message);
         return;
       }
-      router.refresh();
+      router.push('/features/docs');
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Try again later.')
