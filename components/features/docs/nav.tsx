@@ -11,19 +11,56 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { ROLE } from "@prisma/client";
 
+
+function getDropdownLabel(pathname: string) {
+  const segments = pathname.split("/").filter(Boolean);
+  let dropdownLabel = "";
+  
+  if (pathname === "/features/docs/faq") {
+    dropdownLabel = "Frequently asked questions"
+  } else {
+    dropdownLabel = segments[segments.length - 1].split("-").join(" ").charAt(0).toUpperCase() + segments[segments.length - 1].split("-").join(" ").slice(1);
+  }
+  return dropdownLabel;
+}
+
+const DEVICES_LINKS = [
+  { title: "Adding", link: "/features/docs/devices/adding-new-device" },
+  { title: "Assigning new owner", link: "/features/docs/devices/reassigning-owner" },
+  { title: "Giving access", link: "/features/docs/devices/giving-access" },
+  { title: "Disabling", link: "/features/docs/devices/disabling" },
+  { title: "Activate and deactivate", link: "/features/docs/devices/activate-and-deactivate" },
+  { title: "Removing", link: "/features/docs/devices/removing" },
+]
+
+const USERS_LINKS = [
+  { title: "Adding", link: "/features/docs/users/adding-new-user" },
+  { title: "Changing role", link: "/features/docs/users/changing-role" },
+  { title: "Removing", link: "/features/docs/users/removing" },
+]
+const ADMIN_LINKS = { DEVICES_LINKS, USERS_LINKS }
+
+const OWNER_LINKS = [
+  { title: "Giving access", link: "/features/docs/devices/giving-access" },
+  { title: "Disabling", link: "/features/docs/devices/disabling" },
+  { title: "Activate and deactivate", link: "/features/docs/devices/activate-and-deactivate" },
+  { title: "Removing", link: "/features/docs/devices/removing" },
+]
+
+const ENDUSER_LINKS = [
+  { title: "Removing device", link: "/features/docs/devices/removing" },
+]
+
+function getLinks(role: ROLE) {
+  let links = [];
+  return role === ROLE.ADMIN ? links = ADMIN_LINKS.DEVICES_LINKS : role === ROLE.OWNER ? links = OWNER_LINKS : ENDUSER_LINKS
+}
+
 export function Nav(props: { role: ROLE }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  let dropdownLabel = "";
-  if (pathname.startsWith("/features/docs/devices") || pathname.startsWith("/features/docs/users")) {
-    dropdownLabel = pathname.split("/")[4].split("-").join(" ").charAt(0).toUpperCase() + pathname.split("/")[4].split("-").join(" ").slice(1);
-  } else if (pathname === "/features/docs/faq") {
-    dropdownLabel = "Frequently asked questions"
-  }
-
-  let links = endUserLinks;
-  { props.role === ROLE.ADMIN ? links = adminLinks.devicesLinks : props.role === ROLE.OWNER ? links = ownerLinks : endUserLinks };
+  const dropdownLabel = getDropdownLabel(pathname);
+  const LINKS = getLinks(props.role)
 
   return (
     <>
@@ -37,7 +74,7 @@ export function Nav(props: { role: ROLE }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="w-fit flex flex-col gap-1 py-2 bg-background-sh shadow-black shadow-md">
             {props.role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground my-2 ml-2">DEVICES</Text>}
-            {links.map((i) => (
+            {LINKS.map((i) => (
               <Link key={i.link} href={i.link} prefetch={true}>
                 <Button onClick={() => setOpen(!open)} variant="ghost" size="sm" className="w-full justify-start pl-2">
                   {i.title}
@@ -48,7 +85,7 @@ export function Nav(props: { role: ROLE }) {
               <>
                 <Separator className="my-2"/>
                 <Text variant="p-small-thick" className="text-muted-foreground my-2 ml-2">USERS</Text>
-                {adminLinks.usersLinks.map((i) => (
+                {ADMIN_LINKS.USERS_LINKS.map((i) => (
                   <Link key={i.link} href={i.link} prefetch={true}>
                     <Button onClick={() => setOpen(!open)} variant="ghost" size="sm" className="w-full justify-start pl-2">
                       {i.title}
@@ -70,7 +107,7 @@ export function Nav(props: { role: ROLE }) {
         <div className="space-y-1.5">
           {props.role === ROLE.ADMIN && <Text variant="p-small-thick" className="text-muted-foreground mb-2 ml-2">DEVICES</Text> }
           <ul className="space-y-1">
-            {links!.map((i) => (
+            {LINKS!.map((i) => (
               <li key={i.link} className={cn(
                 "cursor-default hover:bg-accent/60 flex select-none items-center rounded-sm px-2 py-1.5 text-xs outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                 pathname === i.link && "bg-primary hover:bg-primary/80 text-accent-foreground"
@@ -86,7 +123,7 @@ export function Nav(props: { role: ROLE }) {
             <div className="space-y-1.5">
               <Text variant="p-small-thick" className="text-muted-foreground mb-2 ml-2">USERS</Text>
               <ul className="space-y-1">
-                {adminLinks.usersLinks!.map((i) => (
+                {ADMIN_LINKS.USERS_LINKS.map((i) => (
                   <li key={i.link} className={cn(
                     "cursor-default hover:bg-accent/60 flex select-none items-center rounded-sm px-2 py-1.5 text-xs outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                     pathname === i.link && "bg-primary text-accent-foreground"
@@ -109,30 +146,3 @@ export function Nav(props: { role: ROLE }) {
     </>
   );
 }
-
-const devicesLinks = [
-  { title: "Adding", link: "/features/docs/devices/adding-new-device" },
-  { title: "Assigning new owner", link: "/features/docs/devices/reassigning-owner" },
-  { title: "Giving access", link: "/features/docs/devices/giving-access" },
-  { title: "Disabling", link: "/features/docs/devices/disabling" },
-  { title: "Activate and deactivate", link: "/features/docs/devices/activate-and-deactivate" },
-  { title: "Removing", link: "/features/docs/devices/removing" },
-]
-
-const usersLinks = [
-  { title: "Adding", link: "/features/docs/users/adding-new-user" },
-  { title: "Changing role", link: "/features/docs/users/changing-role" },
-  { title: "Removing", link: "/features/docs/users/removing" },
-]
-const adminLinks = { devicesLinks, usersLinks }
-
-const ownerLinks = [
-  { title: "Giving access", link: "/features/docs/devices/giving-access" },
-  { title: "Disabling", link: "/features/docs/devices/disabling" },
-  { title: "Activate and deactivate", link: "/features/docs/devices/activate-and-deactivate" },
-  { title: "Removing", link: "/features/docs/devices/removing" },
-]
-
-const endUserLinks = [
-  { title: "Removing device", link: "/features/docs/devices/removing" },
-]
