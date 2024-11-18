@@ -6,25 +6,17 @@ function createResponse(message: string, status: number, user?: User) {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const userID = Number(searchParams.get("userID"));
-
-  if (!userID) {
-    return createResponse("User id is required", 400);
-  }
-
   try {
-    const gettingUser = await db.user.findUnique({
-      where: {
-       id: userID
+    const gettingOldestAccount = await db.user.findFirst({
+      orderBy: {
+       createdAt: 'asc'
       },
-     
     });
     
-    if (!gettingUser) {
+    if (!gettingOldestAccount) {
       return createResponse(`User not found`, 503);
     } else {
-      return createResponse("User has been fetched", 200, gettingUser);
+      return createResponse("User has been fetched", 200, gettingOldestAccount);
     }
   } catch (error) {
     console.error(error);

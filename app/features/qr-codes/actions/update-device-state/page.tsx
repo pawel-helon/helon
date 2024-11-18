@@ -28,26 +28,25 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
   useEffect(() => {
     try {
       const init = async () => {
-        const gettingDevice = await getDevice(1);
+        const gettingDevice = await getDevice();
         if (!gettingDevice.device) {
           toast.error(gettingDevice.message)
           return 
         }
         
-        setDeviceState(changeDeviceState(gettingDevice.device.state));
-
-        const updatintDeviceState = await updateDeviceState(1, changeDeviceState(gettingDevice.device.state));
-        if (updatintDeviceState.status !== 200) {
+        const updatintDeviceState = await updateDeviceState(changeDeviceState(gettingDevice.device.state));
+        if (!updatintDeviceState.device) {
           toast.error(updatintDeviceState.message);
           return;
         }
+        setDeviceState(updatintDeviceState.device.state);
       }
       init();
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error occurred. Try again later.");
     }
-  },[deviceState])
+  },[setDeviceState])
 
   return (
     <>
@@ -55,7 +54,9 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
         <Sheet open={true} onOpenChange={() => router.push("/features/qr-codes")}>
           <SheetContent side="bottom" aria-describedby="" className="min-h-[200px]">
             <SheetTitle className="text-center mb-8">Confirmation</SheetTitle>
-            <Text variant="p-base-thin" className="text-center">{getMessage(deviceState)}</Text>
+            <Text variant="p-base-thin" className="text-center">
+              {getMessage(deviceState)}
+            </Text>
             <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-2 p-6">
               <Button onClick={() => router.push("/features/qr-codes")}>
                 <ChevronLeft className="size-5 mr-1"/>Back
@@ -67,7 +68,9 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
         <Dialog open={true} onOpenChange={() => router.push("/features/qr-codes")}>
           <DialogContent aria-describedby="" className="min-h-[320px] flex flex-col">
             <DialogTitle className="mb-8">Confirmation</DialogTitle>
-            <Text variant="p-base-thin">{getMessage(deviceState)}</Text>
+            <Text variant="p-base-thin">
+              {getMessage(deviceState)}
+            </Text>
             <div className="absolute bottom-0 left-0 right-0 flex justify-end gap-2 p-6">
               <Button onClick={() => router.push("/features/qr-codes")}>
                 Back

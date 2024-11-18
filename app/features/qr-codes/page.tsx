@@ -28,14 +28,14 @@ export default function QRCodesPage() {
   useEffect(() => {
     try {
       const init = async () => {
-        const gettingUser = await getUser(1);
+        const gettingUser = await getUser();
         if (!gettingUser.user) {
           toast.error(gettingUser.message);
           return;
         }
         setSelectedUserRole(gettingUser.user.role);
         
-        const gettingDevice = await getDevice(1);
+        const gettingDevice = await getDevice();
         if (!gettingDevice.device) {
           toast.error(gettingDevice.message);
           return;
@@ -52,7 +52,7 @@ export default function QRCodesPage() {
 
   async function handleUserRoleChange(role: ROLE) {
     try {
-      const updatingRole = await updateUserRole(1, role);
+      const updatingRole = await updateUserRole(role);
       if (updatingRole.status === 200) {
         setSelectedUserRole(role);
       } else {
@@ -66,7 +66,7 @@ export default function QRCodesPage() {
 
   async function handleDeviceStatusChange(status: STATUS) {
     try {
-      const updatingDeviceStatus = await updateDeviceStatus(1, status);
+      const updatingDeviceStatus = await updateDeviceStatus(status);
       if (updatingDeviceStatus.status === 200) {
         setSelectedDeviceStatus(status);
       } else {
@@ -80,7 +80,7 @@ export default function QRCodesPage() {
 
   async function handleDeviceStateChange(state: STATE) {
     try {
-      const updatingDeviceState = await updateDeviceState(1, state);
+      const updatingDeviceState = await updateDeviceState(state);
       if (updatingDeviceState.status === 200) {
         setSelectedDeviceState(state);
       } else {

@@ -10,16 +10,25 @@ function capitalizeFirstLetter(string: string) {
 }
 
 export async function PUT(request: Request) {
-  const { userID, userRole }: {userID: number, userRole: ROLE } = await request.json();
+  const { userRole }: { userRole: ROLE } = await request.json();
 
-  if (!userID || !userRole) {
+  if (!userRole) {
     return createResponse("userId and userRole are required", 400);
   }
 
   try {
+    const gettingOldestUser = await db.user.findFirst({
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+    if (!gettingOldestUser) {
+      return createResponse("Failed to fetch user", 503)
+    }
+    
     const updatingUser = await db.user.update({
       where: {
-        id: userID
+        id: gettingOldestUser.id
       },
       data: {
         role: userRole

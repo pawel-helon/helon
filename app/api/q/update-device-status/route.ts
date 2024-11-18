@@ -14,20 +14,26 @@ function getSuccessMessage(status: STATUS) {
 }
 
 export async function PUT(request: Request) {
-  const { deviceID, deviceStatus }: { deviceID: number, deviceStatus: STATUS } = await request.json();
-
-  if (!deviceID) {
-    return createResponse("deviceId is required", 400);
-  }
+  const { deviceStatus }: { deviceID: number, deviceStatus: STATUS } = await request.json();
 
   if (!deviceStatus) {
     return createResponse("deviceState is required", 400);
   }
 
   try {
+    const gettingOldestDevice = await db.device.findFirst({
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+
+    if (!gettingOldestDevice) {
+      return createResponse("Failed to fetch device", 503)
+    }
+    
     const updatingDevice = await db.device.update({
       where: {
-        id: deviceID
+        id: gettingOldestDevice.id
       },
       data: {
         status: deviceStatus

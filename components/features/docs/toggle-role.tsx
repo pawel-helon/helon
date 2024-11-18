@@ -19,7 +19,9 @@ export function ToggleRole(props: { role: ROLE, setRole: (role: ROLE) => void })
           props.setRole(props.role);
           return;
         }
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 300)
       })
     } catch (error) {
       console.error(error);

@@ -30,7 +30,9 @@ export function UpdateRole<TData>({
       }
       setOpen(!open);
       table.resetRowSelection();
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 300)
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error has occurred");

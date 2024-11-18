@@ -117,7 +117,7 @@ export function AddDeviceForm(props: { children: React.ReactNode, startTransitio
         toast.success(addingDevice.message);
         setTimeout(() => {
           window.location.reload();
-        },500)
+        }, 300)
       })
       
     } catch (error) {

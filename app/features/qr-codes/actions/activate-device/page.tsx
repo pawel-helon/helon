@@ -6,11 +6,12 @@ import { useMedia } from "react-use";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { getDevice, updateDeviceStatus } from "@/actions/database-actions";
-import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContentWithoutClose as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContentWithoutClose as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
 import { Text } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { STATUS } from "@prisma/client";
+import { ActionsQRCodes } from "@/components/features/qr-codes/actions-qr-codes";
 
 export default function FeaturesQRCodesActionsUpdateDeviceState() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
   useEffect(() => {
     try {
       const init = async () => {
-        const gettingDevice = await getDevice(1);
+        const gettingDevice = await getDevice();
         if (!gettingDevice.device) {
           toast.error(gettingDevice.message)
           return 
@@ -28,7 +29,7 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
           router.push("/features/qr-codes")
         }
 
-        const updatintDeviceStatus = await updateDeviceStatus(1, STATUS.ACTIVE);
+        const updatintDeviceStatus = await updateDeviceStatus(STATUS.ACTIVE);
         if (updatintDeviceStatus.status !== 200) {
           toast.error(updatintDeviceStatus.message);
           return;

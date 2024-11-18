@@ -1,26 +1,23 @@
 "use client"
 
 import { useEffect } from "react"
-import { toast } from "sonner";
 import { navigateUser } from "@/actions/actions-from-qr-code";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function QRCodeActions() {
+  const router = useRouter();
   useEffect(() => {
     try {
-      const initActions = async () => {
-        try {
-          await navigateUser();
-        } catch (error) {
-          console.error(error);
-          toast.error("An unexpected error occurred. Try again later.");
-        }
+      const init = async () => {
+        await navigateUser(router);
       }
-      initActions();
+      init();
     } catch (error) {
       console.error(error);
-      toast.error("An unexpected error occurred. Try again later.");
-    }
-  },[])
+      toast.error("An unexpected error occurred. Try again later")
+    } 
+  },[router])
   
   return null;
 }

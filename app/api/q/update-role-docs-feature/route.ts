@@ -14,9 +14,19 @@ export async function PUT(request: Request) {
   }
 
   try {
+    const gettingOldestUser = await db.user.findFirst({
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+
+    if (!gettingOldestUser) {
+      return createResponse("Failed to fetch user", 503);
+    }
+
     const updatingRole = await db.user.update({
       where: {
-        id: 1
+        id: gettingOldestUser.id
       },
       data: {
         role: role,

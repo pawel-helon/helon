@@ -13,7 +13,7 @@ import { DevicesByStatusChart } from "@/components/features/charts/devices-by-st
 
 export default async function ChartsPage() {
   await getDevices();
-  const newDevicesByMonth = await countNewDevicesByMonth() as {month: string, count: number}[];
+  const newDevicesByMonth = await countNewDevicesByMonth() as { month: string, count: number }[];
   const allDevicesCount = await countAllDevices();
   const activeDevicesCount = await countActiveDevices();
   return (

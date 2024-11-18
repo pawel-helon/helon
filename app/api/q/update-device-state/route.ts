@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { Device, STATE } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number, device?: Device) {
   return new Response(JSON.stringify({ message, status, device }));
@@ -14,16 +15,26 @@ function getSuccessMessage(status: STATE) {
 }
 
 export async function PUT(request: Request) {
-  const { deviceID, deviceState }: { deviceID: number, deviceState: STATE } = await request.json();
+  const { deviceState }: { deviceState: STATE } = await request.json();
 
-  if (!deviceID || !deviceState) {
+  if (!deviceState) {
     return createResponse("deviceId and deviceState are required", 400);
   }
 
   try {
+    const gettingOldestDevice = await db.device.findFirst({
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+
+    if (!gettingOldestDevice) {
+      return createResponse("Failed to fetch device", 503)
+    }
+    
     const updatingDevice = await db.device.update({
       where: {
-        id: deviceID
+        id: gettingOldestDevice.id
       },
       data: {
         state: deviceState
@@ -33,7 +44,8 @@ export async function PUT(request: Request) {
     if (!updatingDevice) {
       return createResponse("Failed to update device state", 503);
     } else {
-      return createResponse(getSuccessMessage(deviceState), 200);
+      revalidatePath('/features/qr-codes/actions/update-device-state')
+      return createResponse(getSuccessMessage(deviceState), 200, updatingDevice);
     }
   } catch (error) {
     console.error(error);

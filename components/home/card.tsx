@@ -40,7 +40,7 @@ export function Card(props: {
       />
       <div className="z-20 w-full flex justify-end p-3 bg-gradient-to-t from-background-sh to-background-sh/40">
         <Link href={props.link} aria-label={`View demo for ${props.title}`} className="w-full xs:w-fit">
-          <Button variant="outline" className="w-full xs:w-fit bg-background-sh xs:hover:bg-[#252322]">
+          <Button variant="outline" className="w-full xs:w-fit bg-background-sh focus:bg-background-sh xs:hover:bg-[#252322]">
             Demo
           </Button>
         </Link>

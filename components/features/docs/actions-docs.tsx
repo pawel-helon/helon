@@ -1,6 +1,6 @@
 'use client'
 
-import { revalidatePath } from "next/cache"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -10,7 +10,6 @@ import { AnimatePresence, motion } from "framer-motion"
 import { NextPrevFeatures } from "@/components/features/next-prev-features"
 import { Button } from "@/components/ui/button"
 import { ROLE } from "@prisma/client"
-import { useRouter } from "next/navigation"
 
 const ROLES = [ROLE.ENDUSER, ROLE.OWNER, ROLE.ADMIN];
 
@@ -30,7 +29,9 @@ export function ActionsDocs(props: { role: ROLE }) {
         toast.error(updatingRole.message);
         return;
       }
-      router.push('/features/docs');
+      setTimeout(() => {
+        window.location.reload();
+      }, 300)
     } catch (error) {
       console.error(error);
       toast.error('An unexpected error occurred. Try again later.')

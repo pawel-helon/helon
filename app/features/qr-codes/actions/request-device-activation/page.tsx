@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
+import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
@@ -9,7 +10,6 @@ import { Text } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { getDevice } from "@/actions/database-actions";
-import { toast } from "sonner";
 import { STATUS } from "@prisma/client";
 
 function getMessage() {
@@ -23,7 +23,7 @@ export default function FeaturesQRCodesActionsUpdateDeviceState() {
   useEffect(() => {
     try {
       const init = async () => {
-        const gettingDevice = await getDevice(1);
+        const gettingDevice = await getDevice();
         if (!gettingDevice.device) {
           toast.error(gettingDevice.message)
           return 

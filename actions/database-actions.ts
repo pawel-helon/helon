@@ -354,8 +354,8 @@ export async function undoRescheduleMeeting(meetingId: string, slotId: string): 
 
 // qr-codes
 
-export async function getUser(userID: number): Promise<{message: string, status: number, user?: User}> {
-  const request = await fetch(`/api/q/get-user?userID=${userID}`, {
+export async function getUser(): Promise<{message: string, status: number, user?: User}> {
+  const request = await fetch(`/api/q/get-user`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   })
@@ -363,8 +363,8 @@ export async function getUser(userID: number): Promise<{message: string, status:
   return response;
 }
 
-export async function getDevice(deviceID: number): Promise<{message: string, status: number, device?: Device}> {
-  const request = await fetch(`/api/q/get-device?deviceID=${deviceID}`, {
+export async function getDevice(): Promise<{message: string, status: number, device?: Device}> {
+  const request = await fetch(`/api/q/get-device`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   })
@@ -372,12 +372,11 @@ export async function getDevice(deviceID: number): Promise<{message: string, sta
   return response;
 }
 
-export async function updateDeviceStatus(deviceID: number, deviceStatus: STATUS): Promise<{message: string, status: number}> {
+export async function updateDeviceStatus(deviceStatus: STATUS): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/q/update-device-status`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      deviceID: deviceID,
       deviceStatus: deviceStatus
     })
   })
@@ -385,12 +384,11 @@ export async function updateDeviceStatus(deviceID: number, deviceStatus: STATUS)
   return response;
 }
 
-export async function updateDeviceState(deviceID: number, deviceState: STATE): Promise<{message: string, status: number}> {
+export async function updateDeviceState(deviceState: STATE): Promise<{message: string, status: number, device?: Device}> {
   const request = await fetch(`/api/q/update-device-state`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      deviceID: deviceID,
       deviceState: deviceState
     })
   })
@@ -398,12 +396,11 @@ export async function updateDeviceState(deviceID: number, deviceState: STATE): P
   return response;
 }
 
-export async function updateUserRole(userID: number, userRole: ROLE): Promise<{message: string, status: number}> {
+export async function updateUserRole(userRole: ROLE): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/q/update-user-role`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      userID: userID,
       userRole: userRole
     })
   })

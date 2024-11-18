@@ -764,20 +764,22 @@ export async function getUsers() {
 // docs
 
 export async function getRole() {
-  const gettingRole = await db.user.findUnique({
-    where: {
-      id: 1
+  const gettingOldestUserRole = await db.user.findFirst({
+    orderBy: {
+      createdAt: 'asc'
     },
     select: {
       role: true
     }
   })
-  if (!gettingRole) {
+  if (!gettingOldestUserRole) {
     return { message: "Failed to fetch role", status: 503 }
   }
 
-  return { message: "Role fetched", status: 200, role: gettingRole.role}
+  return { message: "Role fetched", status: 200, role: gettingOldestUserRole.role}
 }
+
+
 
 // notifications
 
@@ -834,61 +836,11 @@ export async function getNotifications() {
 // charts
 
 export async function getDevices() {
-  const count = await db.device.count();
-  if (count === 0) {
-    const creatingDevices = await db.device.createMany({
-      data: [
-        {
-          deviceName: "Blue",
-          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
-          positionLng: -89.295031,
-          positionLat: 33.137635,
-          emei: "555555555555544",
-          model: "MZ-12",
-          SIM: "001-5555555",
-          status: STATUS.ACTIVE,
-          state: STATE.CLOSED,
-          ownerId: 2,
-          createdAt: new Date(2024, 8, 11)
-        },
-        {
-          deviceName: "Green",
-          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
-          positionLng: -89.295031,
-          positionLat: 33.137635,
-          emei: "555555555555544",
-          model: "MZ-12",
-          SIM: "001-5555555",
-          status: STATUS.INACTIVE,
-          state: STATE.CLOSED,
-          ownerId: 2,
-          createdAt: new Date(2024, 7, 11)
-        },
-        {
-          deviceName: "Red",
-          address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
-          positionLng: -89.295031,
-          positionLat: 33.137635,
-          emei: "555555555555544",
-          model: "MZ-12",
-          SIM: "001-5555555",
-          status: STATUS.ACTIVE,
-          state: STATE.CLOSED,
-          ownerId: 2,
-          createdAt: new Date(2024, 6, 11)
-        },
-      ]
-    })
-    if (!creatingDevices) {
-      return { message: "Failed to create devices", status: 503 };
-    } else {
-      const fetchingDevices = await db.device.findMany();
-      return { message: "Devices fetched", status: 200, users: fetchingDevices };
-    }
-  } else {
-    const fetchingDevices = await db.device.findMany();
-    return { message: "Devices fetched", status: 200, users: fetchingDevices };
+  const fetchingDevices = await db.device.findMany();
+  if (!fetchingDevices) {
+    return { message: "Failed to fetch devices", status: 503 }
   }
+  return { message: "Devices fetched", status: 200, users: fetchingDevices };
 }
 
 export async function countNewDevicesByMonth() {
@@ -934,4 +886,106 @@ export async function countActiveDevices() {
 export async function countAllDevices() {
   const count = await db.device.count();
   return count;
+}
+
+// home
+
+export async function setData() {
+  const countingUsers = await db.user.count();
+  if (countingUsers === 0) {
+    await db.user.createMany({
+      data: [
+        {
+          name: "Alex Atkins",
+          email: "a.atkins@qt2.com",
+          role: ROLE.ADMIN,
+          password: "password",
+          createdAt: new Date(2024, 5, 12, 0, 0, 0, 0)
+        },
+        {
+          name: "Bob Berkley",
+          email: "b.berkley@qt2.com",
+          role: ROLE.OWNER,
+          password: "password",
+          createdAt: new Date(2024, 5, 11, 0, 0, 0, 0)
+        },
+        {
+          name: "Clair Clarkson",
+          email: "c.clarkson@qt2.com",
+          role: ROLE.ENDUSER,
+          password: "password",
+          createdAt: new Date(2024, 5, 10, 0, 0, 0, 0)
+        },
+        {
+          name: "David Daniels",
+          email: "d.daniels@qt2.com",
+          role: ROLE.OWNER,
+          password: "password",
+          createdAt: new Date(2024, 5, 9, 0, 0, 0, 0)
+        },
+        {
+          name: "Ethan Edwards",
+          email: "e.edwards@qt2.com",
+          role: ROLE.OWNER,
+          password: "password",
+          createdAt: new Date(2024, 5, 8, 0, 0, 0, 0)
+        },
+        {
+          name: "Frank Fisher",
+          email: "f.fisher@qt2.com",
+          role: ROLE.OWNER,
+          password: "password",
+          createdAt: new Date(2024, 5, 7, 0, 0, 0, 0)
+        }
+      ]
+    })
+  }
+  if (countingUsers > 0) {
+    const countingDevices = await db.device.count();
+    if (countingDevices === 0) {
+      await db.device.createMany({
+        data: [
+          {
+            deviceName: "Blue",
+            address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+            positionLng: -89.295031,
+            positionLat: 33.137635,
+            emei: "155555555555544",
+            model: "MZ-12",
+            SIM: "001-5555551",
+            status: STATUS.ACTIVE,
+            state: STATE.CLOSED,
+            ownerId: 2,
+            createdAt: new Date(2024, 8, 11)
+          },
+          {
+            deviceName: "Green",
+            address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+            positionLng: -89.295031,
+            positionLat: 33.137635,
+            emei: "255555555555544",
+            model: "MZ-12",
+            SIM: "001-5555552",
+            status: STATUS.INACTIVE,
+            state: STATE.CLOSED,
+            ownerId: 2,
+            createdAt: new Date(2024, 7, 11)
+          },
+          {
+            deviceName: "Red",
+            address: "Stevenson-Kerr Road, McCool, Mississippi 39108, United States",
+            positionLng: -89.295031,
+            positionLat: 33.137635,
+            emei: "355555555555544",
+            model: "MZ-12",
+            SIM: "001-5555553",
+            status: STATUS.ACTIVE,
+            state: STATE.CLOSED,
+            ownerId: 2,
+            createdAt: new Date(2024, 6, 11)
+          },
+        ]
+      })
+    } 
+  }
 }

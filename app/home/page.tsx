@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Text } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/home/card";
+import { setData } from "@/actions/server-actions";
 
 export default async function HomePage() {
+  setData();
   return (
     <div>
       <div className="relative h-[80vh] justify-center items-center flex flex-col gap-8">

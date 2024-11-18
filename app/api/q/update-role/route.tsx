@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { ROLE } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number ) {
   return new Response(JSON.stringify({ message, status }));
@@ -27,6 +28,7 @@ export async function PUT(request: Request) {
     if (!updatingRole) {
       return createResponse("Failed to update role", 503);
     } else {
+      revalidatePath('/features/tables')
       return createResponse("Roles updated", 200);
     }
   } catch (error) {
