@@ -44,7 +44,7 @@ export async function PUT(request: Request) {
     if (!updatingDevice) {
       return createResponse("Failed to update device state", 503);
     } else {
-      revalidatePath('/features/qr-codes/actions/update-device-state')
+      revalidatePath('/features/qr-codes');
       return createResponse(getSuccessMessage(deviceState), 200, updatingDevice);
     }
   } catch (error) {

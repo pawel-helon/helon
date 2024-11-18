@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { Device, ROLE } from "@prisma/client";
 
@@ -38,6 +39,7 @@ export async function PUT(request: Request) {
     if (!updatingUser) {
       return createResponse("Failed to update user role", 503);
     } else {
+      revalidatePath('/features/qr-codes');
       return createResponse(`User role has been changed to ${capitalizeFirstLetter(userRole)}`, 200);
     }
   } catch (error) {

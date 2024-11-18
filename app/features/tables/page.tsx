@@ -14,7 +14,6 @@ import { DataTable } from "@/components/features/tables/data-table";
 
 async function gettingData() {
   const gettingData = await getUsers();
-  if (!gettingData) return;
   return gettingData.users;
 }
 

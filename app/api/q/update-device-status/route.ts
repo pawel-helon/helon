@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { Device, STATUS } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number, device?: Device) {
   return new Response(JSON.stringify({ message, status, device }));
@@ -43,6 +44,7 @@ export async function PUT(request: Request) {
     if (!updatingDevice) {
       return createResponse("Failed to update device status", 503);
     } else {
+      revalidatePath('/features/qr-codes');
       return createResponse(getSuccessMessage(deviceStatus), 200);
     }
   } catch (error) {
