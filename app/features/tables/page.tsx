@@ -7,9 +7,19 @@ import { Button } from "@/components/ui/button";
 import { ActionsTables } from "@/components/features/tables/actions-tables";
 import { DisabledAction } from "@/components/disabled-action";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { DataTableWrapper } from "@/components/features/tables/data-table-wrapper";
+import { getUsers } from "@/actions/server-actions";
+import { User } from "@prisma/client";
+import { columns } from "@/components/features/tables/data-table/column-definitions";
+import { DataTable } from "@/components/features/tables/data-table";
+
+async function gettingData() {
+  const gettingData = await getUsers();
+  if (!gettingData) return;
+  return gettingData.users;
+}
 
 export default async function TablesPage() {
+  const users = await gettingData() as User[];
   return (
     <>
       <ActionsTables />
@@ -81,7 +91,7 @@ export default async function TablesPage() {
           <div className="flex items-start my-[4rem] gap-2">
             <Text variant="h1">Users</Text>
           </div>
-          <DataTableWrapper />
+          <DataTable data={users} columns={columns}/>
         </div>
       </div>
     </>

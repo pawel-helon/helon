@@ -28,7 +28,7 @@ export async function PUT(request: Request) {
     if (!updatingRole) {
       return createResponse("Failed to update role", 503);
     } else {
-      revalidatePath('/features/tables')
+      revalidatePath('/features/tables');
       return createResponse("Roles updated", 200);
     }
   } catch (error) {
