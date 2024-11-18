@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number, user?: User) {
   return new Response(JSON.stringify({ message, status, user }));
@@ -16,6 +17,7 @@ export async function GET(request: Request) {
     if (!gettingOldestAccount) {
       return createResponse(`User not found`, 503);
     } else {
+      revalidatePath('/');
       return createResponse("User has been fetched", 200, gettingOldestAccount);
     }
   } catch (error) {

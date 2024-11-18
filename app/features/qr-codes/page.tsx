@@ -21,9 +21,9 @@ const deviceStatuses = [STATUS.ACTIVE, STATUS.INACTIVE];
 
 export default function QRCodesPage() {
   const isMobile = useMedia("(max-width: 480px)", false)
-  const [selectedUserRole, setSelectedUserRole] = useState<ROLE>();
-  const [selectedDeviceStatus, setSelectedDeviceStatus] = useState<STATUS>();
-  const [selectedDeviceState, setSelectedDeviceState] = useState<STATE>();
+  const [selectedUserRole, setSelectedUserRole] = useState<ROLE | undefined>(undefined);
+  const [selectedDeviceStatus, setSelectedDeviceStatus] = useState<STATUS | undefined>(undefined);
+  const [selectedDeviceState, setSelectedDeviceState] = useState<STATE | undefined>(undefined);
 
   useEffect(() => {
     try {
