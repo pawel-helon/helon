@@ -146,35 +146,49 @@ export function DayCardActions(props: {
     }
   }
 
-  const emptyCheckboxes: number[] = [];
-  let i: number = 0;
-  for (i = 1; i <= 7 - props.weekDays.length; i++) {
-    emptyCheckboxes.push(i);
-  }
-
   return (
     <>
       {isMobile ? (
         <div className="w-full flex flex-col gap-2">
           <div className="w-full flex">
             <DuplicateDay weekNumber={props.weekNumber} day={props.day} weekDays={props.weekDays} slots={props.slots}/>
-            <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-20 rounded-l-none px-1.5 bg-background-sh">
-                  <ChevronDown size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
-                <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-                  {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
-                </Button>
-                <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-                  Delete slots
-                </Button>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div role="menu">
+              <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
+                <DropdownMenuTrigger asChild>
+                  <Button aria-label="Show more options" variant="outline" className="w-20 rounded-l-none px-1.5 bg-background-sh">
+                    <ChevronDown size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
+                  <Button
+                    aria-label={props.isRecurringDay ? 'Disable recurring' : 'Set recurring'} 
+                    role="option" 
+                    onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} 
+                    variant="ghost" 
+                    size="sm" 
+                    className="justify-start text-left pl-1.5"
+                  >
+                    {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
+                  </Button>
+                  <Button 
+                    aria-label="Delete slots" 
+                    role="option" 
+                    onClick={handleDeleteSlots} 
+                    variant="ghost" 
+                    size="sm" 
+                    className="justify-start text-left pl-1.5"
+                  >
+                    Delete slots
+                  </Button>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-          <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} className={cn('w-full', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
+          <Button 
+            aria-label={props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
+            onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} 
+            className={cn('w-full', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}
+          >
             <Plus size={16} className="size-4 -ml-2 mr-1"/>
             {props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
           </Button>
@@ -182,21 +196,37 @@ export function DayCardActions(props: {
       ) : (
         <div className="flex">
           <DuplicateDay weekNumber={props.weekNumber} day={props.day} weekDays={props.weekDays} slots={props.slots}/>
-          <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">
-                <ChevronDown size={16} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
-              <Button onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-                {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
-              </Button>
-              <Button onClick={handleDeleteSlots} variant="ghost" size="sm" className="justify-start text-left pl-1.5">
-                Delete slots
-              </Button>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div role="menu">
+            <DropdownMenu open={isDropdownOpened} onOpenChange={setIsDropdownOpened}>
+              <DropdownMenuTrigger asChild>
+                <Button aria-label="Show more options" variant="outline" size="sm" className="w-8 rounded-l-none px-1.5">
+                  <ChevronDown size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[132px] flex flex-col bg-background-sh shadow-black shadow-sm p-1">
+                <Button 
+                  role="option"
+                  aria-label={props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
+                  onClick={props.isRecurringDay ? handleDisableRecurringDay : handleSetRecurringDay} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="justify-start text-left pl-1.5"
+                >
+                  {props.isRecurringDay ? 'Disable recurring' : 'Set recurring'}
+                </Button>
+                <Button 
+                  role="option"
+                  aria-label="Delete slots"
+                  onClick={handleDeleteSlots} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="justify-start text-left pl-1.5"
+                >
+                  Delete slots
+                </Button>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       )}
     </>

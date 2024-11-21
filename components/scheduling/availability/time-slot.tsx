@@ -51,47 +51,68 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   return (
     <div className="w-full flex justify-between items-center">
       <div className="relative flex gap-2">
-        {props.slot.recurring && <span className="size-2 absolute -top-1 left-0 xs:-left-1 rounded-full bg-teal-500"></span>}
+        {props.slot.recurring && <span className="size-2 absolute -top-1 left-0 xs:-left-1 rounded-full bg-teal-500" />}
         <DropdownMenu open={isHoursDropdownOpened} onOpenChange={setIsHoursDropdownOpened}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="w-16 min-w-[64px] bg-background-sh">
+          <DropdownMenuTrigger asChild id="temp">
+            <Button
+              aria-label="Change hour"
+              variant="outline"
+              size="sm"
+              className="w-16 min-w-[64px] bg-background-sh"
+            >
               {String(props.slot.dateTime.getHours()).padStart(2, '0')}
-              <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
+              <CaretSortIcon className="size-4 ml-2 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="start" className="w-16 min-w-[64px] flex flex-col shadow-black shadow-sm bg-background-sh">
             <div className="w-full max-h-[320px] flex flex-col pr-1 gap-0.5 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
-              {HOURS.map((hour) => {
-                return (
-                  <Button key={hour} onClick={() => handleSlotHourChange(hour)} variant="ghost" size="sm" className="h-8 py-2">
-                    {hour}
-                  </Button>
-                );
-              })}
+              {HOURS.map((hour) => (
+                <Button
+                  key={hour}
+                  role="option"
+                  tabIndex={0}
+                  onClick={() => handleSlotHourChange(hour)}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 py-2"
+                >
+                  {hour}
+                </Button>
+              ))}
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu open={isMinutesDropdownOpened} onOpenChange={setIsMinutesDropdownOpened}>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="w-16 min-w-[64px] bg-background-sh">
+            <Button
+              aria-label="Change minutes"
+              variant="outline"
+              size="sm"
+              className="w-16 min-w-[64px] bg-background-sh"
+            >
               {String(props.slot.dateTime.getMinutes()).padStart(2, '0')}
-              <CaretSortIcon className="size-4 ml-2 text-muted-foreground"/>
+              <CaretSortIcon className="size-4 ml-2 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-16 min-w-[64px] flex flex-col shadow-black shadow-sm bg-background-sh">
             <div className="w-full max-h-[140px] flex flex-col gap-0.5">
-              {MINUTES.map((minute) => {
-                return (
-                  <Button key={minute} onClick={() => handleSlotMinuteChange(minute)} variant="ghost" size="sm" className="w-full h-8 py-2" >
-                    {minute}
-                  </Button>
-                );
-              })}
+              {MINUTES.map((minute) => (
+                <Button
+                  role="option"
+                  key={minute} 
+                  onClick={() => handleSlotMinuteChange(minute)} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full h-8 py-2"
+                >
+                  {minute}
+                </Button>
+              ))}
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <TimeSlotActions slot={props.slot} daysExceptToday={props.daysExceptToday}/>
+      <TimeSlotActions slot={props.slot} daysExceptToday={props.daysExceptToday} />
     </div>
   )
 }

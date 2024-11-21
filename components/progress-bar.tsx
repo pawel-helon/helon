@@ -23,7 +23,7 @@ export function ProgressBar() {
   }, [parentId]);
 
   return (
-    <div className={cn(
+    <div role="progressbar" className={cn(
       "h-1 absolute top-0 left-0 transition-all duration-300 ease-in-out rounded-r-full xs:rounded-full xs:rounded-bl-none bg-primary",
       parentId === "choose-slot-form" ? widthChooseSlotPage : "",
       parentId === "confirm-booking-form" ? widthConfirmBookingPage : "",

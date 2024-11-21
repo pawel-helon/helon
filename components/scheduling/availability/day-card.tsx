@@ -28,12 +28,11 @@ export const getBadgeVariant = (weekNumber: number) => {
 }
 
 function isBeforeEndOfTheDay(day: string) {
-  if (new Date() <= new Date(new Date(day).setHours(23, 59, 59, 999))) {
-    return true
-  } else {
-    return false
-  }
+  let result: boolean;
+  new Date() <= new Date(new Date(day).setHours(23, 59, 59, 999)) ? result = true : result = false;
+  return result;
 }
+
 function getDateOfMeeting(date: Date) {
   return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
@@ -88,7 +87,7 @@ export function DayCard(props: {
   return (
     <>
       {isMobile ? (
-        <div style={{ aspectRatio: "1" }} className="relative h-full col-span-1 flex flex-col bg-background-sh">
+        <div role="gridcell" style={{ aspectRatio: "1" }} className="relative h-full col-span-1 flex flex-col bg-background-sh">
           {filteredSlots.length > 0 ? (
             <>
               <div className="w-full flex flex-col gap-2 pt-2 pl-2 pr-3 overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
@@ -121,16 +120,16 @@ export function DayCard(props: {
           )}
         </div>
       ) : (
-        <div style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border shadow-lg shadow-black bg-background-sh">
+        <div role="gridcell" style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border shadow-lg shadow-black bg-background-sh">
           <div className="w-full flex justify-between items-center p-3">
             <Text variant="p-base-thick" className={cn("mb-2", new Date() < new Date(`${props.day}T23:59:59.999Z`) ? 'text-foreground' : 'text-muted-foreground')}>
               {getDayOfWeek(date)}
             </Text>
-            <div className={cn(badgeVariant, "h-5 inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
+            <div id={`day-availability-card-${getDateOfMeeting(date)}`} className={cn(badgeVariant, "h-5 inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
               {getDateOfMeeting(date)}
             </div>
           </div>
-          <div className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
+          <div aria-labelledby={`day-availability-card-${getDateOfMeeting(date)}`} className="h-full overflow-y-scroll scrollbar scrollbar-thumb-muted scrollbar-thumb-rounded-full scrollbar-track-card-background scrollbar-w-1 scrollbar-h-1">
             {filteredSlots.length > 0 ? (
               <div>
                 <div className="w-full h-full flex flex-col gap-2 pt-2 pl-3 pr-2 mb-[72px]">
@@ -140,7 +139,12 @@ export function DayCard(props: {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh">
                   <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay} isRecurringSlotsOnly={props.isRecurringSlotsOnly} />
-                  <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} size='icon' className={cn('size-8', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}>
+                  <Button
+                    aria-label={props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
+                    onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot}
+                    size='icon'
+                    className={cn('size-8', props.isRecurringSlotsOnly ? 'bg-teal-500 hover:bg-teal-500/90' : '')}
+                  >
                     <Plus size={16} />
                   </Button>
                 </div>
@@ -152,13 +156,21 @@ export function DayCard(props: {
                     <Text variant="p-small-thin" className="w-full text-center text-muted-foreground text-balance">
                       There are no {props.isRecurringSlotsOnly && ' recurring '} slots created yet
                     </Text>
-                    <Button onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot} size="sm" variant="outline" className="bg-background-sh">
+                    <Button
+                      aria-label={props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
+                      onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot}
+                      size="sm"
+                      variant="outline"
+                      className="bg-background-sh"
+                    >
                       <Plus className="size-4 -ml-2 mr-1"/>
                       {props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
                     </Button>
                   </div>
                 ) : (
-                  <Text variant="p-small-thin" className="w-full text-center text-muted-foreground text-balance absolute top-0 bottom-0 left-0 right-0 flex flex-col p-3 justify-center items-center gap-2 mt-4">There are no slots available.</Text>
+                  <Text variant="p-small-thin" className="w-full text-center text-muted-foreground text-balance absolute top-0 bottom-0 left-0 right-0 flex flex-col p-3 justify-center items-center gap-2 mt-4">
+                    There are no slots available.
+                  </Text>
                 )}
               </>
             )}

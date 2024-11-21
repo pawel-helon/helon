@@ -16,15 +16,13 @@ const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 function getDayOfWeek(day: string) {
   return DAYS_OF_WEEK[new Date(day).getDay()];
 }
-function getDateOfMeeting(day: string) {
+function getMeetingDate(day: string) {
   return `${String(new Date(day).getDate()).padStart(2, '0')}.${String(new Date(day).getMonth() + 1).padStart(2, '0')}`;
 }
 function isBeforeEndOfDay(day: string) {
-  if (new Date() < new Date(`${day}T23:59:59.999Z`)) {
-    return true
-  } else {
-    return false
-  }
+  let result: boolean
+  new Date() < new Date(`${day}T23:59:59.999Z`) ? result = true : result = false;
+  return result;
 }
 
 function getBadgeVariant(weekNumber: number) {
@@ -39,6 +37,15 @@ function getBadgeVariant(weekNumber: number) {
   }
 }
 
+function getEmptyCards(weekLength: number) {
+  let emptyCards: number[] = [];
+  let i: number = 0;
+  for (i = 1; i <= 7 - weekLength; i++) {
+    emptyCards.push(i);
+  }
+  return emptyCards;
+}
+
 type DaySlots = { day: string, slots: Slot[] };
 
 export function DayGrid(props: {
@@ -50,7 +57,8 @@ export function DayGrid(props: {
   const isMobile = useMedia("(max-width: 480px)", false);
   const [isRecurringSlotsOnly, setIsRecurringSlotsOnly] = useState<boolean>(false);
   const badgeVariant = getBadgeVariant(props.weekNumber);
-  
+  const emptyCards = getEmptyCards(props.weekDays.length);
+
   useEffect(() => {
     async function initDeletePastSlots() {
       try {
@@ -61,18 +69,12 @@ export function DayGrid(props: {
     }
     initDeletePastSlots();
   })
-
-  const emptyCards: number[] = [];
-  let i: number = 0;
-  for (i = 1; i <= 7 - props.weekDays.length; i++) {
-    emptyCards.push(i);
-  }
   
   return (
-    <>
+    <div role="tabpanel">
       {isMobile ? (
-        <>
-          <div className="w-full flex justify-end items-center gap-2 mb-4">
+        <main>
+          <div role="toolbar" className="w-full flex justify-end items-center gap-2 mb-4">
             <Label htmlFor="only-recurring" className="text-xs text-muted-foreground">Recurring only</Label>
             <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className="data-[state=checked]:bg-teal-500" />
           </div>
@@ -82,7 +84,7 @@ export function DayGrid(props: {
                 <AccordionTrigger className="px-2 hover:no-underline">
                   <div className="flex items-center gap-2">
                     <div className={cn(badgeVariant, "h-5 w-fit inline-flex items-center px-1.5 text-xs text-black font-semibold rounded-full shadow-black shadow-sm")}>
-                      {getDateOfMeeting(day.day)}
+                      {getMeetingDate(day.day)}
                     </div>
                     <Text variant="p-base-thick" className={cn("leading-none", isBeforeEndOfDay(day.day) ? "text-foreground" : "text-muted-foreground")}>
                       {getDayOfWeek(day.day)}
@@ -95,40 +97,34 @@ export function DayGrid(props: {
               </AccordionItem>
             ))}
           </Accordion>
-        </>
+        </main>
       ) : (
-        <>
-          <div className="w-full flex justify-end items-center gap-2 mb-4">
+        <main>
+          <div role="toolbar" className="w-full flex justify-end items-center gap-2 mb-4">
             <Label htmlFor='only-recurring' className='text-xs text-muted-foreground'>Recurring only</Label>
             <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className="data-[state=checked]:bg-teal-500"/>
           </div>
-          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16">
+          <div role="grid" className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 xs:gap-4 mb-16">
             {props.weekNumber === 1 && (
               <>
-                {emptyCards.map((card) => {
-                  return (
-                    <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
-                  )
-                })}
+                {emptyCards.map((card) => (
+                  <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+                ))}
               </>
             )}
-            {props.slotsForWeek.map((day) => {
-              return (
-                <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
-              )
-            })}
+            {props.slotsForWeek.map((day) => (
+              <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
+            ))}
             {props.weekNumber === 53 && (
               <>
-                {emptyCards.map((card) => {
-                  return (
-                    <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
-                  )
-                })}
+                {emptyCards.map((card) => (
+                  <div key={card} style={{ aspectRatio: "3/4" }} className="relative h-full col-span-1 flex flex-col border rounded-md border-border bg-background-sh" />
+                ))}
               </>
             )}
           </div>
-        </>
+        </main>
       )}
-    </>
+    </div>
   )
 }

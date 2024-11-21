@@ -121,19 +121,35 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
   const weekSlots = await cachedWeekSlots(weekDays);
   const recurringDays = await cachedRecurringDays(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
+  const prevWeekDays = cachedWeekDays(year, prevWeekNumber);
+  const nextWeekDays = cachedWeekDays(year, nextWeekNumber);
 
   return (
     <>
       <Breadcrumbs />
-      <Header weeks={weeks} weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
-      <div className="h-11 mb-8 flex border-b border-border">
-        <Link href="/features/scheduling/meetings" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
-          Meetings
-        </Link>
-        <Link href="/features/scheduling/availability" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
-          Availability
-        </Link>
-      </div>
+      <Header
+        weeks={weeks}
+        weekNumber={weekNumber}
+        weekDays={weekDays}
+        prevWeekNumber={prevWeekNumber} 
+        prevWeekDays={prevWeekDays}
+        yearOnBackwardNavigation={yearOnBackwardNavigation} 
+        nextWeekNumber={nextWeekNumber} 
+        nextWeekDays={nextWeekDays}
+        yearOnForewardNavigation={yearOnForewardNavigation}
+      />
+      <ul role="tablist" className="h-11 mb-8 flex border-b border-border">
+        <li role="tab" className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
+          <Link href="/features/scheduling/meetings" prefetch={true}>
+            Meetings
+          </Link>
+        </li>
+        <li role="tab" className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
+          <Link href="/features/scheduling/availability" prefetch={true}>
+            Availability
+          </Link>
+        </li>
+      </ul>
       <DayGrid slotsForWeek={weekSlots} weekNumber={weekNumber} weekDays={weekDays} recurringDays={recurringDays}/>
     </>
   )

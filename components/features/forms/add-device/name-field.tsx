@@ -11,6 +11,7 @@ export function NameField(props: {
     <div className="flex flex-col gap-2">
       <Label htmlFor="name" className="text-xs">Device name</Label>
       <Input
+        aria-required="true"
         id="name"
         name="name"
         placeholder="Enter device name"

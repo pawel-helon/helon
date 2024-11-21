@@ -120,26 +120,44 @@ export default async function MeetingsLayout(props: {
   const weekDays = cachedWeekDays(year, weekNumber);
   const weekMeetings = await cachedWeekMeetings(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
-  
+  const prevWeekDays = cachedWeekDays(year, prevWeekNumber);
+  const nextWeekDays = cachedWeekDays(year, nextWeekNumber);
+
   return (
     <div id="meetings">
       <Breadcrumbs />
-      <Header weeks={weeks} weekNumber={weekNumber} weekDays={weekDays} prevWeekNumber={prevWeekNumber} yearOnBackwardNavigation={yearOnBackwardNavigation} nextWeekNumber={nextWeekNumber} yearOnForewardNavigation={yearOnForewardNavigation} />
-      <div className="h-11 mb-8 flex border-b border-border">
-        <Link href="/features/scheduling/meetings" prefetch={true} className="inline-flex items-center xs:justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
-          Meetings
-        </Link>
-        <Link href="/features/scheduling/availability" prefetch={true} className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
-          Availability
-        </Link>
-      </div>
-      <SelectDayOfWeek year={year} weekNumber={weekNumber} weekDays={weekDays}/>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:pt-9">
-        <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
-          {props.children}
-        </div>
-        <div className="hidden md:col-span-1 md:flex flex-col gap-4">
-          <DayList weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
+      <Header
+        weeks={weeks}
+        weekNumber={weekNumber}
+        weekDays={weekDays}
+        prevWeekNumber={prevWeekNumber}
+        prevWeekDays={prevWeekDays}
+        yearOnBackwardNavigation={yearOnBackwardNavigation}
+        nextWeekNumber={nextWeekNumber}
+        nextWeekDays={nextWeekDays}
+        yearOnForewardNavigation={yearOnForewardNavigation}
+      />
+      <ul role="tablist" className="h-11 mb-8 flex border-b border-border">
+        <li role="tab" className="inline-flex items-center xs:justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-primary shadow border-b border-primary">
+          <Link href="/features/scheduling/meetings" prefetch={true}>
+            Meetings
+          </Link>
+        </li>
+        <li role="tab" className="inline-flex items-center justify-center whitespace-nowrap rounded-none px-3 py-1 text-sm font-medium hover:cursor-pointer ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 text-muted-foreground shadow border-b border-muted-foreground">
+          <Link href="/features/scheduling/availability" prefetch={true}>
+            Availability
+          </Link>
+        </li>
+      </ul>
+      <div role="tabpanel">
+        <SelectDayOfWeek year={year} weekNumber={weekNumber} weekDays={weekDays} />
+        <div role="grid" className="grid grid-cols-1 md:grid-cols-3 gap-4 md:pt-9">
+          <main className="col-span-1 md:col-span-2 flex flex-col gap-4">
+            {props.children}
+          </main>
+          <div className="hidden md:col-span-1 md:flex flex-col gap-4">
+            <DayList weekNumber={weekNumber} weekMeetings={weekMeetings} weekDays={weekDays} />
+          </div>
         </div>
       </div>
     </div>

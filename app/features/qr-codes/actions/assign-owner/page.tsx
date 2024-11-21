@@ -30,7 +30,7 @@ export default function FeaturesQRCodesActionsAssignOwner() {
                 <SelectTrigger>
                   <SelectValue placeholder="Select new owner" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background-sh">
                   <SelectGroup>
                     {users.map((user) => (
                       <SelectItem key={user} value={user}>
@@ -59,7 +59,7 @@ export default function FeaturesQRCodesActionsAssignOwner() {
               <SelectTrigger>
                 <SelectValue placeholder="Select new owner" className="w-full" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background-sh">
                 <SelectGroup>
                   {users.map((user) => (
                     <SelectItem key={user} value={user}>

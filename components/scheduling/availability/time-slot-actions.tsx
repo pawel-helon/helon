@@ -108,17 +108,17 @@ export function TimeSlotActions(props: { slot: Slot, daysExceptToday: string[] }
   
   return (
     <div className="w-full flex justify-end gap-1">
-      <Button onClick={handleDeleteSlot} size="icon" variant="outline" className="size-8 bg-background-sh">
+      <Button aria-label="Delete slot" onClick={handleDeleteSlot} size="icon" variant="outline" className="size-8 bg-background-sh">
         <Trash2 size={16} />
       </Button>
       <DropdownMenu open={isActionsOnSlotDropdownOpened} onOpenChange={setIsActionsOnSlotDropdownOpened}>
         <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="outline" className="size-8 bg-background-sh">
+          <Button aria-label="Open more options" size="icon" variant="outline" className="size-8 bg-background-sh">
             <EllipsisVertical size={16} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="flex flex-col shadow-black shadow-sm p-1  bg-background-sh">
-          <Button onClick={props.slot.recurring ? handleDisableRecurringSlot : handleSetRecurringSlot} variant='ghost' size='sm' className='justify-start text-left pl-2.5 bg-background-sh'>
+          <Button role="option" aria-label={props.slot.recurring ? "Disable recurring" : "Set recurring"} onClick={props.slot.recurring ? handleDisableRecurringSlot : handleSetRecurringSlot} variant='ghost' size='sm' className='justify-start text-left pl-2.5 bg-background-sh'>
             {props.slot.recurring ? "Disable recurring" : "Set recurring"}
           </Button>
         </DropdownMenuContent>

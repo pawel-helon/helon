@@ -129,7 +129,7 @@ export const RescheduleMeetingMobile = React.memo(function RescheduleMeetingMobi
   return (
     <Sheet open={openSheet} onOpenChange={handleCloseSheet}>
       <SheetTrigger asChild>
-        <Button size="sm">
+        <Button aria-label="Open reschedule meeting dialog" size="sm">
           Reschedule
         </Button>
       </SheetTrigger>
@@ -150,7 +150,7 @@ export const RescheduleMeetingMobile = React.memo(function RescheduleMeetingMobi
                       {slots.filter((s, i) => displayedFirstSlot <= i && i < displayedLastSlot).map((s) => (
                         <RadioGroup key={s.id} name="slotId">
                           <RadioGroupItem key={s.id} value={s.id} onClick={() => setSelectedSlot(s.id)} className="w-full" asChild>
-                            <Button variant={selectedSlot === s.id ? "secondary" : "outline"} size="sm" className={selectedSlot === s.id ? "w-full bg-accent" : "w-full"}>
+                            <Button aria-label="Select slot" variant={selectedSlot === s.id ? "secondary" : "outline"} size="sm" className={selectedSlot === s.id ? "w-full bg-accent" : "w-full"}>
                               {getSlotTime(s.dateTime)}
                             </Button>
                           </RadioGroupItem>
@@ -158,11 +158,11 @@ export const RescheduleMeetingMobile = React.memo(function RescheduleMeetingMobi
                       ))}
                       {slots.length > 5 && (
                         <div className="w-full flex justify-end gap-2">
-                          <Button disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
+                          <Button aria-label="Show previous slots" disabled={displayedFirstSlot === 0} onClick={handlePrevSlots} type="button" variant="outline" className="w-full text-xs pr-6">
                             <ChevronLeft className="size-4 mr-2"/>
                             Previous
                           </Button>
-                          <Button disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
+                          <Button aria-label="Show next slots" disabled={displayedLastSlot >= slots.length} onClick={handleNextSlots} type="button" variant="outline" className="w-full text-xs pl-6">
                             Next
                             <ChevronRight className="size-4 ml-2"/>
                           </Button>
@@ -180,10 +180,10 @@ export const RescheduleMeetingMobile = React.memo(function RescheduleMeetingMobi
               )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 flex flex-col xs:flex-row xs:justify-end p-6 gap-2">
-              <Button onClick={handleCloseSheet} type="button" variant="ghost">
+              <Button aria-label="Close" onClick={handleCloseSheet} type="button" variant="ghost">
                 Close
               </Button>
-              <Button type="submit" disabled={isPending || selectedSlot === ""}>
+              <Button aria-label="Submit" type="submit" disabled={isPending || selectedSlot === ""}>
                 {isPending ? <RiLoaderFill className="size-5 animate-spin" /> : "Reschedule"}
               </Button>
             </div>

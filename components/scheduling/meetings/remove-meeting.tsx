@@ -5,11 +5,11 @@ import { useTransition } from "react"
 import { RiLoaderFill } from "react-icons/ri"
 import { useMedia } from "react-use"
 import { toast } from "sonner"
-import { Text } from "@/components/typography"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogClose, DialogContent, DialogTitleH as DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { removeMeeting, undoRemoveMeeting } from "@/actions/database-actions"
+import { Text } from "@/components/typography"
+import { Dialog, DialogClose, DialogContent, DialogTitleH as DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
 
 export function RemoveMeeting(props: {
   meetingId: string;
@@ -50,13 +50,12 @@ export function RemoveMeeting(props: {
     }
   }
   
-  
   return (
     <>
       {isMobile ? (
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="sm">
+            <Button aria-label="Open remove meeting dialog" variant="ghost" size="sm">
               Remove
             </Button>
           </SheetTrigger>
@@ -69,11 +68,11 @@ export function RemoveMeeting(props: {
             </Text>
             <div className="w-full absolute bottom-0 left-0 right-0 flex flex-col p-6 gap-2">
               <SheetClose asChild>
-                <Button variant="ghost">
+                <Button aria-label="Cancel" variant="ghost">
                   Cancel
                 </Button>
               </SheetClose>
-              <Button onClick={handleRemoveMeeting} disabled={isPending} className="min-w-[108px]">
+              <Button aria-label="Remove meeting" onClick={handleRemoveMeeting} disabled={isPending} className="min-w-[108px]">
                 {isPending ? <RiLoaderFill className="size-5 animate-spin"/>: 'Remove'}
               </Button>
             </div>
@@ -82,7 +81,7 @@ export function RemoveMeeting(props: {
       ) : (
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm">
+            <Button aria-label="Open remove meeting dialog" variant="ghost" size="sm">
               Remove
             </Button>
           </DialogTrigger>
@@ -95,11 +94,11 @@ export function RemoveMeeting(props: {
             </Text>
             <div className="w-full absolute bottom-0 left-0 right-0 flex justify-end p-6 gap-2">
               <DialogClose asChild>
-                <Button variant="ghost">
+                <Button aria-label="Cancel" variant="ghost">
                   Cancel
                 </Button>
               </DialogClose>
-              <Button onClick={handleRemoveMeeting} disabled={isPending} className="min-w-[108px]">
+              <Button aria-label="Remove meeting" onClick={handleRemoveMeeting} disabled={isPending} className="min-w-[108px]">
                 {isPending ? <RiLoaderFill className="size-5 animate-spin"/>: 'Remove'}
               </Button>
             </div>

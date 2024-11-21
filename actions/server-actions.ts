@@ -669,11 +669,14 @@ export async function getMeetingsForWeek(week: string[]) {
   const weekMeetings = [] as {day: string, meetings: Meeting[]}[]
 
   for (const day of week) {
+    const dayStart = new Date(new Date(day).setHours(0,0,0,0));
+    const dayEnd = new Date(new Date(day).setHours(23,59,59,999));
+
     const meetings = await db.meeting.findMany({
       where: {
         dateTime: {
-          gte: new Date(`${day}T00:00:00.000Z`),
-          lte: new Date(`${day}T23:59:59.999Z`)
+          gte: dayStart,
+          lte: dayEnd
         },
       },
       orderBy: {
@@ -690,11 +693,14 @@ export async function getMeetingsForWeek(week: string[]) {
 }
 
 export async function getDayMeetings(day: string) {
+  const dayStart = new Date(new Date(day).setHours(0,0,0,0));
+  const dayEnd = new Date(new Date(day).setHours(23,59,59,999));
+  
   const meetings = await db.meeting.findMany({
     where: {
       dateTime: {
-        gte: new Date(`${day}T00:00:00.000Z`),
-        lte: new Date(`${day}T23:59:59.999Z`)
+        gte: dayStart,
+        lte: dayEnd,
       }
     }
   })

@@ -46,12 +46,16 @@ const cachedWeekDays = cache((year: number, week: number) => {
   return weekDays;
 });
 
+function getWeekNumberAndYear(week: string) {
+  const year = Number(week.split('-')[0]);
+  const weekNumber = Number(week.split('-')[2]);
+  return { year, weekNumber }  
+}
 
 export default async function MeetingsWeekDayPage(props: {
   params: { week: string; day: string }
 }) {
-  const year = Number(props.params.week.split('-')[0]);
-  const weekNumber = Number(props.params.week.split('-')[2]);
+  const { year, weekNumber } = getWeekNumberAndYear(props.params.week)
   const weekDays = cachedWeekDays(year, weekNumber);
   const day = weekDays.filter((d) => DAYS_OF_WEEK[new Date(d).getDay()] === props.params.day);
   const gettingDayMeetings = await getDayMeetings(day[0]);

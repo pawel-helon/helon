@@ -4,10 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { CheckIcon } from "lucide-react";
 import { IoIosInformationCircle } from "react-icons/io";
+import { useMedia } from "react-use";
 import { Text } from "@/components/typography";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "@/components/ui/button";
-import { useMedia } from "react-use";
 
 export function Card(props: {
   title: string,

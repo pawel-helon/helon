@@ -15,7 +15,9 @@ export default async function HomePage() {
           <span className="text-white">Next.js</span>
         </Text>
         <Link href="/book-meeting" prefetch={true}>
-          <Button size="lg" className="rounded-full">Book meeting</Button>
+          <Button size="lg" className="rounded-full">
+            Book meeting
+          </Button>
         </Link>
         <span className="absolute top-[8%] right-[10%] animate-scale-160 rounded-full size-1 bg-accent-pink-h" />
         <span className="absolute top-[57%] xs:top-[40%] left-[5%] xs:left-[20%] animate-scale-140 rounded-full size-3  bg-gradient-to-r from-accent-orange-h to-accent-pink-h" />

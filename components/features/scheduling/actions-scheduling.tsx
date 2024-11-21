@@ -25,14 +25,14 @@ export function ActionsScheduling() {
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         >
-          <div className='flex items-center gap-2 p-1.5 border border-border rounded-full shadow-black shadow-sm bg-background-sh'>
-            <Link href='/home'>
-              <Button variant='outline' size='icon' className='rounded-full' aria-label='Go to home page'>
+          <nav className='flex items-center gap-2 p-1.5 border border-border rounded-full shadow-black shadow-sm bg-background-sh'>
+            <Link href='/home' aria-label='Go to home page'>
+              <Button variant='outline' size='icon' className='rounded-full'>
                 <House size={18}/>
               </Button>
             </Link>
             <NextPrevFeatures />
-          </div>
+          </nav>
         </motion.div>
       )}
     </AnimatePresence>

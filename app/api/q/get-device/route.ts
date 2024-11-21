@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Device, STATE, STATUS } from "@prisma/client";
+import { Device } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number, device?: Device) {
@@ -8,17 +8,17 @@ function createResponse(message: string, status: number, device?: Device) {
 
 export async function GET(request: Request) {
   try {
-    const gettinOldestgDevice = await db.device.findFirst({
+    const gettinOldestDevice = await db.device.findFirst({
       orderBy: {
        createdAt: 'asc'
       },
      
     });
-    if (!gettinOldestgDevice) {
+    if (!gettinOldestDevice) {
       return createResponse("Failed to fetch device", 503)
     }
     revalidatePath('/');
-    return createResponse("Device has been fetched", 200, gettinOldestgDevice);
+    return createResponse("Device has been fetched", 200, gettinOldestDevice);
   } catch (error) {
     console.error(error);
     return createResponse("An unexpected error has occurred", 500);

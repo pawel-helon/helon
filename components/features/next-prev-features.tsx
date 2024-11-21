@@ -53,34 +53,38 @@ export function NextPrevFeatures() {
 
   return (
     <div className='flex gap-1'>
-      <TooltipProvider delayDuration={350}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href={prevFeatureLink}>
-              <Button size='icon' variant='outline' className='rounded-full'>
-                <ChevronLeft size={18} />
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={12} className="text-xs">
-            {prevFeatureName}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider delayDuration={350}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href={nextFeatureLink}>
-              <Button size='icon' variant='outline' className='rounded-full'>
-                <ChevronRight size={18} />
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={12} className="text-xs">
-            {nextFeatureName}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div role="tooltip" aria-label={`Go to ${prevFeatureName} feature`}>
+        <TooltipProvider delayDuration={350}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href={prevFeatureLink}>
+                <Button size='icon' variant='outline' className='rounded-full'>
+                  <ChevronLeft size={18} />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={24} className="rounded-full text-xs">
+              {prevFeatureName}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div role="tooltip" aria-label={`Go to ${nextFeatureName} feature`}>
+        <TooltipProvider delayDuration={350}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href={nextFeatureLink}>
+                <Button size='icon' variant='outline' className='rounded-full'>
+                  <ChevronRight size={18} />
+                </Button>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={24} className="rounded-full text-xs">
+              {nextFeatureName}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   )
   
