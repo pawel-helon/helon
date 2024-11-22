@@ -746,53 +746,11 @@ export async function getRole() {
 // notifications
 
 export async function getNotifications() {
-  const notificationsCount = await db.notification.count()
-  if (notificationsCount === 0) {
-    const creatingNofications = await db.notification.createMany({
-      data: [
-        {
-          type: NOTIFICATIONTYPE.ACCESSREQUEST,
-          title: "I would like to have access to Blue device",
-          userId: 1,
-          requesterId: 2,
-          requsterName: "Bob Berkley",
-          requesterAvatar: "/avatars/avatar-vector-male-01.png",
-          requestedRole: ROLE.ENDUSER,
-          requestedEMEI: '555555555555555',
-          createdAt: new Date(new Date().setHours(12,0,0,0))
-        },
-        {
-          type: NOTIFICATIONTYPE.ROLECHANGEREQUEST,
-          title: "I would like my role to be changed to owner",
-          userId: 1,
-          requesterId: 4,
-          requsterName: "David Daniels",
-          requesterAvatar: "/avatars/avatar-vector-male-02.png",
-          requestedRole: ROLE.ENDUSER,
-          requestedEMEI: '555555555555555',
-          createdAt: new Date(new Date().setHours(10,0,0,0))
-        },
-        {
-          type: NOTIFICATIONTYPE.OWNERSHIPREQUEST,
-          title: "I would like to have ownership of the Blue device",
-          userId: 1,
-          requesterId: 5,
-          requsterName: "Ethan Edwards",
-          requesterAvatar: "/avatars/avatar-vector-male-03.png",
-          requestedRole: ROLE.OWNER,
-          requestedEMEI: '555555555555555',
-          createdAt: new Date(new Date().setHours(8,0,0,0))
-        },
-      ]
-    })
-    if (!creatingNofications) {
-      return { message: "Failed to create notifications", status: 503 }
-    }
-    return { message: "Notifications created", status: 201, notifications: creatingNofications }
-  } else {
-    const gettingNotifications = await db.notification.findMany()
-    return { message: "Notifications fetched", status: 200, notifications: gettingNotifications }
+  const gettingNotifications = await db.notification.findMany()
+  if (!gettingNotifications) {
+    return { message: "Failed to fetch notifications", status: 503 }
   }
+  return { message: "Notifications fetched", status: 200, notifications: gettingNotifications }
 }
 
 // charts
@@ -948,6 +906,52 @@ export async function setData() {
           },
         ]
       })
-    } 
+    }
+    const notificationsCount = await db.notification.count();
+    if (notificationsCount === 0) {
+      const creatingNofications = await db.notification.createMany({
+        data: [
+          {
+            type: NOTIFICATIONTYPE.ACCESSREQUEST,
+            title: "I would like to have access to Blue device",
+            userId: 1,
+            requesterId: 2,
+            requsterName: "Bob Berkley",
+            requesterAvatar: "/avatars/avatar-vector-male-01.png",
+            requestedRole: ROLE.ENDUSER,
+            requestedEMEI: '555555555555555',
+            createdAt: new Date(new Date().setHours(12,0,0,0))
+          },
+          {
+            type: NOTIFICATIONTYPE.ROLECHANGEREQUEST,
+            title: "I would like my role to be changed to owner",
+            userId: 1,
+            requesterId: 4,
+            requsterName: "David Daniels",
+            requesterAvatar: "/avatars/avatar-vector-male-02.png",
+            requestedRole: ROLE.ENDUSER,
+            requestedEMEI: '555555555555555',
+            createdAt: new Date(new Date().setHours(10,0,0,0))
+          },
+          {
+            type: NOTIFICATIONTYPE.OWNERSHIPREQUEST,
+            title: "I would like to have ownership of the Blue device",
+            userId: 1,
+            requesterId: 5,
+            requsterName: "Ethan Edwards",
+            requesterAvatar: "/avatars/avatar-vector-male-03.png",
+            requestedRole: ROLE.OWNER,
+            requestedEMEI: '555555555555555',
+            createdAt: new Date(new Date().setHours(8,0,0,0))
+          },
+        ]
+      })
+      if (!creatingNofications) {
+        return { message: "Failed to create notifications", status: 503 }
+      }
+      return { message: "Notifications created", status: 201, notifications: creatingNofications }
+    }
+
+
   }
 }

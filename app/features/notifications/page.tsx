@@ -12,11 +12,14 @@ import { DisabledAction } from "@/components/disabled-action";
 import { Statistics } from "@/components/features/notifications/statistics";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-export default async function NotificationsPage() {
+async function gettingNotifications() {
   const gettingNotifications = await getNotifications();  
-  if (!gettingNotifications.notifications) return;
   const notifications = gettingNotifications.notifications as Notification[];
+  return { notifications }
+}
 
+export default async function NotificationsPage() {
+  const { notifications } = await gettingNotifications()
   return (
     <>
       <ActionsNotifications />
