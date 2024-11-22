@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { Meeting, NOTIFICATIONTYPE, ROLE, Slot, STATE, STATUS } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 // features
 
@@ -11,22 +12,27 @@ export async function getSlotsForWeek(week: string[]) {
   const weekSlots = [] as {day: string, slots: Slot[]}[]
   
   for (const day of week) {
+    const dayStart = new Date(new Date(day).setHours(0,0,0,0));
+    const dayEnd = new Date(new Date(day).setHours(23,59,59,999));
+      
     const slots = await db.slot.findMany({
       where: {
         dateTime: {
-          gte: new Date(`${day}T00:00:00.000Z`),
-          lte: new Date(`${day}T23:59:59.999Z`)
+          gte: dayStart,
+          lte: dayEnd
         },
       },
       orderBy: {
         dateTime: "asc" 
-      }
+      },
+      cacheStrategy: { swr: 60, ttl: 60 },
     }) as Slot[];
     weekSlots.push({day, slots})
   }
   if (!weekSlots) {
     return { message: "No slots fetched", status: 404 };
   } else {  
+    revalidatePath('/features/scheduling/availability');
     return { message: "Slots fetched", status: 200, weekSlots };
   }
 }

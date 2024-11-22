@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 function createResponse(message: string, status: number) {
   return new Response(JSON.stringify({ message, status }));
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     if (!addingSlot || !firstAvailableTime[0]) {
       return createResponse("Failed to add slot", 503);
     }
-    
+    revalidatePath('/features/scheduling');
     return createResponse("Slot has been added", 201);
   } catch (error) {
     console.error(error);

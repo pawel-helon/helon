@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { cache } from 'react'
 import { checkRecurringDays, getSlotsForWeek } from '@/actions/server-actions'
 import { Header } from '@/components/features/scheduling/header-availability';
 import { DayGrid } from '@/components/scheduling/availability/day-grid'
@@ -8,7 +7,7 @@ import { Breadcrumbs } from '@/components/features/scheduling/breadcrumbs';
 
 type Week = { weekNumber: number; firstDay: string; lastDay: string };
 
-const cachedWeeks = cache((year: number) => {
+function getWeeks(year: number) {
   const yearStart = new Date(year, 0, 1).getDay();
   const yearEnd = new Date(year, 11, 31).getDay();
   let weekNumber: number = 0;
@@ -34,11 +33,11 @@ const cachedWeeks = cache((year: number) => {
     }
   }
   return weeks;
-})
+}
 
 type DaySlots = { day: string, slots: Slot[] };
 
-const cachedWeekDays = cache((year: number, week: number) => {
+function getWeekDays(year: number, week: number) {
   if (week < 1 || week > 53 || year < new Date().getFullYear() || year > 2100) {
     throw new Error;
   }
@@ -78,18 +77,19 @@ const cachedWeekDays = cache((year: number, week: number) => {
     });
   }
   return weekDays
-});
+};
 
-const cachedWeekSlots = cache(async (weekDays: string[]) => {
+async function getWeekSlots(weekDays: string[]) {
   const slotsForWeek = await getSlotsForWeek(weekDays);
   const weekSlots = slotsForWeek.weekSlots as DaySlots[];
   return weekSlots;
-})
-const cachedRecurringDays = cache(async (weekDays: string[]) => {
+}
+
+async function getRecurringDays(weekDays: string[]) {
   const checkingRecurringDays = await checkRecurringDays(weekDays);
   const recurringDays = checkingRecurringDays.recurringDays as string[];
   return recurringDays;
-})
+}
 
 function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
   const prevWeek = Array.from({ length: 7 }, (_, i) => new Date(new Date(weekDays[0]).setDate(new Date(weekDays[0]).getDate() + i - 7)).toISOString().split('T')[0]);
@@ -113,16 +113,23 @@ function getPrevNextWeeks(weekDays: string[], weekNumber: number) {
   return { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation };
 }
 
+function getYearAndWeek(week: string) {
+  const year = Number(week.split('-')[0]);
+  const weekNumber = Number(week.split('-')[2]);
+  return { year, weekNumber }
+}
+
 export default async function WeekAvailabilityPage(props: { params: { week: string } }) {
-  const year = Number(props.params.week.split('-')[0]);
-  const weeks = cachedWeeks(year);
-  const weekNumber = Number(props.params.week.split('-')[2]);
-  const weekDays = cachedWeekDays(year, weekNumber);
-  const weekSlots = await cachedWeekSlots(weekDays);
-  const recurringDays = await cachedRecurringDays(weekDays);
+  const { year, weekNumber } = getYearAndWeek(props.params.week);
+  const weeks = getWeeks(year);
+  const weekDays = getWeekDays(year, weekNumber);
+  const weekSlots = await getWeekSlots(weekDays);
+  const recurringDays = await getRecurringDays(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
-  const prevWeekDays = cachedWeekDays(year, prevWeekNumber);
-  const nextWeekDays = cachedWeekDays(year, nextWeekNumber);
+  const prevWeekDays = getWeekDays(year, prevWeekNumber);
+  const nextWeekDays = getWeekDays(year, nextWeekNumber);
+
+  console.log(weekSlots)
 
   return (
     <>
