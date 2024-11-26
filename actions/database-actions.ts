@@ -111,7 +111,7 @@ export async function checkSlotAvailability(slotId: string): Promise<{ message: 
 
 // scheduling/availability - slots
 
-export async function addSlot(day: string): Promise<{message: string, status: number}> {
+export async function addSlot(day: string): Promise<{message: string, status: number, slot?: Slot}> {
   const request = await fetch(`/api/database/scheduling/add-slot`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -194,28 +194,30 @@ export async function disableRecurringSlot(slotId: string, dateTime: string): Pr
   return response;
 }
 
-export async function updateSlotHour(slotId: string, dateTime: string, hour: string): Promise<{message: string, status: number}> {
+export async function updateSlotHour(slotId: string, dateTime: Date, hour: string, minutes: string): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/database/scheduling/update-slot-hour`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       slotId: slotId,
       dateTime: dateTime,
-      hour: hour
+      hour: hour,
+      minutes: minutes
     })
   })
   const response = await request.json();
   return response;
 } 
 
-export async function updateSlotMinute(slotId: string, dateTime: string, minute: string): Promise<{message: string, status: number}> {
+export async function updateSlotMinute(slotId: string, dateTime: Date, hour: string, minutes: string): Promise<{message: string, status: number}> {
   const request = await fetch(`/api/database/scheduling/update-slot-minute`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       slotId: slotId,
       dateTime: dateTime,
-      minute: minute
+      hour: hour,
+      minutes: minutes
     })
   })
   const response = await request.json();

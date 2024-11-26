@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useMedia } from "react-use";
@@ -29,7 +29,7 @@ export const getBadgeVariant = (weekNumber: number) => {
 
 function isBeforeEndOfTheDay(day: string) {
   let result: boolean;
-  new Date() <= new Date(new Date(day).setHours(23, 59, 59, 999)) ? result = true : result = false;
+  new Date() <= new Date(new Date(day).setHours(19, 59, 59, 999)) ? result = true : result = false;
   return result;
 }
 
@@ -40,30 +40,64 @@ function getDayOfWeek(date: Date) {
   return DAYS_OF_WEEK[date.getDay()];
 }
 
+function gettingNewSlot(day: string, slots: Slot[]) {
+  const allTimes = [] as string[];
+  let newTime: string = '';
+  for (let hour = 8; hour <= 20; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      allTimes.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
+    }
+  }
+  
+  if (slots.length === 0) {
+    if (new Date(day).getDate() === new Date().getDate() && new Date() < new Date(new Date().setHours(19,59,59,999))) {
+      const currentHour = String(new Date().getHours()).padStart(2, '0');
+      const currentMinuutes = String(new Date().getMinutes()).padStart(2, '0');
+      const time = allTimes.filter(slot => new Date(`${day}T${slot}:00.000Z`) > new Date(`${day}T${currentHour}:${currentMinuutes}:00.000Z`))[0];
+      newTime = time;
+    } else {
+      newTime = '08:00'
+    }
+  }
+  else {
+    const currentLastSlot = slots[slots.length - 1];
+    const currentLastSlotHour = String(new Date(currentLastSlot.dateTime).getHours()).padStart(2, '0');
+    const currentLastSlotMinutes = String(new Date(currentLastSlot.dateTime).getMinutes()).padStart(2, '0');
+    const currentLastSlotIndex = allTimes.indexOf(`${currentLastSlotHour}:${currentLastSlotMinutes}`);
+    const time = allTimes[currentLastSlotIndex + 1];
+    newTime = time;
+  }
+  return { id: 'temp', type: SLOTTYPE.AVAILABLE, dateTime: new Date(`${day}T${newTime}:00.000Z`), recurring: false, createdAt: new Date(), updatedAt: new Date() }
+}
+
 export function DayCard(props: {
   weekNumber: number;
   day: string;
-  slots: Slot[];
+  data: Slot[];
   isRecurringSlotsOnly: boolean;
   weekDays: string[];
   recurringDays: string[];
 }) {
-  const isMobile = useMedia("(max-width: 480px)", false);
+  const [slots, setSlots] = useState<Slot[]>(props.data);
   const router = useRouter();
   const date = useMemo(() => new Date(props.day), [props.day]);
   const isRecurringDay = props.recurringDays.includes(props.day);
   const daysExceptToday = props.weekDays.filter(d => d !== props.day);
-  const filteredSlots = props.isRecurringSlotsOnly ? props.slots.filter((s) => s.recurring === true && s.type !== SLOTTYPE.BOOKED) : props.slots.filter((s) => s.type !== SLOTTYPE.BOOKED);
+  const filteredSlots = props.isRecurringSlotsOnly ? slots.filter((s) => s.recurring === true && s.type !== SLOTTYPE.BOOKED) : slots.filter((s) => s.type !== SLOTTYPE.BOOKED);
   const badgeVariant = getBadgeVariant(props.weekNumber);
+  const isMobile = useMedia("(max-width: 480px)", false);
+  const newSlot = gettingNewSlot(props.day, slots);
 
   async function handleAddSlot() {
+    setSlots(prev => [...prev, newSlot])
     try {
-      const addingSlot = await addSlot(props.day);
-      if (addingSlot.status !== 201) {
-        toast.error(addingSlot.message);
+      const result = await addSlot(props.day);
+      if (result.status !== 201) {
+        toast.error(result.message);
+        setSlots(props.data);
         return;
       }
-      router.refresh();
+      setSlots(prev => prev.map(slot => slot.id === 'temp' ? result.slot! : slot));
     } catch (error) {
       console.error(error);
       toast.error("An unexpected error occurred. Please try again later.");
@@ -96,7 +130,7 @@ export function DayCard(props: {
                 ))}
               </div>
               <div className="absolute bottom-0 left-2 right-2 flex justify-between py-2 bg-background-sh">
-                <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay} isRecurringSlotsOnly={props.isRecurringSlotsOnly} />
+                <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay} isRecurringSlotsOnly={props.isRecurringSlotsOnly} />
               </div>
             </>
           ) : (
@@ -138,7 +172,7 @@ export function DayCard(props: {
                   ))}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between p-3 rounded-b-md bg-background-sh">
-                  <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={props.slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay} isRecurringSlotsOnly={props.isRecurringSlotsOnly} />
+                  <DayCardActions weekNumber={props.weekNumber} day={props.day} slots={slots} weekDays={props.weekDays} isRecurringDay={isRecurringDay} isRecurringSlotsOnly={props.isRecurringSlotsOnly} />
                   <Button
                     aria-label={props.isRecurringSlotsOnly ? "Add recurring slot" : "Add slot"}
                     onClick={props.isRecurringSlotsOnly ? handleAddRecurringSlot : handleAddSlot}

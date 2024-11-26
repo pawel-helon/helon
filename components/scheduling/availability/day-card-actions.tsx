@@ -12,6 +12,21 @@ import { Button } from "@/components/ui/button";
 import { Slot } from "@prisma/client";
 import { cn } from "@/lib/utils";
 
+function gettingNewSlot(slots: Slot[]) {
+  const allTimes = [] as string[];
+  for (let hour = 8; hour <= 20; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      allTimes.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
+    }
+  }
+  const currentLastSlot = slots[slots.length - 1];
+  const currentLastSlotHour = String(new Date(currentLastSlot.dateTime).getHours()).padStart(2, '0');
+  const currentLastSlotMinutes = String(new Date(currentLastSlot.dateTime).getMinutes()).padStart(2, '0');
+  const currentLastSlotIndex = allTimes.indexOf(`${currentLastSlotHour}-${currentLastSlotMinutes}`)
+  const newSlot = allTimes[currentLastSlotIndex + 1];
+  return newSlot;
+}
+
 export function DayCardActions(props: {
   day: string;
   weekNumber: number;
@@ -23,7 +38,8 @@ export function DayCardActions(props: {
   const isMobile = useMedia("(max-width: 480px)", false);
   const router = useRouter();
   const [isDropdownOpened, setIsDropdownOpened] = useState<boolean>(false);
-
+  const newSlot = gettingNewSlot(props.slots);
+  
   async function handleAddSlot() {
     try {
       const addingSlot = await addSlot(props.day);

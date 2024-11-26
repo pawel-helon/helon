@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { checkRecurringDays, getSlotsForWeek } from '@/actions/server-actions'
 import { Header } from '@/components/features/scheduling/header-availability';
 import { DayGrid } from '@/components/scheduling/availability/day-grid'
-import { Slot } from '@prisma/client';
 import { Breadcrumbs } from '@/components/features/scheduling/breadcrumbs';
+import { Slot } from '@prisma/client';
 
 type Week = { weekNumber: number; firstDay: string; lastDay: string };
 
@@ -123,13 +123,11 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
   const { year, weekNumber } = getYearAndWeek(props.params.week);
   const weeks = getWeeks(year);
   const weekDays = getWeekDays(year, weekNumber);
-  const weekSlots = await getWeekSlots(weekDays);
+  const data = await getWeekSlots(weekDays);
   const recurringDays = await getRecurringDays(weekDays);
   const { prevWeekNumber, nextWeekNumber, yearOnBackwardNavigation, yearOnForewardNavigation } = getPrevNextWeeks(weekDays, weekNumber);
   const prevWeekDays = getWeekDays(year, prevWeekNumber);
   const nextWeekDays = getWeekDays(year, nextWeekNumber);
-
-  console.log(weekSlots)
 
   return (
     <>
@@ -157,7 +155,12 @@ export default async function WeekAvailabilityPage(props: { params: { week: stri
           </Link>
         </li>
       </ul>
-      <DayGrid slotsForWeek={weekSlots} weekNumber={weekNumber} weekDays={weekDays} recurringDays={recurringDays}/>
+      <DayGrid
+        slotsForWeek={data}
+        weekNumber={weekNumber}
+        weekDays={weekDays}
+        recurringDays={recurringDays}
+      />
     </>
   )
 }

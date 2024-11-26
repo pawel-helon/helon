@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { updateSlotHour, updateSlotMinute } from "@/actions/database-actions";
@@ -13,19 +12,28 @@ import { Slot } from "@prisma/client";
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = ["00", "15", "30", "45"];
 
+function getSlotTime(dateTime: Date) {
+  const initHour = String(new Date(dateTime).getHours()).padStart(2, '0');
+  const initMinutes = String(new Date(dateTime).getMinutes()).padStart(2, '0');
+  return { initHour, initMinutes };
+}
+
 export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
-  const router = useRouter();
+  const { initHour, initMinutes } = getSlotTime(props.slot.dateTime)
+  const [hour, setHour] = useState<string>(initHour);
+  const [minutes, setMinutes] = useState<string>(initMinutes);
   const [isHoursDropdownOpened, setIsHoursDropdownOpened] = useState<boolean>(false);
   const [isMinutesDropdownOpened, setIsMinutesDropdownOpened] = useState<boolean>(false);
-  
+
   async function handleSlotHourChange(hour: string) {
+    setHour(hour);
     try {
-      const updatingSlot = await updateSlotHour(props.slot.id, props.slot.dateTime.toISOString(), hour);
+      const updatingSlot = await updateSlotHour(props.slot.id, props.slot.dateTime, hour, minutes);
       if (updatingSlot.status !== 200) {
         toast.error(updatingSlot.message);
+        setHour(initHour);
         return;
       }
-      router.refresh();
       setIsHoursDropdownOpened(false);
     } catch (error) {
       console.error(error);
@@ -34,13 +42,14 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
   }
   
   async function handleSlotMinuteChange(minute: string) {
+    setMinutes(minute);
     try {
-      const updatingSlot = await updateSlotMinute(props.slot.id, props.slot.dateTime.toISOString(), minute);
+      const updatingSlot = await updateSlotMinute(props.slot.id, props.slot.dateTime, hour, minute);
       if (updatingSlot.status !== 200) {
         toast.error(updatingSlot.message);
+        setMinutes(initMinutes);
         return;
       }
-      router.refresh();
       setIsMinutesDropdownOpened(false);
     } catch (error) {
       console.error(error);
@@ -60,7 +69,7 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
               size="sm"
               className="w-16 min-w-[64px] bg-background-sh"
             >
-              {String(props.slot.dateTime.getHours()).padStart(2, '0')}
+              {hour}
               <CaretSortIcon className="size-4 ml-2 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -90,7 +99,7 @@ export function TimeSlot(props: { slot: Slot, daysExceptToday: string[] }) {
               size="sm"
               className="w-16 min-w-[64px] bg-background-sh"
             >
-              {String(props.slot.dateTime.getMinutes()).padStart(2, '0')}
+              {minutes}
               <CaretSortIcon className="size-4 ml-2 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>

@@ -1,8 +1,9 @@
-import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
+import { Slot } from "@prisma/client";
 
-function createResponse(message: string, status: number) {
-  return new Response(JSON.stringify({ message, status }));
+function createResponse(message: string, status: number, slot?: Slot) {
+  return new Response(JSON.stringify({ message, status, slot }));
 }
 
 async function generateAvailableTimes(day: string): Promise<string> {
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
       return createResponse("Failed to add slot", 503);
     }
     revalidatePath('/features/scheduling');
-    return createResponse("Slot has been added", 201);
+    return createResponse("Slot has been added", 201, addingSlot);
   } catch (error) {
     console.error(error);
     return createResponse('An error occurred while adding slot', 500);

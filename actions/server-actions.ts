@@ -25,7 +25,6 @@ export async function getSlotsForWeek(week: string[]) {
       orderBy: {
         dateTime: "asc" 
       },
-      cacheStrategy: { swr: 60, ttl: 60 },
     }) as Slot[];
     weekSlots.push({day, slots})
   }

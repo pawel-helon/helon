@@ -10,6 +10,7 @@ import { DayCard } from "@/components/scheduling/availability/day-card";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Text } from "@/components/typography";
 import { cn } from "@/lib/utils";
+import { checkRecurringDays, getSlotsForWeek } from "@/actions/server-actions";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -54,21 +55,32 @@ export function DayGrid(props: {
   weekDays: string[];
   recurringDays: string[];
 }) {
-  const isMobile = useMedia("(max-width: 480px)", false);
   const [isRecurringSlotsOnly, setIsRecurringSlotsOnly] = useState<boolean>(false);
   const badgeVariant = getBadgeVariant(props.weekNumber);
   const emptyCards = getEmptyCards(props.weekDays.length);
+  const isMobile = useMedia("(max-width: 480px)", false);
+
+  const [data, setData] = useState<DaySlots[]>(props.slotsForWeek);
+  const [recurringDays, setRecurringDays] = useState<string[]>(props.recurringDays);
 
   useEffect(() => {
-    async function initDeletePastSlots() {
+    async function init() {
       try {
         await deletePastSlots();
+        const gettingSlotsForWeek = await getSlotsForWeek(props.weekDays);
+        if (gettingSlotsForWeek.weekSlots) {
+          setData(gettingSlotsForWeek.weekSlots);
+        }
+        const gettingRecurringDays = await checkRecurringDays(props.weekDays);
+        if (gettingRecurringDays.status === 200) {
+          setRecurringDays(gettingRecurringDays.recurringDays);
+        }
       } catch (error) {
         console.error(error);
       }
     }
-    initDeletePastSlots();
-  })
+    init();
+  },[setData, setRecurringDays])
   
   return (
     <div role="tabpanel">
@@ -79,7 +91,7 @@ export function DayGrid(props: {
             <Switch checked={isRecurringSlotsOnly} onCheckedChange={() => setIsRecurringSlotsOnly(!isRecurringSlotsOnly)} className="data-[state=checked]:bg-teal-500" />
           </div>
           <Accordion type="single" defaultValue={props.weekDays[0]} className="flex flex-col gap-4">
-            {props.slotsForWeek.map((day) => (
+            {props.slotsForWeek!.map((day) => (
               <AccordionItem key={day.day} value={day.day} className="border border-border rounded-md shadow-lg shadow-black">
                 <AccordionTrigger className="px-2 hover:no-underline">
                   <div className="flex items-center gap-2">
@@ -92,7 +104,15 @@ export function DayGrid(props: {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-0">
-                  <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
+                  <DayCard
+                    key={day.day} 
+                    weekNumber={props.weekNumber} 
+                    day={day.day} 
+                    data={day.slots} 
+                    isRecurringSlotsOnly={isRecurringSlotsOnly} 
+                    weekDays={props.weekDays} 
+                    recurringDays={props.recurringDays!}
+                  />
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -112,8 +132,16 @@ export function DayGrid(props: {
                 ))}
               </>
             )}
-            {props.slotsForWeek.map((day) => (
-              <DayCard key={day.day} weekNumber={props.weekNumber} day={day.day} slots={day.slots} isRecurringSlotsOnly={isRecurringSlotsOnly} weekDays={props.weekDays} recurringDays={props.recurringDays}/>
+            {props.slotsForWeek!.map((day) => (
+              <DayCard 
+                key={day.day} 
+                weekNumber={props.weekNumber} 
+                day={day.day} 
+                data={day.slots} 
+                isRecurringSlotsOnly={isRecurringSlotsOnly} 
+                weekDays={props.weekDays} 
+                recurringDays={props.recurringDays!}
+              />
             ))}
             {props.weekNumber === 53 && (
               <>

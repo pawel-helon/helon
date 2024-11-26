@@ -3,10 +3,9 @@
 import { useEffect } from "react";
 import { useMedia } from "react-use";
 import { MdError } from "react-icons/md";
-
 import { Text } from "@/components/typography";
-import { Sheet, SheetContentWithoutClose as SheetContent } from "@/components/ui/sheet";
-import { Dialog, DialogContentWithoutClose as DialogContent } from "@/components/ui/dialog";
+import { Sheet, SheetContentWithoutClose as SheetContent, SheetTitleH as SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContentWithoutClose as DialogContent, DialogTitleH as DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +26,7 @@ export default function ErrorHomePage({ error }: {
         <Sheet open={true}>
           <SheetContent side="bottom" aria-describedby="">
             <div className="relative p-3 text-left border-b border-border">
-              <Text variant="h3" className="text-center">Error</Text>
+              <SheetTitle className="text-center">Error</SheetTitle>
               <MdError className="absolute top-3 right-3 text-muted-foreground size-5"/>
             </div>
             <div className="py-6 px-3">
@@ -42,7 +41,7 @@ export default function ErrorHomePage({ error }: {
         <Dialog open={true}>
           <DialogContent aria-describedby="">
             <div className="flex justify-between items-start mb-8 text-left">
-              <Text variant="h3">Error</Text>
+              <DialogTitle>Error</DialogTitle>
               <MdError className="text-muted-foreground size-5"/>
             </div>
             <div className="min-h-[200px]">
