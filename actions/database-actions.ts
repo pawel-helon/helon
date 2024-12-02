@@ -229,3 +229,259 @@ export async function addDevice(deviceName: string, emei: string, phoneNumber: s
   const response = await request.json();
   return response;
 }
+
+// scheduling
+
+export async function addRecurringSlot(day: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/add-recurring-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function addSlot(day: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/add-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function deleteSlots(day: string): Promise<{message: string, status: number, prevSlots?: Slot[]}> {
+  const request = await fetch(`/api/features/scheduling/delete-slots`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function disableRecurringDay(day: string, slots: Slot[]): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/disable-recurring-day`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day,
+      slots: slots
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function setRecurringDay(day: string, slots: Slot[]): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/set-recurring-day`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      day: day,
+      slots: slots
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoDeleteSlots(prevSlots: Slot[]): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/undo-delete-slots`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prevSlots: prevSlots
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function deletePastSlots(): Promise<{ message: string, status: number }> {
+  const request = await fetch("/api/features/scheduling/delete-past-slots", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function duplicateDay(days: string[], slots: Slot[]): Promise<{message: string, status: number, prevSlots?: { day: string, slots: Slot[] }[]}> {
+  const request = await fetch(`/api/features/scheduling/duplicate-day`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      days: days,
+      slots: slots
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoDuplicateDay(prevSlots: { day: string, slots: Slot[] }[]): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/undo-duplicate-day`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prevSlots: prevSlots
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function deleteSlot(slotId: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/delete-slot`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoDeleteSlot(dateTime: Date): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/undo-delete-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      dateTime: dateTime,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function setRecurringSlot(slotId: string, dateTime: Date): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/set-recurring-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      dateTime: dateTime,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function disableRecurringSlot(slotId: string, dateTime: Date): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/disable-recurring-slot`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      dateTime: dateTime,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function updateSlotHour(slotId: string, dateTime: Date, hour: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/update-slot-hour`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      dateTime: dateTime,
+      hour: hour
+    })
+  })
+  const response = await request.json();
+  return response;
+} 
+
+export async function updateSlotMinute(slotId: string, dateTime: Date, minute: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/update-slot-minute`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      slotId: slotId,
+      dateTime: dateTime,
+      minute: minute
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function removeMeeting(meetingId: string): Promise<{message: string, status: number, meeting?: Meeting}> {
+  const request = await fetch(`/api/features/scheduling/remove-meeting`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoRemoveMeeting(meeting: Meeting): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/undo-remove-meeting`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meeting: meeting,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function getAvailableSlotsForDate(date: string): Promise<{ message: string, slots: Slot[], status: number }> {
+  const request = await fetch(`/api/features/get-available-slots-for-date?date=${date}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function checkSlotAvailability(slotId: string): Promise<{ message: string, status: number }> {
+  const request = await fetch(`/api/features/check-slot-availability?slotId=${slotId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function rescheduleMeeting(meetingId: string, slotId: string): Promise<{message: string, status: number, prevSlotId?: string}> {
+  const request = await fetch(`/api/features/scheduling/reschedule-meeting`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+      slotId: slotId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
+
+export async function undoRescheduleMeeting(meetingId: string, slotId: string): Promise<{message: string, status: number}> {
+  const request = await fetch(`/api/features/scheduling/undo-reschedule-meeting`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      meetingId: meetingId,
+      slotId: slotId,
+    })
+  })
+  const response = await request.json();
+  return response;
+}
