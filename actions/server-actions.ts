@@ -8,34 +8,6 @@ import { revalidatePath } from "next/cache";
 
 // scheduling/availability
 
-export async function getSlotsForWeek(week: string[]) {
-  const weekSlots = [] as {day: string, slots: Slot[]}[]
-  
-  for (const day of week) {
-    const dayStart = new Date(new Date(day).setHours(0,0,0,0));
-    const dayEnd = new Date(new Date(day).setHours(23,59,59,999));
-      
-    const slots = await db.slot.findMany({
-      where: {
-        dateTime: {
-          gte: dayStart,
-          lte: dayEnd
-        },
-      },
-      orderBy: {
-        dateTime: "asc" 
-      },
-    }) as Slot[];
-    weekSlots.push({day, slots})
-  }
-  if (!weekSlots) {
-    return { message: "No slots fetched", status: 404 };
-  } else {  
-    revalidatePath('/features/scheduling/availability');
-    return { message: "Slots fetched", status: 200, weekSlots };
-  }
-}
-
 export async function updateSlotHour(slotId: string, dateTime: Date, hour: string) {
   const slot = await db.slot.update({
     where: {
@@ -560,25 +532,6 @@ export async function checkRecurringDay(day: string) {
     return { message: 'Recurring day not found', status: 204 }
   } else {
     return { message: 'Recurring day found', status: 200 }
-  }
-}
-
-export async function checkRecurringDays(days: string[]) {
-  const recurringDays: string[] = [];
-
-  for (const day of days) {
-    const recurringDay = await db.recurringDate.findUnique({
-      where: { dateTime: new Date(day) }
-    })
-    if (recurringDay) {
-      recurringDays.push(day);
-    }
-  }
-
-  if (recurringDays.length === 0) {
-    return { message: 'No recurring days found', status: 204, recurringDays }
-  } else {
-    return { message: 'Recurring days found', status: 200, recurringDays }
   }
 }
 

@@ -59,13 +59,13 @@ export default async function HomePage() {
           mobileImageSrc="/mobile-onboarding.png"
           desktopImageSrc="/desktop-onboarding.png"
         />
-        <Card
+        {/* <Card
           title="Scheduling"
           link="/features/scheduling"
           overview={["quickly setup your availability", "easily manage appointments", "get confirmations to your inbox"]}
           mobileImageSrc="/mobile-scheduling.png"
           desktopImageSrc="/desktop-scheduling.png"
-        />
+        /> */}
         <Card
           title="Notifications"
           link="/features/notifications"
