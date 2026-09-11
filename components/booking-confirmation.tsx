@@ -23,7 +23,7 @@ export const BookingConfirmation: React.FC<
             New booking
           </Heading>
           <Text className="text-[#09090B] text-sm leading-snug font-normal">
-            {`${userName}(${userEmail}) booked meeting at ${dateTime} with the following message: ${message}`}
+            {`${userName} booked meeting at ${dateTime} with the following message: ${message}. Please, reach out at ${userEmail}.`}
           </Text>
         </Container>
       </Body>
